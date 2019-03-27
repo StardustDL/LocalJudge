@@ -12,6 +12,8 @@ namespace LocalJudge.Server.API
 {
     public class Program
     {
+        public static string Workspace { get; set; }
+
         public static void Main(string[] args)
         {
             CreateWebHostBuilder(args).Build().Run();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -26,6 +27,7 @@ namespace LocalJudge.Server.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddSwaggerDocument();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -33,13 +35,18 @@ namespace LocalJudge.Server.API
         {
             if (env.IsDevelopment())
             {
+                Program.Workspace = Path.GetFullPath(Path.Join(Directory.GetCurrentDirectory(), "../../temp/test"));
                 app.UseDeveloperExceptionPage();
             }
             else
             {
+                Program.Workspace = Path.GetFullPath(Directory.GetCurrentDirectory());
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUi3();
 
             app.UseHttpsRedirection();
             app.UseMvc();
