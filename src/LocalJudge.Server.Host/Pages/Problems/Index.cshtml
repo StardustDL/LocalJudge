@@ -1,0 +1,39 @@
+﻿@page
+@model LocalJudge.Server.Host.Pages.Problems.IndexModel
+@{
+    ViewData["Title"] = "Problems";
+}
+
+<h1>Problems</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Problems[0].Name)
+            </th>
+            <th style="width:10%">
+                @Html.DisplayNameFor(model => model.Problems[0].Author)
+            </th>
+            <th style="width:10%">
+                @Html.DisplayNameFor(model => model.Problems[0].Source)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Problems)
+        {
+            <tr>
+                <td>
+                    <a asp-page="./View" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Name)</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Author)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Source)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

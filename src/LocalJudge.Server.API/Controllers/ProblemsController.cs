@@ -75,7 +75,7 @@ namespace LocalJudge.Server.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<TestCaseMetadata> GetSampleInput(string id, string tid)
+        public ActionResult<string> GetSampleInput(string id, string tid)
         {
             var res = Program.Workspace.Problems.Get(id)?.GetSample(tid);
             if (res != null)

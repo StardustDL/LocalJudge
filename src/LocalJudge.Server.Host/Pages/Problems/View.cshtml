@@ -1,0 +1,125 @@
+﻿@page
+@model LocalJudge.Server.Host.Pages.Problems.ViewModel
+@{
+    ViewData["Title"] = "View";
+}
+
+<h1>@Html.DisplayFor(model => model.Metadata.Name)</h1>
+
+<div class="row">
+    <div class="col-9">
+        <h2>Description</h2>
+
+        <p>@Html.DisplayFor(model => model.Description.Description)</p>
+
+        <br />
+
+        <h2>Input</h2>
+
+        <p>@Html.DisplayFor(model => model.Description.Input)</p>
+
+        <br />
+
+        <h2>Output</h2>
+
+        <p>@Html.DisplayFor(model => model.Description.Output)</p>
+
+        <br />
+
+        <h2>Samples</h2>
+
+        @for (int i = 0; i < Model.SampleData.Count; i++)
+        {
+            var item = Model.SampleData[i];
+            <h3>Sample @i</h3>
+            <h4>Input</h4>
+            <pre>@Html.DisplayFor(model => item.Input)</pre>
+            <h4>Output</h4>
+            <pre>@Html.DisplayFor(model => item.Output)</pre>
+            <br />
+        }
+
+        <h2>Hint</h2>
+
+        <p>@Html.DisplayFor(model => model.Description.Hint)</p>
+
+        <br />
+    </div>
+    <div class="col-3">
+        <h2>Information</h2>
+        <dl>
+            <dt>@Html.DisplayNameFor(model => model.Metadata.Author)</dt>
+            <dd>@Html.DisplayFor(model => model.Metadata.Author)</dd>
+            <dt>@Html.DisplayNameFor(model => model.Metadata.Source)</dt>
+            <dd>@Html.DisplayFor(model => model.Metadata.Source)</dd>
+        </dl>
+        <br />
+        <h2>Sample Cases</h2>
+        <table class="table table-sm table-bordered">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Samples[0].Id)
+                    </th>
+                    <th style="width:10%">
+                        @Html.DisplayNameFor(model => model.Samples[0].TimeLimit)
+                    </th>
+                    <th style="width:10%">
+                        @Html.DisplayNameFor(model => model.Samples[0].MemoryLimit)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Samples)
+                {
+                    <tr>
+                        <td>
+                            @item.Id
+                        </td>
+                        <td>
+                            @item.TimeLimit.TotalSeconds s
+                        </td>
+                        <td>
+                            @(item.MemoryLimit / 1024 / 1024) MB
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <br />
+        <h2>Test Cases</h2>
+        <table class="table table-sm table-bordered">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Tests[0].Id)
+                    </th>
+                    <th style="width:10%">
+                        @Html.DisplayNameFor(model => model.Tests[0].TimeLimit)
+                    </th>
+                    <th style="width:10%">
+                        @Html.DisplayNameFor(model => model.Tests[0].MemoryLimit)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Tests)
+                {
+                    <tr>
+                        <td>
+                            @item.Id
+                        </td>
+                        <td>
+                            @item.TimeLimit.TotalSeconds s
+                        </td>
+                        <td>
+                            @(item.MemoryLimit / 1024 / 1024) MB
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
