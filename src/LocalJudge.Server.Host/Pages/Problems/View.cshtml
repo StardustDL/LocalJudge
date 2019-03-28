@@ -5,7 +5,7 @@
 }
 
 @section header{
-    <link rel="stylesheet" data-name="vs/editor/editor.main" href="~/lib/monaco-editor/min/vs/editor/editor.main.css">
+    <link rel="stylesheet" data-name="vs/editor/editor.main" href="../lib/monaco-editor/min/vs/editor/editor.main.css">
 }
 
 <h1>@Html.DisplayFor(model => model.Metadata.Name)</h1>
@@ -71,10 +71,10 @@
                     <th>
                         @Html.DisplayNameFor(model => model.Samples[0].Id)
                     </th>
-                    <th style="width:10%">
+                    <th>
                         @Html.DisplayNameFor(model => model.Samples[0].TimeLimit)
                     </th>
-                    <th style="width:10%">
+                    <th>
                         @Html.DisplayNameFor(model => model.Samples[0].MemoryLimit)
                     </th>
                 </tr>
@@ -90,7 +90,7 @@
                             @item.TimeLimit.TotalSeconds s
                         </td>
                         <td>
-                            @(item.MemoryLimit / 1024 / 1024) MB
+                            @((double)item.MemoryLimit / 1024 / 1024) MB
                         </td>
                     </tr>
                 }
@@ -104,10 +104,10 @@
                     <th>
                         @Html.DisplayNameFor(model => model.Tests[0].Id)
                     </th>
-                    <th style="width:10%">
+                    <th>
                         @Html.DisplayNameFor(model => model.Tests[0].TimeLimit)
                     </th>
-                    <th style="width:10%">
+                    <th>
                         @Html.DisplayNameFor(model => model.Tests[0].MemoryLimit)
                     </th>
                 </tr>
@@ -123,7 +123,7 @@
                             @item.TimeLimit.TotalSeconds s
                         </td>
                         <td>
-                            @(item.MemoryLimit / 1024 / 1024) MB
+                            @((double)item.MemoryLimit / 1024 / 1024) MB
                         </td>
                     </tr>
                 }
@@ -140,16 +140,11 @@
 
 </div>
 
-@if (!string.IsNullOrEmpty(Model.SubmissionID))
-{
-    <p>Submitted: @Model.SubmissionID .</p>
-}
-
 <form method="post">
-    <textarea asp-for="SubmitData.ProblemID"></textarea>
-    <textarea asp-for="SubmitData.Language"></textarea>
-    <textarea asp-for="SubmitData.Code" id="formCode"></textarea>
-    <input type="submit" value="Save" class="btn btn-primary" />
+    <textarea asp-for="SubmitData.ProblemID" style="display:none"></textarea>
+    <textarea asp-for="SubmitData.Language" style="display:none"></textarea>
+    <textarea asp-for="SubmitData.Code" id="formCode" style="display:none"></textarea>
+    <input type="submit" value="Submit" class="btn btn-primary" />
 </form>
 
 @section scripts{

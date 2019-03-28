@@ -16,6 +16,7 @@ namespace LocalJudge.Core.Judgers
         {
             JudgeResult res = new JudgeResult
             {
+                ID = name,
                 State = JudgeState.Pending,
                 Issues = new List<Issue>()
             };
@@ -38,7 +39,7 @@ namespace LocalJudge.Core.Judgers
                             {
                                 if (runner.ExitCode != 0)
                                 {
-                                    res.Issues.Add(new Issue(IssueLevel.Error, $"Runtime error for {name}: exited with {runner.ExitCode}."));
+                                    res.Issues.Add(new Issue(IssueLevel.Error, $"exited with {runner.ExitCode}."));
                                     res.State = JudgeState.RuntimeError;
                                     break;
                                 }
@@ -52,11 +53,6 @@ namespace LocalJudge.Core.Judgers
                                 }
                                 else
                                 {
-                                    // TODO:
-                                    if (timeLimit.TotalSeconds / runner.RunningTime.TotalSeconds < 2)
-                                        res.Issues.Add(new Issue(IssueLevel.Warning, $"The time limit is too small for {name}. It used {runner.RunningTime.TotalSeconds} seconds"));
-                                    if ((double)memoryLimit / runner.MaximumMemory < 2)
-                                        res.Issues.Add(new Issue(IssueLevel.Warning, $"The memory limit is too small for {name}. It used {runner.MaximumMemory} bytes"));
                                     res.State = JudgeState.Accept;
                                 }
                                 break;

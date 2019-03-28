@@ -41,6 +41,7 @@ namespace LocalJudge.Server.API.Controllers
             {
                 ProblemID = data.ProblemID,
                 Language = data.Language,
+                Time = DateTimeOffset.Now,
             };
             var sub = Program.Workspace.Submissions.Create(Guid.NewGuid().ToString(), meta);
             if (sub == null) return Forbid();
@@ -61,6 +62,12 @@ namespace LocalJudge.Server.API.Controllers
                 Program.Workspace.Submissions.Delete(sub.ID);
                 return Forbid();
             }
+        }
+
+        [HttpGet]
+        public ActionResult<IEnumerable<SubmissionMetadata>> GetAll()
+        {
+            return Ok(Program.Workspace.Submissions.GetAll().Select(item => item.GetMetadata()));
         }
 
         [HttpGet("{id}")]
@@ -93,7 +100,7 @@ namespace LocalJudge.Server.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<SubmissionResult> GetCode(string id)
+        public ActionResult<string> GetCode(string id)
         {
             var res = Program.Workspace.Submissions.Get(id)?.GetCode();
             if (res != null)

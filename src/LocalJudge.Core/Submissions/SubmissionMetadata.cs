@@ -1,4 +1,5 @@
 ﻿using LocalJudge.Core.Judgers;
+using System;
 
 namespace LocalJudge.Core.Submissions
 {
@@ -9,5 +10,7 @@ namespace LocalJudge.Core.Submissions
         public string ProblemID { get; set; }
 
         public ProgrammingLanguage Language { get; set; }
+
+        public DateTimeOffset Time { get; set; }
     }
 }

@@ -44,8 +44,6 @@ namespace LocalJudge.Server.Host.Pages.Problems
 
         public IList<TestCaseMetadata> Tests { get; set; }
 
-        public string SubmissionID { get; set; }
-
         public async Task<IActionResult> OnGetAsync(string id)
         {
             if (string.IsNullOrEmpty(id))
@@ -63,7 +61,7 @@ namespace LocalJudge.Server.Host.Pages.Problems
                 return NotFound();
             }
 
-            Samples = (await client.GetSamplesAsync(id)).ToList();
+            Samples = await client.GetSamplesAsync(id);
             List<TestCaseData> samples = new List<TestCaseData>();
             foreach (var s in Samples)
             {
@@ -77,7 +75,7 @@ namespace LocalJudge.Server.Host.Pages.Problems
             }
             SampleData = samples;
 
-            Tests = (await client.GetTestsAsync(id)).ToList();
+            Tests = await client.GetTestsAsync(id);
 
             SubmitData = new SubmitData
             {
@@ -101,14 +99,12 @@ namespace LocalJudge.Server.Host.Pages.Problems
             try
             {
                 var meta = await client.SubmitAsync(SubmitData);
-                SubmissionID = meta.Id;
+                return Redirect($"../Submissions/View?id={meta.Id}");
             }
             catch
             {
                 return NotFound();
             }
-
-            return await OnGetAsync(SubmitData.ProblemID);
         }
     }
 }

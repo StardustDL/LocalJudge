@@ -14,7 +14,7 @@ namespace LocalJudge.Server.API.Controllers
     public class ProblemsController : ControllerBase
     {
         [HttpGet]
-        public ActionResult<IEnumerable<ProblemMetadata>> Get()
+        public ActionResult<IEnumerable<ProblemMetadata>> GetAll()
         {
             return Ok(Program.Workspace.Problems.GetAll().Select(item => item.GetMetadata()));
         }

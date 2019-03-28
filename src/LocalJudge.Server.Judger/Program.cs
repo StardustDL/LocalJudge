@@ -66,7 +66,7 @@ namespace LocalJudger.Server.Judger
                         compileResult = Compiler.Compile(lang.CompileCommand, submission.Code, Path.Join(submission.Root, "compiled"), lang.CompileTimeLimit, lang.CompileMemoryLimit);
                         if (compileResult.State != CompileState.Compiled)
                         {
-                            result.Issues.Add(new Issue(IssueLevel.Error, "Compiled error" + compileResult.State.ToString()));
+                            result.Issues.Add(new Issue(IssueLevel.Error, "Compiled error with internal error: " + compileResult.State.ToString()));
                             result.Issues.AddRange(compileResult.Issues);
                             result.State = JudgeState.CompileError;
                         }
@@ -86,13 +86,13 @@ namespace LocalJudger.Server.Judger
                         foreach (var item in problem.GetSamples())
                         {
                             var casemdata = item.GetMetadata();
-                            var res = LocalJudge.Core.Judgers.Judger.Judge($"Sample {id}", lang.RunCommand.Resolve(vars), casemdata.TimeLimit, casemdata.MemoryLimit, File.OpenText(item.Input), File.OpenText(item.Output), comparer);
+                            var res = LocalJudge.Core.Judgers.Judger.Judge(casemdata.ID, lang.RunCommand.Resolve(vars), casemdata.TimeLimit, casemdata.MemoryLimit, File.OpenText(item.Input), File.OpenText(item.Output), comparer);
                             result.Samples.Add(res);
                         }
                         foreach (var item in problem.GetTests())
                         {
                             var casemdata = item.GetMetadata();
-                            var res = LocalJudge.Core.Judgers.Judger.Judge($"Test {id}", lang.RunCommand.Resolve(vars), casemdata.TimeLimit, casemdata.MemoryLimit, File.OpenText(item.Input), File.OpenText(item.Output), comparer);
+                            var res = LocalJudge.Core.Judgers.Judger.Judge(casemdata.ID, lang.RunCommand.Resolve(vars), casemdata.TimeLimit, casemdata.MemoryLimit, File.OpenText(item.Input), File.OpenText(item.Output), comparer);
                             result.Tests.Add(res);
                         }
                     }

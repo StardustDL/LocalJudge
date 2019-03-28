@@ -5,6 +5,8 @@ namespace LocalJudge.Core.Judgers
 {
     public class JudgeResult
     {
+        public string ID { get; set; }
+
         public JudgeState State { get; set; }
 
         public TimeSpan Time { get; set; }

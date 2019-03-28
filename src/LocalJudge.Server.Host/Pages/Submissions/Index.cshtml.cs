@@ -7,7 +7,7 @@ using LocalJudge.Server.Host.APIClients;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace LocalJudge.Server.Host.Pages.Problems
+namespace LocalJudge.Server.Host.Pages.Submissions
 {
     public class IndexModel : PageModel
     {
@@ -18,13 +18,15 @@ namespace LocalJudge.Server.Host.Pages.Problems
             this.clientFactory = clientFactory;
         }
 
-        public IList<ProblemMetadata> Problems { get; set; }
+        public IList<SubmissionMetadata> Submissions { get; set; }
 
         public async Task OnGetAsync()
         {
             var httpclient = clientFactory.CreateClient();
-            var client = new ProblemsClient(httpclient);
-            Problems = await client.GetAllAsync();
+            var client = new SubmissionsClient(httpclient);
+            var ls = (await client.GetAllAsync()).ToList();
+            ls.Sort((x, y) => y.Time.CompareTo(x.Time));
+            Submissions = ls;
         }
     }
 }
