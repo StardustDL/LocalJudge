@@ -31,6 +31,9 @@ namespace LocalJudge.Server.Host.Pages.Problems
             this.clientFactory = clientFactory;
         }
 
+        [BindProperty]
+        public SubmitData SubmitData { get; set; }
+
         public ProblemMetadata Metadata { get; set; }
 
         public ProblemDescription Description { get; set; }
@@ -41,6 +44,7 @@ namespace LocalJudge.Server.Host.Pages.Problems
 
         public IList<TestCaseMetadata> Tests { get; set; }
 
+        public string SubmissionID { get; set; }
 
         public async Task<IActionResult> OnGetAsync(string id)
         {
@@ -61,13 +65,13 @@ namespace LocalJudge.Server.Host.Pages.Problems
 
             Samples = (await client.GetSamplesAsync(id)).ToList();
             List<TestCaseData> samples = new List<TestCaseData>();
-            foreach(var s in Samples)
+            foreach (var s in Samples)
             {
                 TestCaseData td = new TestCaseData
                 {
                     Metadata = s,
                     Input = await client.GetSampleInputAsync(id, s.Id),
-                    Output = await client.GetSampleOutputAsync(id,s.Id),
+                    Output = await client.GetSampleOutputAsync(id, s.Id),
                 };
                 samples.Add(td);
             }
@@ -75,7 +79,36 @@ namespace LocalJudge.Server.Host.Pages.Problems
 
             Tests = (await client.GetTestsAsync(id)).ToList();
 
+            SubmitData = new SubmitData
+            {
+                Code = "",
+                Language = ProgrammingLanguage.Cpp,
+                ProblemID = Metadata.Id,
+            };
+
             return Page();
+        }
+
+        public async Task<IActionResult> OnPostAsync()
+        {
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
+
+            var httpclient = clientFactory.CreateClient();
+            var client = new SubmissionsClient(httpclient);
+            try
+            {
+                var meta = await client.SubmitAsync(SubmitData);
+                SubmissionID = meta.Id;
+            }
+            catch
+            {
+                return NotFound();
+            }
+
+            return await OnGetAsync(SubmitData.ProblemID);
         }
     }
 }

@@ -4,25 +4,29 @@
     ViewData["Title"] = "View";
 }
 
+@section header{
+    <link rel="stylesheet" data-name="vs/editor/editor.main" href="~/lib/monaco-editor/min/vs/editor/editor.main.css">
+}
+
 <h1>@Html.DisplayFor(model => model.Metadata.Name)</h1>
 
 <div class="row">
     <div class="col-9">
         <h2>Description</h2>
 
-        <p>@Html.DisplayFor(model => model.Description.Description)</p>
+        <p>@Html.Raw(Markdig.Markdown.ToHtml(Model.Description.Description))</p>
 
         <br />
 
         <h2>Input</h2>
 
-        <p>@Html.DisplayFor(model => model.Description.Input)</p>
+        <p>@Html.Raw(Markdig.Markdown.ToHtml(Model.Description.Input))</p>
 
         <br />
 
         <h2>Output</h2>
 
-        <p>@Html.DisplayFor(model => model.Description.Output)</p>
+        <p>@Html.Raw(Markdig.Markdown.ToHtml(Model.Description.Output))</p>
 
         <br />
 
@@ -32,16 +36,22 @@
         {
             var item = Model.SampleData[i];
             <h3>Sample @i</h3>
-            <h4>Input</h4>
-            <pre>@Html.DisplayFor(model => item.Input)</pre>
-            <h4>Output</h4>
-            <pre>@Html.DisplayFor(model => item.Output)</pre>
+            <div class="row">
+                <div class="col">
+                    <h4>Input</h4>
+                    <pre>@Html.DisplayFor(model => item.Input)</pre>
+                </div>
+                <div class="col">
+                    <h4>Output</h4>
+                    <pre>@Html.DisplayFor(model => item.Output)</pre>
+                </div>
+            </div>
             <br />
         }
 
         <h2>Hint</h2>
 
-        <p>@Html.DisplayFor(model => model.Description.Hint)</p>
+        @Html.Raw(Markdig.Markdown.ToHtml(Model.Description.Hint))
 
         <br />
     </div>
@@ -122,4 +132,52 @@
     </div>
 </div>
 
+<h2>Code</h2>
 
+<br />
+
+<div id="codeEditor" class="row" style="min-height:500px">
+
+</div>
+
+@if (!string.IsNullOrEmpty(Model.SubmissionID))
+{
+    <p>Submitted: @Model.SubmissionID .</p>
+}
+
+<form method="post">
+    <textarea asp-for="SubmitData.ProblemID"></textarea>
+    <textarea asp-for="SubmitData.Language"></textarea>
+    <textarea asp-for="SubmitData.Code" id="formCode"></textarea>
+    <input type="submit" value="Save" class="btn btn-primary" />
+</form>
+
+@section scripts{
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+        tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ]
+        }
+        });
+    </script>
+    <script>var require = { paths: { 'vs': '../lib/monaco-editor/min/vs' } }</script>
+    <script src="../lib/monaco-editor/min/vs/loader.js"></script>
+    <script src="../lib/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
+    <script src="../lib/monaco-editor/min/vs/editor/editor.main.js"></script>
+    <script>
+        var editor = monaco.editor.create(document.getElementById('codeEditor'), {
+            value: [
+                '#include <iostream>',
+                'int main() {',
+                '\t',
+                '}'
+            ].join('\n'),
+            language: 'cpp'
+        });
+        editor.onDidChangeModelContent((e) => {
+            document.getElementById('formCode').value = editor.getValue();
+        });
+    </script>
+}

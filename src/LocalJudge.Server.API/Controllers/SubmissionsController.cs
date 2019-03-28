@@ -30,9 +30,13 @@ namespace LocalJudge.Server.API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
         public ActionResult<SubmissionMetadata> Submit([FromBody] SubmitData data)
         {
+            if (Program.Workspace.Problems.Has(data.ProblemID) == false)
+                return NotFound();
+
             var meta = new SubmissionMetadata
             {
                 ProblemID = data.ProblemID,

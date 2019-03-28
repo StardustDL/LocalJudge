@@ -8,7 +8,7 @@ namespace LocalJudge.Core.Judgers
     {
         public const string V_CodeFile = "{codefile}", V_Output = "{output}";
 
-        public static CompileResult Compile(Command executor,string codePath, string outputPath, TimeSpan timeLimit, long memoryLimit)
+        public static CompileResult Compile(Command executor, string codePath, string outputPath, TimeSpan timeLimit, long memoryLimit)
         {
             CompileResult res = new CompileResult
             {
