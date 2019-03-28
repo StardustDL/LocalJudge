@@ -7,7 +7,7 @@ using System.Text;
 
 namespace LocalJudge.Core.Judgers.Comparers
 {
-    class LineByLine : IJudgeComparer
+    public class LineByLine : IJudgeComparer
     {
         public IEnumerable<Issue> Compare(TextReader expected, TextReader real)
         {

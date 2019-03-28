@@ -29,7 +29,7 @@ namespace LocalJudge.Core.Judgers
 
         public string Error { get; private set; }
 
-        public StreamReader Input { get; set; }
+        public TextReader Input { get; set; }
 
         public long? MemoryLimit { get; set; }
 
@@ -107,7 +107,13 @@ namespace LocalJudge.Core.Judgers
             StartTime = DateTimeOffset.Now;
 
             Process.Start();
-            Process.StandardInput.WriteLine(Input);
+            if (Input != null)
+            {
+                while (Input.Peek() != -1)
+                {
+                    Process.StandardInput.WriteLine(Input.ReadLine());
+                }
+            }
             Process.StandardInput.Close();
 
             bwMemory.RunWorkerAsync();

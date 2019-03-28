@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LocalJudge.Core.Helpers
 {
-    internal static class TextIO
+    public static class TextIO
     {
         public static readonly Encoding UTF8WithoutBOM = new UTF8Encoding(false);
 

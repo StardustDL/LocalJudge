@@ -1,4 +1,5 @@
-﻿using LocalJudge.Core.Judgers.Comparers;
+﻿using LocalJudge.Core.Helpers;
+using LocalJudge.Core.Judgers.Comparers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,28 +8,11 @@ using System.Text;
 
 namespace LocalJudge.Core.Judgers
 {
-    public enum JudgeState
-    {
-        Pending,
-        Judging,
-        Accept,
-        WrongAnswer,
-        TimeLimitExceeded,
-        MemoryLimitExceeded,
-        RuntimeError,
-        SystemError,
-    }
-
-    public class JudgeResult
-    {
-        public JudgeState State { get; set; }
-
-        public List<Issue> Issues { get; set; }
-    }
-
     public static class Judger
     {
-        public static JudgeResult Judge(string name, string[] executor, TimeSpan timelimit, long memoryLimit, StreamReader input, StreamReader output, IJudgeComparer comparer)
+        public const string V_CodeFile = "{codefile}", V_CompileOutput = "{compiled}";
+
+        public static JudgeResult Judge(string name, Command executor, TimeSpan timeLimit, long memoryLimit, TextReader input, TextReader output, IJudgeComparer comparer)
         {
             JudgeResult res = new JudgeResult
             {
@@ -37,14 +21,17 @@ namespace LocalJudge.Core.Judgers
             };
             try
             {
-                using (var runner = new Runner(new System.Diagnostics.ProcessStartInfo(executor[0], string.Join(" ", executor.Skip(1))))
+                using (var runner = new Runner(new System.Diagnostics.ProcessStartInfo(executor.Name, string.Join(" ", executor.Arguments)))
                 {
-                    TimeLimit = timelimit,
+                    TimeLimit = timeLimit,
                     MemoryLimit = memoryLimit,
                     Input = input,
                 })
                 {
+                    res.State = JudgeState.Judging;
                     runner.Run();
+                    res.Time = runner.RunningTime;
+                    res.Memory = runner.MaximumMemory;
                     switch (runner.State)
                     {
                         case RunnerState.Ended:
@@ -66,7 +53,7 @@ namespace LocalJudge.Core.Judgers
                                 else
                                 {
                                     // TODO:
-                                    if (timelimit.TotalSeconds / runner.RunningTime.TotalSeconds < 2)
+                                    if (timeLimit.TotalSeconds / runner.RunningTime.TotalSeconds < 2)
                                         res.Issues.Add(new Issue(IssueLevel.Warning, $"The time limit is too small for {name}. It used {runner.RunningTime.TotalSeconds} seconds"));
                                     if ((double)memoryLimit / runner.MaximumMemory < 2)
                                         res.Issues.Add(new Issue(IssueLevel.Warning, $"The memory limit is too small for {name}. It used {runner.MaximumMemory} bytes"));
@@ -77,12 +64,14 @@ namespace LocalJudge.Core.Judgers
                         case RunnerState.OutOfMemory:
                             {
                                 var message = $"Used {runner.MaximumMemory} bytes, limit {memoryLimit} bytes.";
+                                res.Issues.Add(new Issue(IssueLevel.Error, $"Memory limit exceeded for {name}. {message}"));
                                 res.State = JudgeState.MemoryLimitExceeded;
                                 break;
                             }
                         case RunnerState.OutOfTime:
                             {
-                                var message = $"Used {runner.RunningTime.TotalSeconds} seconds, limit {timelimit.TotalSeconds} seconds.";
+                                var message = $"Used {runner.RunningTime.TotalSeconds} seconds, limit {timeLimit.TotalSeconds} seconds.";
+                                res.Issues.Add(new Issue(IssueLevel.Error, $"Time limit exceeded for {name}. {message}"));
                                 res.State = JudgeState.TimeLimitExceeded;
                                 break;
                             }

@@ -16,162 +16,156 @@ namespace LocalJudge.Server.API.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<ProblemMetadata>> Get()
         {
-            var workspace = new Workspace(Program.Workspace);
-            return Ok(workspace.Problems.GetAll().Select(item => item.GetMetadata()));
+            return Ok(Program.Workspace.Problems.GetAll().Select(item => item.GetMetadata()));
         }
 
-        [HttpGet("{name}")]
+        [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<ProblemMetadata> Get(string name)
+        public ActionResult<ProblemMetadata> Get(string id)
         {
-            var workspace = new Workspace(Program.Workspace);
-            var res = workspace.Problems.Get(name)?.GetMetadata();
+            var res = Program.Workspace.Problems.Get(id)?.GetMetadata();
             if (res != null)
                 return Ok(res);
             else
                 return NotFound();
         }
 
-        [HttpGet("{name}/description")]
+        [HttpGet("{id}/description")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<ProblemDescription> GetDescription(string name)
+        public ActionResult<ProblemDescription> GetDescription(string id)
         {
-            var workspace = new Workspace(Program.Workspace);
-            var res = workspace.Problems.Get(name);
+            var res = Program.Workspace.Problems.Get(id);
             if (res != null)
                 return Ok(res.GetDescription());
             else
                 return NotFound();
         }
 
-        [HttpGet("{name}/samples")]
+        [HttpGet("{id}/samples")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<IEnumerable<TestCaseMetadata>> GetSamples(string name)
+        public ActionResult<IEnumerable<TestCaseMetadata>> GetSamples(string id)
         {
-            var workspace = new Workspace(Program.Workspace);
-            var res = workspace.Problems.Get(name);
+            var res = Program.Workspace.Problems.Get(id);
             if (res != null)
                 return Ok(res.GetSamples().Select(item => item.GetMetadata()));
             else
                 return NotFound();
         }
 
-        [HttpGet("{name}/samples/{sname}")]
+        [HttpGet("{id}/samples/{tid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<TestCaseMetadata> GetSample(string name, string sname)
+        public ActionResult<TestCaseMetadata> GetSample(string id, string tid)
         {
-            var workspace = new Workspace(Program.Workspace);
-            var res = workspace.Problems.Get(name)?.GetSample(sname);
+            var res = Program.Workspace.Problems.Get(id)?.GetSample(tid);
             if (res != null)
                 return Ok(res.GetMetadata());
             else
                 return NotFound();
         }
 
-        [HttpGet("{name}/samples/{sname}/input")]
+        [HttpGet("{id}/samples/{tid}/input")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<TestCaseMetadata> GetSampleInput(string name, string sname)
+        public ActionResult<TestCaseMetadata> GetSampleInput(string id, string tid)
         {
-            var workspace = new Workspace(Program.Workspace);
-            var res = workspace.Problems.Get(name)?.GetSample(sname);
+            var res = Program.Workspace.Problems.Get(id)?.GetSample(tid);
             if (res != null)
                 return Ok(res.GetInput());
             else
                 return NotFound();
         }
 
-        [HttpGet("{name}/samples/{sname}/output")]
+        [HttpGet("{id}/samples/{tid}/output")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<string> GetSampleOutput(string name, string sname)
+        public ActionResult<string> GetSampleOutput(string id, string tid)
         {
-            var workspace = new Workspace(Program.Workspace);
-            var res = workspace.Problems.Get(name)?.GetSample(sname);
+            var res = Program.Workspace.Problems.Get(id)?.GetSample(tid);
             if (res != null)
                 return Ok(res.GetOutput());
             else
                 return NotFound();
         }
 
-        [HttpGet("{name}/tests")]
+        [HttpGet("{id}/tests")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<IEnumerable<TestCaseMetadata>> GetTests(string name)
+        public ActionResult<IEnumerable<TestCaseMetadata>> GetTests(string id)
         {
-            var workspace = new Workspace(Program.Workspace);
-            var res = workspace.Problems.Get(name);
+            var res = Program.Workspace.Problems.Get(id);
             if (res != null)
                 return Ok(res.GetTests().Select(item => item.GetMetadata()));
             else
                 return NotFound();
         }
 
-        [HttpGet("{name}/tests/{tname}")]
+        [HttpGet("{id}/tests/{tid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<TestCaseMetadata> GetTest(string name, string tname)
+        public ActionResult<TestCaseMetadata> GetTest(string id, string tid)
         {
-            var workspace = new Workspace(Program.Workspace);
-            var res = workspace.Problems.Get(name)?.GetTest(tname);
+            var res = Program.Workspace.Problems.Get(id)?.GetTest(tid);
             if (res != null)
                 return Ok(res.GetMetadata());
             else
                 return NotFound();
         }
 
-        [HttpGet("{name}/tests/{tname}/input")]
+        [HttpGet("{id}/tests/{tid}/input")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<string> GetTestInput(string name, string tname)
+        public ActionResult<string> GetTestInput(string id, string tid)
         {
-            var workspace = new Workspace(Program.Workspace);
-            var res = workspace.Problems.Get(name)?.GetTest(tname);
+            var res = Program.Workspace.Problems.Get(id)?.GetTest(tid);
             if (res != null)
                 return Ok(res.GetInput());
             else
                 return NotFound();
         }
 
-        [HttpGet("{name}/tests/{tname}/output")]
+        [HttpGet("{id}/tests/{tid}/output")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<string> GetTestOutput(string name, string tname)
+        public ActionResult<string> GetTestOutput(string id, string tid)
         {
-            var workspace = new Workspace(Program.Workspace);
-            var res = workspace.Problems.Get(name)?.GetTest(tname);
+            var res = Program.Workspace.Problems.Get(id)?.GetTest(tid);
             if (res != null)
                 return Ok(res.GetOutput());
             else
                 return NotFound();
         }
 
-        [HttpDelete("{name}")]
-        public void Delete(string name)
+        [HttpDelete("{id}")]
+        public void Delete(string id)
         {
-            var workspace = new Workspace(Program.Workspace);
-            workspace.Problems.Delete(name);
+            Program.Workspace.Problems.Delete(id);
         }
 
-        [HttpPut("{name}")]
-        public void Create(string name)
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesDefaultResponseType]
+        public ActionResult<ProblemMetadata> Create(string id)
         {
-            var workspace = new Workspace(Program.Workspace);
-            workspace.Problems.Create(name);
+            var res = Program.Workspace.Problems.Create(id);
+            if (res != null)
+                return Created($"problems/{id}", res);
+            else
+                return Conflict();
         }
     }
 }

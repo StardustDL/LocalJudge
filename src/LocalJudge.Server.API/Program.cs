@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using LocalJudge.Core;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -12,7 +13,7 @@ namespace LocalJudge.Server.API
 {
     public class Program
     {
-        public static string Workspace { get; set; }
+        public static Workspace Workspace { get; set; }
 
         public static void Main(string[] args)
         {

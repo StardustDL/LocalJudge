@@ -12,28 +12,29 @@ namespace LocalJudge.Core.Problems
 
         public IEnumerable<ProblemPath> GetAll() => Directory.GetDirectories(Root).Select(path => new ProblemPath(path));
 
-        public bool Has(string name)
+        public bool Has(string id)
         {
-            string path = Path.Combine(Root, name);
+            string path = Path.Combine(Root, id);
             return Directory.Exists(path);
         }
 
-        public ProblemPath Get(string name)
+        public ProblemPath Get(string id)
         {
-            string path = Path.Combine(Root, name);
+            string path = Path.Combine(Root, id);
             return Directory.Exists(path) ? new ProblemPath(path) : null;
         }
 
         public ProblemPath Create(string id, ProblemMetadata metadata = null, ProblemDescription description = null)
         {
             string path = Path.Combine(Root, id);
+            if (Directory.Exists(path)) return null;
             Directory.CreateDirectory(path);
             return ProblemPath.Initialize(path, metadata, description);
         }
 
-        public void Delete(string name)
+        public void Delete(string id)
         {
-            string path = Path.Combine(Root, name);
+            string path = Path.Combine(Root, id);
             Directory.Delete(path, true);
         }
 

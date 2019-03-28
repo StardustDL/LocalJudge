@@ -14,25 +14,32 @@ namespace LocalJudge.Server.API.Controllers
     [ApiController]
     public class AdminController : ControllerBase
     {
+        static readonly object lock_admin = new object();
+
         [HttpGet]
         public ActionResult<string> GetRootDirectory()
         {
-            return Program.Workspace;
+            return Program.Workspace.Root;
         }
 
         [HttpPut("init")]
         public void Initialize()
         {
-            string workspace = Program.Workspace;
-            Workspace.Initialize(workspace);
+            lock (lock_admin)
+            {
+                Workspace.Initialize(Program.Workspace.Root);
+            }
         }
 
         [HttpPut("seed")]
         public void SeedData()
         {
-            string workspace = Program.Workspace;
-            var ws = Workspace.Initialize(workspace);
-            ws.Problems.Create("0");
+            lock (lock_admin)
+            {
+                string workspace = Program.Workspace.Root;
+                var ws = Workspace.Initialize(workspace);
+                ws.Problems.Create("0");
+            }
         }
     }
 }

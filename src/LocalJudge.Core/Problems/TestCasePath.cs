@@ -10,6 +10,8 @@ namespace LocalJudge.Core.Problems
 
         public string Root { get; private set; }
 
+        public string ID { get; private set; }
+
         public string Profile { get; private set; }
 
         public TestCaseMetadata GetMetadata()
@@ -30,6 +32,7 @@ namespace LocalJudge.Core.Problems
         public TestCasePath(string root)
         {
             Root = root;
+            ID = Path.GetFileName(Root);
             Profile = Path.Combine(Root, PF_Profile);
             Input = Path.Combine(Root, PF_Input);
             Output = Path.Combine(Root, PF_Output);
@@ -38,9 +41,9 @@ namespace LocalJudge.Core.Problems
         public static TestCasePath Initialize(string root, TestCaseMetadata metadata = null, string input = "", string output = "")
         {
             var res = new TestCasePath(root);
-            if (metadata == null) metadata = new TestCaseMetadata { TimeLimit = 1, MemoryLimit = 128 };
-            metadata.ID = Path.GetFileName(root);
-            TextIO.WriteAllInUTF8(res.Profile, Newtonsoft.Json.JsonConvert.SerializeObject(metadata));
+            if (metadata == null) metadata = new TestCaseMetadata { TimeLimit = TimeSpan.FromSeconds(1), MemoryLimit = 128 * 1024 * 1024 };
+            metadata.ID = res.ID;
+            TextIO.WriteAllInUTF8(res.Profile, Newtonsoft.Json.JsonConvert.SerializeObject(metadata, Newtonsoft.Json.Formatting.Indented));
             TextIO.WriteAllInUTF8(res.Input, input);
             TextIO.WriteAllInUTF8(res.Output, output);
             return res;
