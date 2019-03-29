@@ -33,6 +33,8 @@ namespace LocalJudge.Core.Judgers
                     runner.Run();
                     res.Time = runner.RunningTime;
                     res.Memory = runner.MaximumMemory;
+                    if (!string.IsNullOrEmpty(runner.Error))
+                        res.Issues.Add(new Issue(IssueLevel.Warning, "Error output: " + runner.Error));
                     switch (runner.State)
                     {
                         case RunnerState.Ended:

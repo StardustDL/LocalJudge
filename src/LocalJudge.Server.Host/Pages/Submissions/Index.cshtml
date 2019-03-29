@@ -10,16 +10,19 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Submissions[0].Id)
+                @Html.DisplayNameFor(model => model.Submissions[0].Metadata.Id)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Submissions[0].ProblemID)
+                @Html.DisplayNameFor(model => model.Submissions[0].Problem)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Submissions[0].Language)
+                @Html.DisplayNameFor(model => model.Submissions[0].Result.State)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Submissions[0].Time)
+                @Html.DisplayNameFor(model => model.Submissions[0].Metadata.Language)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Submissions[0].Metadata.Time)
             </th>
         </tr>
     </thead>
@@ -28,16 +31,19 @@
         {
             <tr>
                 <td>
-                    <a asp-page="./View" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Id)</a>
+                    <a asp-page="./View" asp-route-id="@item.Metadata.Id">@Html.DisplayFor(modelItem => item.Metadata.Id)</a>
                 </td>
                 <td>
-                    <a asp-page="../Problems/View" asp-route-id="@item.ProblemID">@Html.DisplayFor(modelItem => item.ProblemID)</a>
+                    <a asp-page="../Problems/View" asp-route-id="@item.Metadata.ProblemID">@Html.DisplayFor(modelItem => item.Problem.Name)</a>
+                </td>
+                <th>
+                    <judge-state value="@item.Result.State"></judge-state>
+                </th>
+                <td>
+                    <prolang-display value="@item.Metadata.Language"></prolang-display>
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Language)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Time)
+                    @Html.DisplayFor(modelItem => item.Metadata.Time)
                 </td>
             </tr>
         }

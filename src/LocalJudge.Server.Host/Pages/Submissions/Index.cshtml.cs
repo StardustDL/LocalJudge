@@ -18,15 +18,20 @@ namespace LocalJudge.Server.Host.Pages.Submissions
             this.clientFactory = clientFactory;
         }
 
-        public IList<SubmissionMetadata> Submissions { get; set; }
+        public IList<SubmissionItem> Submissions { get; set; }
 
         public async Task OnGetAsync()
         {
             var httpclient = clientFactory.CreateClient();
             var client = new SubmissionsClient(httpclient);
-            var ls = (await client.GetAllAsync()).ToList();
-            ls.Sort((x, y) => y.Time.CompareTo(x.Time));
-            Submissions = ls;
+            var ms = (await client.GetAllAsync()).ToList();
+            ms.Sort((x, y) => y.Time.CompareTo(x.Time));
+            var ss = new List<SubmissionItem>();
+            foreach(var v in ms)
+            {
+                ss.Add(await SubmissionItem.Get(v, httpclient));
+            }
+            Submissions = ss;
         }
     }
 }

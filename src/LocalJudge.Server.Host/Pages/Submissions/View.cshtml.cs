@@ -18,11 +18,9 @@ namespace LocalJudge.Server.Host.Pages.Submissions
             this.clientFactory = clientFactory;
         }
 
-        public SubmissionMetadata Metadata { get; set; }
+        public SubmissionItem Submission { get; set; }
 
         public string Code { get; set; }
-
-        public SubmissionResult Result { get; set; }
 
         public async Task<IActionResult> OnGetAsync(string id)
         {
@@ -33,21 +31,13 @@ namespace LocalJudge.Server.Host.Pages.Submissions
             var client = new SubmissionsClient(httpclient);
             try
             {
-                Metadata = await client.GetAsync(id);
+                var metadata = await client.GetAsync(id);
+                Submission = await SubmissionItem.Get(metadata, httpclient);
                 Code = await client.GetCodeAsync(id);
             }
             catch
             {
                 return NotFound();
-            }
-
-            try
-            {
-                Result = await client.GetResultAsync(id);
-            }
-            catch
-            {
-                Result = null;
             }
 
             return Page();

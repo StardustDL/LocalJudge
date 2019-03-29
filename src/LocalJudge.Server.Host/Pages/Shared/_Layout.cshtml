@@ -17,6 +17,8 @@
     </environment>
     <link rel="stylesheet" href="~/css/site.css" />
 
+    <link rel="stylesheet" href="~/lib/font-awesome/css/all.css">
+
     @RenderSection("Header", required: false)
 </head>
 <body>
@@ -31,13 +33,22 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">
+                                <i class="fa fa-home"></i>
+                                Home
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Problems/Index">Problems</a>
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Problems/Index">
+                                <i class="fa fa-list"></i>
+                                Problems
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Submissions/Index">Submissions</a>
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Submissions/Index">
+                                <i class="fa fa-tasks"></i>
+                                Submissions
+                            </a>
                         </li>
                     </ul>
                 </div>

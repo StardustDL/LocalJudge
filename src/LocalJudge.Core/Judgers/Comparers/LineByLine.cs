@@ -17,7 +17,7 @@ namespace LocalJudge.Core.Judgers.Comparers
 
             if (lexpected.Count != lreal.Count)
             {
-                yield return new Issue(IssueLevel.Error, $"The count of lines are not equal: expected {expected}, but real {real}.");
+                yield return new Issue(IssueLevel.Error, $"The count of lines are not equal: expected {lexpected.Count}, but real {lreal.Count}.");
                 yield break;
             }
             for (int i = 0; i < lexpected.Count; i++)

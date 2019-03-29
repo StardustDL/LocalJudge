@@ -5,6 +5,10 @@
     {
       "library": "monaco-editor@0.16.2",
       "destination": "wwwroot/lib/monaco-editor/"
+    },
+    {
+      "library": "font-awesome@5.8.1",
+      "destination": "wwwroot/lib/font-awesome/"
     }
   ]
 }

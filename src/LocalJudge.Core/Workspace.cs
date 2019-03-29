@@ -75,6 +75,18 @@ namespace LocalJudge.Core
                         {
                             Name = Judger.V_CompileOutput,
                         }
+                    },
+                    [ProgrammingLanguage.Python] = new LanguageConfig
+                    {
+                        CompileCommand = null,
+                        RunCommand = new Command
+                        {
+                            Name = "python",
+                            Arguments = new string[]
+                            {
+                                Judger.V_CodeFile
+                            },
+                        }
                     }
                 }
             };

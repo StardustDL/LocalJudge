@@ -52,8 +52,6 @@
         <h2>Hint</h2>
 
         @Html.Raw(Markdig.Markdown.ToHtml(Model.Description.Hint))
-
-        <br />
     </div>
     <div class="col-3">
         <h2>Information</h2>
@@ -87,10 +85,10 @@
                             @item.Id
                         </td>
                         <td>
-                            @item.TimeLimit.TotalSeconds s
+                            <timespan-display value="@item.TimeLimit"></timespan-display>
                         </td>
                         <td>
-                            @((double)item.MemoryLimit / 1024 / 1024) MB
+                            <memory-display value="@item.MemoryLimit"></memory-display>
                         </td>
                     </tr>
                 }
@@ -120,10 +118,10 @@
                             @item.Id
                         </td>
                         <td>
-                            @item.TimeLimit.TotalSeconds s
+                            <timespan-display value="@item.TimeLimit"></timespan-display>
                         </td>
                         <td>
-                            @((double)item.MemoryLimit / 1024 / 1024) MB
+                            <memory-display value="@item.MemoryLimit"></memory-display>
                         </td>
                     </tr>
                 }
@@ -132,20 +130,27 @@
     </div>
 </div>
 
-<h2>Code</h2>
+<div class="row" style="margin-bottom:10px">
+    <label style="margin-right:10px; position:relative; top:6px; font-size:large">Language</label>
+    <select id="selCodeLanguage" style="font-size:medium; width:150px"></select>
+    <label style="margin-left:20px; margin-right:10px; position:relative; top:6px; font-size:large">Theme</label>
+    <select id="selCodeTheme" style="font-size:medium; width:150px">
+        <option>Visual Studio</option>
+        <option>Visual Studio Dark</option>
+        <option>High Contrast Dark</option>
+    </select>
 
-<br />
+    <form method="post" style="margin-left:20px;">
+        <textarea asp-for="SubmitData.ProblemID" style="display:none"></textarea>
+        <textarea asp-for="SubmitData.Language" id="formLang" style="display:none"></textarea>
+        <textarea asp-for="SubmitData.Code" id="formCode" style="display:none"></textarea>
+        <input type="submit" value="Submit" class="btn btn-primary" />
+    </form>
+</div>
 
 <div id="codeEditor" class="row" style="min-height:500px">
 
 </div>
-
-<form method="post">
-    <textarea asp-for="SubmitData.ProblemID" style="display:none"></textarea>
-    <textarea asp-for="SubmitData.Language" style="display:none"></textarea>
-    <textarea asp-for="SubmitData.Code" id="formCode" style="display:none"></textarea>
-    <input type="submit" value="Submit" class="btn btn-primary" />
-</form>
 
 @section scripts{
     <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
@@ -162,17 +167,95 @@
     <script src="../lib/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
     <script src="../lib/monaco-editor/min/vs/editor/editor.main.js"></script>
     <script>
-        var editor = monaco.editor.create(document.getElementById('codeEditor'), {
-            value: [
-                '#include <iostream>',
-                'int main() {',
-                '\t',
-                '}'
-            ].join('\n'),
-            language: 'cpp'
+        "use strict";
+
+        var editor = null;
+
+        $(document).ready(function () {
+            require(['vs/editor/editor.main'], function () {
+                var MODES = (function () {
+                    // var modesIds = monaco.languages.getLanguages().map(function (lang) { return lang.id; });
+                    // modesIds.sort();
+
+                    return [{
+                        editorID: "cpp",
+                        lang: "Cpp",
+                        show: "C++"
+                    },
+                    {
+                        editorID: "c",
+                        lang: "C",
+                        show: "C"
+                    },
+                    {
+                        editorID: "python",
+                        lang: "Python",
+                        show: "Python"
+                    }
+                    ]
+                })();
+
+                var startModeIndex = 0;
+                for (var i = 0; i < MODES.length; i++) {
+                    var o = document.createElement('option');
+                    o.textContent = MODES[i].show;
+                    if (MODES[i].lang === 'Cpp') {
+                        startModeIndex = i;
+                    }
+                    $("#selCodeLanguage").append(o);
+                }
+                $("#selCodeLanguage").selectedIndex = startModeIndex;
+                loadSample(MODES[startModeIndex]);
+                $("#selCodeLanguage").change(function () {
+                    loadSample(MODES[this.selectedIndex]);
+                    document.getElementById('formLang').value = MODES[this.selectedIndex].lang;
+                });
+
+                $("#selCodeTheme").change(function () {
+                    changeTheme(this.selectedIndex);
+                });
+            });
+
+            window.onresize = function () {
+                if (editor) {
+                    editor.layout();
+                }
+            };
         });
-        editor.onDidChangeModelContent((e) => {
+
+        function loadSample(mode) {
+            if (!editor) {
+                $('#codeEditor').empty();
+                editor = monaco.editor.create(document.getElementById('codeEditor'), {
+                    model: null,
+                });
+            }
+
+            var oldModel = editor.getModel();
+            var newModel = monaco.editor.createModel("", mode.editorID);
+            editor.setModel(newModel);
+            if (oldModel) {
+                oldModel.dispose();
+            }
+
             document.getElementById('formCode').value = editor.getValue();
-        });
+            editor.onDidChangeModelContent((e) => {
+                document.getElementById('formCode').value = editor.getValue();
+            });
+        }
+
+        function changeTheme(theme) {
+            var newTheme = (theme === 1 ? 'vs-dark' : (theme === 0 ? 'vs' : 'hc-black'));
+            monaco.editor.setTheme(newTheme);
+        }
+                                    /*var editor = monaco.editor.create(document.getElementById('codeEditor'), {
+value: [
+'#include <iostream>',
+'int main() {',
+'\t',
+'}'
+].join('\n'),
+language: 'cpp'
+});*/
     </script>
 }
