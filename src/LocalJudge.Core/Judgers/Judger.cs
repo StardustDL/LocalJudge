@@ -50,7 +50,7 @@ namespace LocalJudge.Core.Judgers
                                     break;
                                 }
                                 var expected = output;
-                                var real = new StringReader(runner.Output);
+                                var real = new StringReader(runner.Output ?? "");
                                 var diff = comparer.Compare(expected, real).ToArray();
                                 if (diff.Length != 0)
                                 {

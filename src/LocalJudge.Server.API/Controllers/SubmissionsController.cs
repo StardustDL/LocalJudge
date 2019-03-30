@@ -42,6 +42,17 @@ namespace LocalJudge.Server.API.Controllers
             return "code.txt";
         }
 
+        void SendJudgeRequest(string id)
+        {
+            using (var pipe = new NamedPipeClientStream(".", PipeStreamName, PipeDirection.Out))
+            {
+                pipe.Connect(10 * 1000);// Wait for 10s
+                var buffer = Encoding.UTF8.GetBytes(id);
+                pipe.Write(buffer, 0, buffer.Length);
+                pipe.WaitForPipeDrain();
+            }
+        }
+
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -65,13 +76,7 @@ namespace LocalJudge.Server.API.Controllers
             try
             {
                 TextIO.WriteAllInUTF8(sub.GetCodePath(), data.Code);
-                using (var pipe = new NamedPipeClientStream(".", PipeStreamName, PipeDirection.Out))
-                {
-                    pipe.Connect(10 * 1000);// Wait for 10s
-                    var buffer = Encoding.UTF8.GetBytes(sub.ID);
-                    pipe.Write(buffer, 0, buffer.Length);
-                    pipe.WaitForPipeDrain();
-                }
+                SendJudgeRequest(sub.ID);
                 return Created($"submissions/{meta.ID}", meta);
             }
             catch
@@ -96,6 +101,32 @@ namespace LocalJudge.Server.API.Controllers
             var res = Program.Workspace.Submissions.Get(id)?.GetMetadata();
             if (res != null)
                 return Ok(res);
+            else
+                return NotFound();
+        }
+
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public ActionResult Rejudge(string id)
+        {
+            var res = Program.Workspace.Submissions.Get(id);
+            if (res != null)
+            {
+                System.IO.File.Delete(res.Result);
+                try
+                {
+                    SendJudgeRequest(res.ID);
+                    return Accepted();
+                }
+                catch
+                {
+                    Program.Workspace.Submissions.Delete(res.ID);
+                    return Forbid();
+                }
+            }
             else
                 return NotFound();
         }

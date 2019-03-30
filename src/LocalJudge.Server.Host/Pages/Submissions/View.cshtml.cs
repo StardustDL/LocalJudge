@@ -22,6 +22,9 @@ namespace LocalJudge.Server.Host.Pages.Submissions
 
         public string Code { get; set; }
 
+        [BindProperty]
+        public string RejudgeID { get; set; }
+
         public async Task<IActionResult> OnGetAsync(string id)
         {
             if (string.IsNullOrEmpty(id))
@@ -32,6 +35,7 @@ namespace LocalJudge.Server.Host.Pages.Submissions
             try
             {
                 var metadata = await client.GetAsync(id);
+                RejudgeID = metadata.Id;
                 Submission = await SubmissionItem.Get(metadata, httpclient);
                 Code = await client.GetCodeAsync(id);
             }
@@ -41,6 +45,29 @@ namespace LocalJudge.Server.Host.Pages.Submissions
             }
 
             return Page();
+        }
+
+        public async Task<IActionResult> OnPostAsync(SubmissionItemOperation oper)
+        {
+            var httpclient = clientFactory.CreateClient();
+            var client = new SubmissionsClient(httpclient);
+            try
+            {
+                switch (oper.Type)
+                {
+                    case SubmissionItemOperationType.Rejudge:
+                        await client.RejudgeAsync(oper.ID);
+                        return Redirect($"/Submissions/View?id={RejudgeID}");
+                    case SubmissionItemOperationType.Delete:
+                        await client.DeleteAsync(oper.ID);
+                        return Redirect($"/Submissions/Index");
+                }
+                return NotFound();                
+            }
+            catch
+            {
+                return NotFound();
+            }
         }
     }
 }

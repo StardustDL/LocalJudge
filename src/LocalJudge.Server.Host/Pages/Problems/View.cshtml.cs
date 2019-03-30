@@ -145,7 +145,7 @@ namespace LocalJudge.Server.Host.Pages.Problems
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction("OnGetAsync");
+                return NotFound();
             }
 
             var httpclient = clientFactory.CreateClient();
@@ -153,7 +153,7 @@ namespace LocalJudge.Server.Host.Pages.Problems
             try
             {
                 var meta = await client.SubmitAsync(SubmitData);
-                return Redirect($"../Submissions/View?id={meta.Id}");
+                return Redirect($"/Submissions/View?id={meta.Id}");
             }
             catch
             {

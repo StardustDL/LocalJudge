@@ -27,11 +27,38 @@ namespace LocalJudge.Server.Host.Pages.Submissions
             var ms = (await client.GetAllAsync()).ToList();
             ms.Sort((x, y) => y.Time.CompareTo(x.Time));
             var ss = new List<SubmissionItem>();
-            foreach(var v in ms)
+            foreach (var v in ms)
             {
                 ss.Add(await SubmissionItem.Get(v, httpclient));
             }
             Submissions = ss;
+        }
+
+        public async Task<IActionResult> OnPostAsync(SubmissionItemOperation oper)
+        {
+            if (!ModelState.IsValid)
+            {
+                return NotFound();
+            }
+            var httpclient = clientFactory.CreateClient();
+            var client = new SubmissionsClient(httpclient);
+            try
+            {
+                switch (oper.Type)
+                {
+                    case SubmissionItemOperationType.Rejudge:
+                        await client.RejudgeAsync(oper.ID);
+                        return Redirect($"/Submissions/Index");
+                    case SubmissionItemOperationType.Delete:
+                        await client.DeleteAsync(oper.ID);
+                        return Redirect($"/Submissions/Index");
+                }
+                return NotFound();
+            }
+            catch
+            {
+                return NotFound();
+            }
         }
     }
 }

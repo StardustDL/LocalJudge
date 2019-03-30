@@ -76,6 +76,25 @@
             </dd>
             <dt>@Html.DisplayNameFor(model => model.Submission.Metadata.Time)</dt>
             <dd><timeoffset-display value="@Model.Submission.Metadata.Time"></timeoffset-display></dd>
+            <dt>Operations</dt>
+            <dd>
+                <div class="row" style="margin-left:0px">
+                    <form method="post">
+                        <textarea name="type" style="display:none">rejudge</textarea>
+                        <textarea name="id" style="display:none">@Model.Submission.Metadata.Id</textarea>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-redo"></i>
+                        </button>
+                    </form>
+                    <form method="post" style="margin-left:10px">
+                        <textarea name="type" style="display:none">delete</textarea>
+                        <textarea name="id" style="display:none">@Model.Submission.Metadata.Id</textarea>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            </dd>
         </dl>
         <br />
         @if (Model.Submission.Result.State != APIClients.JudgeState.Pending)
