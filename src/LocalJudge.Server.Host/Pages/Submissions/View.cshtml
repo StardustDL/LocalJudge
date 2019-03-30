@@ -17,9 +17,9 @@
 
 <div class="row">
     <div class="col-8">
-        <h2>
+        <h1 class="display-4">
             <judge-state value="@Model.Submission.Result.State"></judge-state>
-        </h2>
+        </h1>
         <br />
         <h2>Code</h2>
 
@@ -35,7 +35,7 @@
                 @foreach (var item in Model.Submission.Result.Issues)
                 {
                     <li>
-                        <label style="color:@Helper.GetIssueColor(item.Level)">@item.Level</label>
+                        <span class="badge badge-@Helper.GetIssueClass(item.Level)">@item.Level</span>
                         @item.Content
                     </li>
                 }
@@ -45,7 +45,7 @@
                     @foreach (var item in ci.Issues)
                     {
                         <li>
-                            <label style="color:@Helper.GetIssueColor(item.Level)">@item.Level</label>
+                            <span class="badge badge-@Helper.GetIssueClass(item.Level)">@item.Level</span>
                             Sample @i: @item.Content
                         </li>
                     }
@@ -56,7 +56,7 @@
                     @foreach (var item in ci.Issues)
                     {
                         <li>
-                            <label style="color:@Helper.GetIssueColor(item.Level)">@item.Level</label>
+                            <span class="badge badge-@Helper.GetIssueClass(item.Level)">@item.Level</span>
                             Test @i: @item.Content
                         </li>
                     }
@@ -65,31 +65,41 @@
         }
     </div>
     <div class="col-4">
-        <h2>Information</h2>
         <dl>
-            <dt>@Html.DisplayNameFor(model => model.Submission.Problem)</dt>
+            <dt style="float:left; min-width:30px"><i class="fa fa-check-square"></i></dt>
+            <dd>@Model.Submission.AcceptedCase / @Model.Submission.TotalCase</dd>
+
+            <dt style="float:left; min-width:30px"><i class="fa fa-question"></i></dt>
             <dd><a asp-page="/Problems/View" asp-route-id="@Model.Submission.Problem.Id">@Html.DisplayFor(model => model.Submission.Problem.Name)</a></dd>
-            <dt>@Html.DisplayNameFor(model => model.Submission.Metadata.Language)</dt>
+
+            <dt style="float:left; min-width:30px"><i class="fa fa-clock"></i></dt>
+            <dd><timespan-display value="@Model.Submission.TotalTime"></timespan-display></dd>
+
+            <dt style="float:left; min-width:30px"><i class="fa fa-microchip"></i></dt>
+            <dd><memory-display value="@Model.Submission.MaximumMemory"></memory-display></dd>
+
+            <dt style="float:left; min-width:30px"><i class="fa fa-code"></i></dt>
             <dd>
                 <prolang-display value="@Model.Submission.Metadata.Language"></prolang-display>
                 (<memory-display value="@Model.Submission.Metadata.CodeLength"></memory-display>)
             </dd>
-            <dt>@Html.DisplayNameFor(model => model.Submission.Metadata.Time)</dt>
+
+            <dt style="float:left; min-width:30px"><i class="fa fa-calendar"></i></dt>
             <dd><timeoffset-display value="@Model.Submission.Metadata.Time"></timeoffset-display></dd>
-            <dt>Operations</dt>
+
             <dd>
                 <div class="row" style="margin-left:0px">
                     <form method="post">
-                        <textarea name="type" style="display:none">rejudge</textarea>
-                        <textarea name="id" style="display:none">@Model.Submission.Metadata.Id</textarea>
-                        <button type="submit" class="btn btn-primary">
+                        <input type="text" name="type" style="display:none" value="rejudge" />
+                        <input type="text" name="id" style="display:none" value="@Model.Submission.Metadata.Id" />
+                        <button type="submit" class="btn btn-outline-secondary">
                             <i class="fa fa-redo"></i>
                         </button>
                     </form>
                     <form method="post" style="margin-left:10px">
-                        <textarea name="type" style="display:none">delete</textarea>
-                        <textarea name="id" style="display:none">@Model.Submission.Metadata.Id</textarea>
-                        <button type="submit" class="btn btn-danger">
+                        <input type="text" name="type" style="display:none" value="delete" />
+                        <input type="text" name="id" style="display:none" value="@Model.Submission.Metadata.Id" />
+                        <button type="submit" class="btn btn-outline-danger">
                             <i class="fa fa-trash"></i>
                         </button>
                     </form>
@@ -102,23 +112,7 @@
             @if (Model.Submission.Result.Samples?.Count > 0)
             {
                 <h2>Sample Cases</h2>
-                <table class="table table-sm table-bordered">
-                    <thead>
-                        <tr>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Submission.Result.Samples[0].Id)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Submission.Result.Samples[0].State)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Submission.Result.Samples[0].Time)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Submission.Result.Samples[0].Memory)
-                            </th>
-                        </tr>
-                    </thead>
+                <table class="table table-sm table-striped">
                     <tbody>
                         @foreach (var item in Model.Submission.Result.Samples)
                         {
@@ -144,23 +138,7 @@
             @if (Model.Submission.Result.Tests?.Count > 0)
             {
                 <h2>Test Cases</h2>
-                <table class="table table-sm table-bordered">
-                    <thead>
-                        <tr>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Submission.Result.Tests[0].Id)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Submission.Result.Tests[0].State)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Submission.Result.Tests[0].Time)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Submission.Result.Tests[0].Memory)
-                            </th>
-                        </tr>
-                    </thead>
+                <table class="table table-sm table-striped">
                     <tbody>
                         @foreach (var item in Model.Submission.Result.Tests)
                         {

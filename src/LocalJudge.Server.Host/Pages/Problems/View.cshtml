@@ -6,8 +6,9 @@
 }
 
 @section header{
-    <link rel="stylesheet" data-name="vs/editor/editor.main" href="../lib/monaco-editor/min/vs/editor/editor.main.css">
-    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0-rc.1/katex.min.css">-->
+<link rel="stylesheet" data-name="vs/editor/editor.main" href="../lib/monaco-editor/min/vs/editor/editor.main.css">
+    @*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0-rc.1/katex.min.css">*@
+<link rel="stylesheet" href="~/lib/highlight.js/styles/default.min.css">
 }
 
 <ul class="breadcrumb">
@@ -16,183 +17,241 @@
     <li class="breadcrumb-item active">@Html.DisplayFor(model => model.Metadata.Id)</li>
 </ul>
 
-<h1>@Html.DisplayFor(model => model.Metadata.Name)</h1>
+<h1 class="display-4">@Html.DisplayFor(model => model.Metadata.Name)</h1>
 
-<div class="row">
+<div class="row" style="margin-top:20px">
     <div class="col-9">
-        <h2>Description</h2>
-
-        <p>@Html.Raw(Markdig.Markdown.ToHtml(Model.Description.Description, Model.MarkdownBuilder.Build()))</p>
-
-        <br />
-
-        <h2>Input</h2>
-
-        <p>@Html.Raw(Markdig.Markdown.ToHtml(Model.Description.Input, Model.MarkdownBuilder.Build()))</p>
-
-        <br />
-
-        <h2>Output</h2>
-
-        <p>@Html.Raw(Markdig.Markdown.ToHtml(Model.Description.Output, Model.MarkdownBuilder.Build()))</p>
-
-        <br />
-
-        <h2>Samples</h2>
-
-        @for (int i = 0; i < Model.SampleData.Count; i++)
-        {
-            var item = Model.SampleData[i];
-            <h3>Sample @i</h3>
-            <div class="row">
-                <div class="col">
-                    <h4>Input</h4>
-                    <pre>@Html.DisplayFor(model => item.Input)</pre>
-                </div>
-                <div class="col">
-                    <h4>Output</h4>
-                    <pre>@Html.DisplayFor(model => item.Output)</pre>
-                </div>
+        <style>
+            .card-content {
+                padding:20px;
+            }
+        </style>
+        <div class="card border-0">
+            <div class="card-header border-0">
+                <h2>
+                    <a class="card-link" data-toggle="collapse" href="#divDescription">
+                        Description
+                    </a>
+                </h2>
             </div>
-            <br />
-        }
-
-        <h2>Hint</h2>
-
-        @Html.Raw(Markdig.Markdown.ToHtml(Model.Description.Hint, Model.MarkdownBuilder.Build()))
+            <div id="divDescription" class="collapse show card-content">
+                @Html.Raw(Markdig.Markdown.ToHtml(Model.Description.Description, Model.MarkdownBuilder.Build()))
+            </div>
+        </div>
+        <div class="card border-0">
+            <div class="card-header border-0">
+                <h2>
+                    <a class="card-link" data-toggle="collapse" href="#divInput">
+                        Input
+                    </a>
+                </h2>
+            </div>
+            <div id="divInput" class="collapse show card-content">
+                @Html.Raw(Markdig.Markdown.ToHtml(Model.Description.Input, Model.MarkdownBuilder.Build()))
+            </div>
+        </div>
+        <div class="card border-0">
+            <div class="card-header border-0">
+                <h2>
+                    <a class="card-link" data-toggle="collapse" href="#divOutput">
+                        Output
+                    </a>
+                </h2>
+            </div>
+            <div id="divOutput" class="collapse show card-content">
+                @Html.Raw(Markdig.Markdown.ToHtml(Model.Description.Output, Model.MarkdownBuilder.Build()))
+            </div>
+        </div>
+        <div class="card border-0">
+            <div class="card-header border-0">
+                <h2>
+                    <a class="card-link" data-toggle="collapse" href="#divSamples">
+                        Samples
+                    </a>
+                </h2>
+            </div>
+            <div id="divSamples" class="collapse show card-content">
+                @for (int i = 0; i < Model.SampleData.Count; i++)
+                {
+                var item = Model.SampleData[i];
+                <h3>Sample @i</h3>
+                <div class="row">
+                    <div class="col">
+                        <h4>Input</h4>
+                        <pre>@Html.DisplayFor(model => item.Input)</pre>
+                    </div>
+                    <div class="col">
+                        <h4>Output</h4>
+                        <pre>@Html.DisplayFor(model => item.Output)</pre>
+                    </div>
+                </div>
+                <br />
+                }
+            </div>
+        </div>
+        <div class="card border-0">
+            <div class="card-header border-0">
+                <h2>
+                    <a class="card-link" data-toggle="collapse" href="#divHint">
+                        Hint
+                    </a>
+                </h2>
+            </div>
+            <div id="divHint" class="collapse show card-content">
+                @Html.Raw(Markdig.Markdown.ToHtml(Model.Description.Hint, Model.MarkdownBuilder.Build()))
+            </div>
+        </div>
     </div>
     <div class="col-3">
-        <h2>Information</h2>
         <dl>
-            <dt>@Html.DisplayNameFor(model => model.Metadata.Author)</dt>
+            <dt style="float:left; min-width:30px"><i class="fa fa-user"></i></dt>
             <dd>@Html.DisplayFor(model => model.Metadata.Author)</dd>
-            <dt>@Html.DisplayNameFor(model => model.Metadata.Source)</dt>
+            <dt style="float:left; min-width:30px"><i class="fa fa-map-marker"></i></dt>
             <dd>@Html.DisplayFor(model => model.Metadata.Source)</dd>
         </dl>
         <br />
-        <h2>Sample Cases</h2>
-        <table class="table table-sm table-bordered">
-            <thead>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Samples[0].Id)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Samples[0].TimeLimit)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Samples[0].MemoryLimit)
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.Samples)
-                {
-                    <tr>
-                        <td>
-                            @item.Id
-                        </td>
-                        <td>
-                            <timespan-display value="@item.TimeLimit"></timespan-display>
-                        </td>
-                        <td>
-                            <memory-display value="@item.MemoryLimit"></memory-display>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-        <br />
-        <h2>Test Cases</h2>
-        <table class="table table-sm table-bordered">
-            <thead>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Tests[0].Id)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Tests[0].TimeLimit)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Tests[0].MemoryLimit)
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.Tests)
-                {
-                    <tr>
-                        <td>
-                            @item.Id
-                        </td>
-                        <td>
-                            <timespan-display value="@item.TimeLimit"></timespan-display>
-                        </td>
-                        <td>
-                            <memory-display value="@item.MemoryLimit"></memory-display>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+        <div class="card border-0">
+            <div class="card-header border-0">
+                <a class="card-link" data-toggle="collapse" href="#divSampleCases">
+                    Sample Cases
+                </a>
+            </div>
+            <div id="divSampleCases" class="collapse show">
+                <table class="table table-sm table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Samples[0].Id)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Samples[0].TimeLimit)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Samples[0].MemoryLimit)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Samples)
+                        {
+                        <tr>
+                            <td>
+                                @item.Id
+                            </td>
+                            <td>
+                                <timespan-display value="@item.TimeLimit"></timespan-display>
+                            </td>
+                            <td>
+                                <memory-display value="@item.MemoryLimit"></memory-display>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card border-0" style="margin-top:10px">
+            <div class="card-header border-0">
+                <a class="card-link" data-toggle="collapse" href="#divTestCases">
+                    Test Cases
+                </a>
+            </div>
+            <div id="divTestCases" class="collapse">
+                <table class="table table-sm table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Tests[0].Id)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Tests[0].TimeLimit)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Tests[0].MemoryLimit)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Tests)
+                        {
+                        <tr>
+                            <td>
+                                @item.Id
+                            </td>
+                            <td>
+                                <timespan-display value="@item.TimeLimit"></timespan-display>
+                            </td>
+                            <td>
+                                <memory-display value="@item.MemoryLimit"></memory-display>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
 @if (Model.EnableCode)
 {
 
-    <div class="row" style="margin-bottom:10px">
-        <label style="margin-right:10px; position:relative; top:6px; font-size:large">Language</label>
-        <select id="selCodeLanguage" style="font-size:medium; width:150px"></select>
-        <label style="margin-left:20px; margin-right:10px; position:relative; top:6px; font-size:large">Theme</label>
-        <select id="selCodeTheme" style="font-size:medium; width:150px">
-            <option>Light</option>
-            <option>Dark</option>
-            <option>High Contrast Dark</option>
-        </select>
+<div class="row" style="margin-bottom:10px; margin-top:20px">
+    <label style="margin-right:10px; position:relative; top:6px; font-size:large">Language</label>
+    <select id="selCodeLanguage" style="font-size:large; width:200px"></select>
+    <label style="margin-left:20px; margin-right:10px; position:relative; top:6px; font-size:large">Theme</label>
+    <select id="selCodeTheme" style="font-size:large; width:200px">
+        <option>Light</option>
+        <option>Dark</option>
+        <option>High Contrast Dark</option>
+    </select>
 
-        <form method="post" style="margin-left:20px;">
-            <textarea asp-for="SubmitData.ProblemID" style="display:none"></textarea>
-            <textarea asp-for="SubmitData.Language" id="formLang" style="display:none"></textarea>
-            <textarea asp-for="SubmitData.Code" id="formCode" style="display:none"></textarea>
-            <input type="submit" value="Submit" class="btn btn-primary" />
-        </form>
-    </div>
+    <form method="post" style="margin-left:20px;">
+        <input type="text" asp-for="SubmitData.ProblemID" style="display:none" />
+        <input type="text" asp-for="SubmitData.Language" id="formLang" style="display:none" />
+        <textarea type="text" asp-for="SubmitData.Code" id="formCode" style="display:none"></textarea>
+        <input type="submit" value="Submit" class="btn btn-primary" style="width:100px" />
+    </form>
+</div>
 
-    <div id="codeEditor" class="row" style="min-height:500px">
+<div id="codeEditor" class="row" style="min-height:500px">
 
-    </div>
+</div>
 }
 
 @section scripts{
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
-    <script type="text/x-mathjax-config">
-        MathJax.Hub.Config({
-        tex2jax: {
-        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-        displayMath: [ ['$$','$$'], ["\\[","\\]"] ]
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    tex2jax: {
+    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+    displayMath: [ ['$$','$$'], ["\\[","\\]"] ]
+    }
+    });
+</script>
+
+<script src="~/lib/highlight.js/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+    @*
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0-rc.1/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0-rc.1/contrib/auto-render.min.js"></script>
+<script>
+    renderMathInElement(document.body,
+        {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "\(", right: "\)", display: false }
+            ]
         }
-        });
-    </script>
-    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0-rc.1/katex.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0-rc.1/contrib/auto-render.min.js"></script>
-    <script>
-        renderMathInElement(document.body,
-            {
-                delimiters: [
-                    { left: "$$", right: "$$", display: true },
-                    { left: "\(", right: "\)", display: false }
-                ]
-            }
-        );
-    </script>-->
+    );
+</script>*@
     @if (Model.EnableCode)
     {
-        <script>var require = { paths: { 'vs': '../lib/monaco-editor/min/vs' } }</script>
-        <script src="../lib/monaco-editor/min/vs/loader.js"></script>
-        <script src="../lib/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
-        <script src="../lib/monaco-editor/min/vs/editor/editor.main.js"></script>
-        <script>
+<script>var require = { paths: { 'vs': '../lib/monaco-editor/min/vs' } }</script>
+<script src="../lib/monaco-editor/min/vs/loader.js"></script>
+<script src="../lib/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
+<script src="../lib/monaco-editor/min/vs/editor/editor.main.js"></script>
+<script>
         "use strict";
 
         var editor = null;
@@ -256,15 +315,6 @@
             var newTheme = (theme === 1 ? 'vs-dark' : (theme === 0 ? 'vs' : 'hc-black'));
             monaco.editor.setTheme(newTheme);
         }
-                                                                            /*var editor = monaco.editor.create(document.getElementById('codeEditor'), {
-value: [
-'#include <iostream>',
-'int main() {',
-'\t',
-'}'
-].join('\n'),
-language: 'cpp'
-});*/
-        </script>
+</script>
     }
 }

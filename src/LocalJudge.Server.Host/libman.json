@@ -9,6 +9,18 @@
     {
       "library": "font-awesome@5.8.1",
       "destination": "wwwroot/lib/font-awesome/"
+    },
+    {
+      "library": "twitter-bootstrap@4.3.1",
+      "destination": "wwwroot/lib/twitter-bootstrap/"
+    },
+    {
+      "library": "jquery@3.3.1",
+      "destination": "wwwroot/lib/jquery/"
+    },
+    {
+      "library": "highlight.js@9.15.6",
+      "destination": "wwwroot/lib/highlight.js/"
     }
   ]
 }

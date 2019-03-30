@@ -40,6 +40,11 @@ namespace LocalJudge.Server.Host.TagHelpers
             {
                 if (haspre) output.Content.Append(" ");
                 output.Content.Append(string.Format("{0} ms", Value.Milliseconds));
+                haspre = true;
+            }
+            if (!haspre)
+            {
+                output.Content.Append("N/A");
             }
             base.Process(context, output);
         }

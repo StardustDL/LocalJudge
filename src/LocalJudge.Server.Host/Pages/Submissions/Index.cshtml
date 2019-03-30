@@ -10,7 +10,7 @@
     <li class="breadcrumb-item active">Submissions</li>
 </ul>
 
-<table class="table">
+<table class="table table-hover">
     <thead>
         <tr>
             <th>
@@ -21,6 +21,15 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Submissions[0].Result.State)
+            </th>
+            <th>
+                Accepted
+            </th>
+            <th>
+                Time
+            </th>
+            <th>
+                Memory
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Submissions[0].Metadata.Language)
@@ -36,14 +45,23 @@
         {
         <tr>
             <td>
-                <a asp-page="./View" asp-route-id="@item.Metadata.Id">@Html.DisplayFor(modelItem => item.Metadata.Id)</a>
+                <a asp-page="./View" asp-route-id="@item.Metadata.Id">@item.Metadata.Id.Substring(30)</a>
             </td>
             <td>
                 <a asp-page="/Problems/View" asp-route-id="@item.Problem.Id">@Html.DisplayFor(modelItem => item.Problem.Name)</a>
             </td>
-            <th>
+            <td>
                 <judge-state value="@item.Result.State"></judge-state>
-            </th>
+            </td>
+            <td>
+                @item.AcceptedCase / @item.TotalCase
+            </td>
+            <td>
+                <timespan-display value="@item.TotalTime"></timespan-display>
+            </td>
+            <td>
+                <memory-display value="@item.MaximumMemory"></memory-display>
+            </td>
             <td>
                 <prolang-display value="@item.Metadata.Language"></prolang-display>
                 (<memory-display value="@item.Metadata.CodeLength"></memory-display>)
@@ -54,16 +72,16 @@
             <td>
                 <div class="row" style="margin-left:0px">
                     <form method="post">
-                        <textarea name="type" style="display:none">rejudge</textarea>
-                        <textarea name="id" style="display:none">@item.Metadata.Id</textarea>
-                        <button type="submit" class="btn btn-primary">
+                        <input type="text" name="type" style="display:none" value="rejudge" />
+                        <input type="text" name="id" style="display:none" value="@item.Metadata.Id" />
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">
                             <i class="fa fa-redo"></i>
                         </button>
                     </form>
                     <form method="post" style="margin-left:10px">
-                        <textarea name="type" style="display:none">delete</textarea>
-                        <textarea name="id" style="display:none">@item.Metadata.Id</textarea>
-                        <button type="submit" class="btn btn-danger">
+                        <input type="text" name="type" style="display:none" value="delete" />
+                        <input type="text" name="id" style="display:none" value="@item.Metadata.Id" />
+                        <button type="submit" class="btn btn-sm btn-outline-danger">
                             <i class="fa fa-trash"></i>
                         </button>
                     </form>

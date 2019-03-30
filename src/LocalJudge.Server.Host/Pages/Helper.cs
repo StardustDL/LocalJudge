@@ -9,18 +9,18 @@ namespace LocalJudge.Server.Host.Pages
     public class Helper
     {
 
-        public static string GetIssueColor(IssueLevel state)
+        public static string GetIssueClass(IssueLevel state)
         {
             switch (state)
             {
                 case IssueLevel.Info:
-                    return "blue";
+                    return "info";
                 case IssueLevel.Error:
-                    return "red";
+                    return "danger";
                 case IssueLevel.Warning:
-                    return "orange";
+                    return "warning";
             }
-            return "black";
+            return "secondary";
         }
 
         public static string GetEditorLanguage(ProgrammingLanguage lang)

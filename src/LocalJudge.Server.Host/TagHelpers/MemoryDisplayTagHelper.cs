@@ -13,7 +13,9 @@ namespace LocalJudge.Server.Host.TagHelpers
         {
             output.TagName = "span";
             output.TagMode = TagMode.StartTagAndEndTag;
-            if (Value < KB)
+            if(Value <= 0)
+                output.Content.Append("N/A");
+            else if (Value < KB)
                 output.Content.Append(string.Format("{0:f2} B", (double)Value));
             else if (Value < MB)
                 output.Content.Append(string.Format("{0:f2} KB", (double)Value / KB));
