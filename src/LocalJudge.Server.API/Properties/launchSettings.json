@@ -18,6 +18,7 @@
     },
     "LocalJudge.Server.API": {
       "commandName": "Project",
+      "commandLineArgs": "-d ../../temp/test/ -p 5000 -sp 5001",
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {

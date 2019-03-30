@@ -35,7 +35,7 @@ namespace LocalJudge.Server.API
         {
             if (env.IsDevelopment())
             {
-                Program.Workspace = new Core.Workspace(Path.GetFullPath(Path.Join(Directory.GetCurrentDirectory(), "../../temp/test")));
+                Program.Workspace = new Core.Workspace(Path.GetFullPath(Directory.GetCurrentDirectory()));
                 app.UseDeveloperExceptionPage();
             }
             else

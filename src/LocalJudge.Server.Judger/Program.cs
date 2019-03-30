@@ -16,6 +16,7 @@ namespace LocalJudger.Server.Judger
     class Program
     {
         const string PipeStreamName = "LocalJudger.Server.Judger";
+
         static Workspace Workspace { get; set; }
 
         static WorkspaceConfig WSConfig { get; set; }
@@ -27,14 +28,17 @@ namespace LocalJudger.Server.Judger
                 Description = "Judger for LocalJudge."
             };
 
-            rootCommand.AddOption(new Option(new string[] { "--dir", "-d" }, "The path of working directory.", new Argument<string>()));
+            rootCommand.AddOption(new Option(new string[] { "--dir", "-d" }, "The path of working directory.", new Argument<string>("")));
             rootCommand.Handler = CommandHandler.Create((string dir) =>
             {
-                Directory.SetCurrentDirectory(dir);
+                if (!string.IsNullOrEmpty(dir))
+                    Directory.SetCurrentDirectory(dir);
             });
 
             // Parse the incoming args and invoke the handler
             int cmdExitCode = rootCommand.InvokeAsync(args).Result;
+
+            if (cmdExitCode != 0) return;
 
             Workspace = new Workspace(Directory.GetCurrentDirectory());
             WSConfig = Workspace.GetConfig();
