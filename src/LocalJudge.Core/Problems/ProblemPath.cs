@@ -65,7 +65,7 @@ namespace LocalJudge.Core.Problems
         public static ProblemPath Initialize(string root, ProblemMetadata metadata = null, ProblemDescription description = null)
         {
             var res = new ProblemPath(root);
-            if (metadata == null) metadata = new ProblemMetadata { Author = "", Name = "Untitled", Source = "Origin" };
+            if (metadata == null) metadata = new ProblemMetadata { Author = "", Name = "Untitled", Source = "" };
             metadata.ID = res.ID;
 
             TextIO.WriteAllInUTF8(res.Profile, Newtonsoft.Json.JsonConvert.SerializeObject(metadata, Newtonsoft.Json.Formatting.Indented));

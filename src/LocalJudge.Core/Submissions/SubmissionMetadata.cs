@@ -12,5 +12,9 @@ namespace LocalJudge.Core.Submissions
         public ProgrammingLanguage Language { get; set; }
 
         public DateTimeOffset Time { get; set; }
+
+        public uint CodeLength { get; set; }
+
+        public string CodePath { get; set; }
     }
 }

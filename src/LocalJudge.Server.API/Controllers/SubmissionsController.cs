@@ -27,6 +27,21 @@ namespace LocalJudge.Server.API.Controllers
             public ProgrammingLanguage Language { get; set; }
         }
 
+        static string GetCodePath(ProgrammingLanguage lang)
+        {
+            switch (lang)
+            {
+                case ProgrammingLanguage.C:
+                case ProgrammingLanguage.Cpp:
+                case ProgrammingLanguage.CSharp:
+                case ProgrammingLanguage.Python:
+                    return $"code.{ProgrammingLanguageHelper.Extends[lang]}";
+                case ProgrammingLanguage.Java:
+                    return $"Main.java";
+            }
+            return "code.txt";
+        }
+
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -42,12 +57,14 @@ namespace LocalJudge.Server.API.Controllers
                 ProblemID = data.ProblemID,
                 Language = data.Language,
                 Time = DateTimeOffset.Now,
+                CodeLength = (uint)Encoding.UTF8.GetByteCount(data.Code),
+                CodePath = GetCodePath(data.Language),
             };
             var sub = Program.Workspace.Submissions.Create(Guid.NewGuid().ToString(), meta);
             if (sub == null) return Forbid();
             try
             {
-                TextIO.WriteAllInUTF8(sub.Code, data.Code);
+                TextIO.WriteAllInUTF8(sub.GetCodePath(), data.Code);
                 using (var pipe = new NamedPipeClientStream(".", PipeStreamName, PipeDirection.Out))
                 {
                     pipe.Connect(10 * 1000);// Wait for 10s

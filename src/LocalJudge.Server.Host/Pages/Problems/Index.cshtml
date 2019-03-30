@@ -2,9 +2,14 @@
 @model LocalJudge.Server.Host.Pages.Problems.IndexModel
 @{
     ViewData["Title"] = "Problems";
+    ViewData["ID"] = "Problems";
 }
 
-<h1>Problems</h1>
+<ul class="breadcrumb">
+    <li class="breadcrumb-item"><a asp-page="/Index">LocalJudge</a></li>
+    <li class="breadcrumb-item active">Problems</li>
+</ul>
+
 <table class="table">
     <thead>
         <tr>

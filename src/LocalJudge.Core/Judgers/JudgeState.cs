@@ -4,7 +4,7 @@
     {
         Pending,
         Judging,
-        Accept,
+        Accepted,
         WrongAnswer,
         TimeLimitExceeded,
         MemoryLimitExceeded,

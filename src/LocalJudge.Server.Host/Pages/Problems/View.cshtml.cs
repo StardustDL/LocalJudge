@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using LocalJudge.Server.Host.APIClients;
+using Markdig;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -26,9 +28,12 @@ namespace LocalJudge.Server.Host.Pages.Problems
 
         private readonly IHttpClientFactory clientFactory;
 
+        public MarkdownPipelineBuilder MarkdownBuilder { get; private set; }
+
         public ViewModel(IHttpClientFactory clientFactory)
         {
             this.clientFactory = clientFactory;
+            MarkdownBuilder = new MarkdownPipelineBuilder().UseAdvancedExtensions();
         }
 
         [BindProperty]
@@ -43,6 +48,10 @@ namespace LocalJudge.Server.Host.Pages.Problems
         public IList<TestCaseMetadata> Samples { get; set; }
 
         public IList<TestCaseMetadata> Tests { get; set; }
+
+        public string LanguageConfig { get; set; }
+
+        public bool EnableCode { get; set; }
 
         public async Task<IActionResult> OnGetAsync(string id)
         {
@@ -80,9 +89,54 @@ namespace LocalJudge.Server.Host.Pages.Problems
             SubmitData = new SubmitData
             {
                 Code = "",
-                Language = ProgrammingLanguage.Cpp,
                 ProblemID = Metadata.Id,
             };
+
+            {
+                StringBuilder res = new StringBuilder();
+                var wclient = new WorkspaceClient(httpclient);
+                IList<ProgrammingLanguage> langs;
+                try
+                {
+                    langs = await wclient.GetSupportLanguagesAsync();
+                }
+                catch
+                {
+                    langs = Array.Empty<ProgrammingLanguage>();
+                }
+                if (langs.Count == 0)
+                {
+                    EnableCode = false;
+                }
+                else
+                {
+                    EnableCode = true;
+                    foreach (var item in langs)
+                    {
+                        switch (item)
+                        {
+                            // editorID for editor, lang for enum, show for selector in html
+                            case ProgrammingLanguage.C:
+                                res.Append("{editorID: \"c\", lang: \"C\", show: \"C\"},");
+                                break;
+                            case ProgrammingLanguage.Cpp:
+                                res.Append("{editorID: \"cpp\", lang: \"Cpp\", show: \"C++\"},");
+                                break;
+                            case ProgrammingLanguage.Java:
+                                res.Append("{editorID: \"java\", lang: \"Java\", show: \"Java\"},");
+                                break;
+                            case ProgrammingLanguage.Python:
+                                res.Append("{editorID: \"python\", lang: \"Python\", show: \"Python\"},");
+                                break;
+                            case ProgrammingLanguage.CSharp:
+                                res.Append("{editorID: \"csharp\", lang: \"CSharp\", show: \"C#\"},");
+                                break;
+                        }
+                    }
+                    SubmitData.Language = langs[0];
+                }
+                LanguageConfig = res.ToString();
+            }
 
             return Page();
         }
@@ -91,7 +145,7 @@ namespace LocalJudge.Server.Host.Pages.Problems
         {
             if (!ModelState.IsValid)
             {
-                return Page();
+                return RedirectToAction("OnGetAsync");
             }
 
             var httpclient = clientFactory.CreateClient();

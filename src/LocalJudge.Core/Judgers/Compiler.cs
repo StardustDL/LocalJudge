@@ -8,7 +8,7 @@ namespace LocalJudge.Core.Judgers
     {
         public const string V_CodeFile = "{codefile}", V_Output = "{output}";
 
-        public static CompileResult Compile(Command executor, string codePath, string outputPath, TimeSpan timeLimit, long memoryLimit)
+        public static CompileResult Compile(Command executor, string workingDirectory, string codePath, string outputPath, TimeSpan timeLimit, long memoryLimit)
         {
             CompileResult res = new CompileResult
             {
@@ -24,7 +24,11 @@ namespace LocalJudge.Core.Judgers
                 };
                 executor = executor.Resolve(vars);
 
-                using (var runner = new Runner(new System.Diagnostics.ProcessStartInfo(executor.Name, string.Join(" ", executor.Arguments)))
+                var startInfo = new System.Diagnostics.ProcessStartInfo(executor.Name, string.Join(" ", executor.Arguments))
+                {
+                    WorkingDirectory = workingDirectory
+                };
+                using (var runner = new Runner(startInfo)
                 {
                     TimeLimit = timeLimit,
                     MemoryLimit = memoryLimit,

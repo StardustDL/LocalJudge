@@ -23,7 +23,7 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-page="/Index">LocalJudge</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -32,21 +32,21 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">
-                                <i class="fa fa-home"></i>
+                        <li class="nav-item @((string)ViewData["ID"] == "Index" ? "active":"")">
+                            <a class="nav-link" asp-area="" asp-page="/Index">
+                                <i class="fa fa-home" style="margin-right:3px"></i>
                                 Home
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Problems/Index">
-                                <i class="fa fa-list"></i>
+                        <li class="nav-item @((string)ViewData["ID"] == "Problems" ? "active":"")">
+                            <a class="nav-link" asp-area="" asp-page="/Problems/Index">
+                                <i class="fa fa-list" style="margin-right:3px"></i>
                                 Problems
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Submissions/Index">
-                                <i class="fa fa-tasks"></i>
+                        <li class="nav-item @((string)ViewData["ID"] == "Submissions" ? "active":"")">
+                            <a class="nav-link" asp-area="" asp-page="/Submissions/Index">
+                                <i class="fa fa-tasks" style="margin-right:3px"></i>
                                 Submissions
                             </a>
                         </li>

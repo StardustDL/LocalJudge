@@ -76,6 +76,44 @@ namespace LocalJudge.Core
                             Name = Judger.V_CompileOutput,
                         }
                     },
+                    [ProgrammingLanguage.Java] = new LanguageConfig
+                    {
+                        CompileMemoryLimit = 1024 * 1024 * 1024,
+                        CompileTimeLimit = TimeSpan.FromSeconds(20),
+                        CompileCommand = new Command
+                        {
+                            Name = "javac",
+                            Arguments = new string[]
+                            {
+                                Compiler.V_CodeFile
+                            }
+                        },
+                        RunCommand = new Command
+                        {
+                            Name = "java",
+                            Arguments = new string[]
+                            {
+                                "Main"
+                            },
+                        }
+                    },
+                    [ProgrammingLanguage.CSharp] = new LanguageConfig
+                    {
+                        CompileMemoryLimit = 1024 * 1024 * 1024,
+                        CompileTimeLimit = TimeSpan.FromSeconds(20),
+                        CompileCommand = new Command
+                        {
+                            Name = "csc",
+                            Arguments = new string[]
+                            {
+                                Compiler.V_CodeFile
+                            }
+                        },
+                        RunCommand = new Command
+                        {
+                            Name = Judger.V_CompileOutput,
+                        }
+                    },
                     [ProgrammingLanguage.Python] = new LanguageConfig
                     {
                         CompileCommand = null,

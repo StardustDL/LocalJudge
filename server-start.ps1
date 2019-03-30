@@ -10,7 +10,7 @@ else {
             dotnet run -p ./src/LocalJudge.Server.Host
         }
         "judger" {
-            dotnet run -p ./src/LocalJudge.Server.Judger
+            dotnet run -p ./src/LocalJudge.Server.Judger -- -d ./temp/test/
         }
         default {
             Write-Output "The type is not found."

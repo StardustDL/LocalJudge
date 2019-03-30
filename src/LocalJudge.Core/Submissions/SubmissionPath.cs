@@ -8,16 +8,7 @@ namespace LocalJudge.Core.Submissions
 {
     public class SubmissionPath
     {
-        static readonly Dictionary<ProgrammingLanguage, string> Extends = new Dictionary<ProgrammingLanguage, string>
-        {
-            [ProgrammingLanguage.C] = "c",
-            [ProgrammingLanguage.Cpp] = "cpp",
-            [ProgrammingLanguage.CSharp] = "cs",
-            [ProgrammingLanguage.Java] = "java",
-            [ProgrammingLanguage.Python] = "py",
-        };
-
-        public const string PF_Profile = "profile.json", PF_Code = "code", PF_Result = "result.json";
+        public const string PF_Profile = "profile.json", PF_Result = "result.json";
 
         public string Root { get; private set; }
 
@@ -47,16 +38,13 @@ namespace LocalJudge.Core.Submissions
             TextIO.WriteAllInUTF8(Result, Newtonsoft.Json.JsonConvert.SerializeObject(result, Newtonsoft.Json.Formatting.Indented));
         }
 
-        public string Code
+        public string GetCodePath()
         {
-            get
-            {
-                var meta = GetMetadata();
-                return Path.Combine(Root, PF_Code + "." + Extends[meta.Language]);
-            }
+            var meta = GetMetadata();
+            return Path.Combine(Root, meta.CodePath);
         }
 
-        public string GetCode() => TextIO.ReadAllInUTF8(Code);
+        public string GetCode() => TextIO.ReadAllInUTF8(GetCodePath());
 
         public SubmissionPath(string root)
         {
@@ -69,10 +57,10 @@ namespace LocalJudge.Core.Submissions
         public static SubmissionPath Initialize(string root, SubmissionMetadata metadata = null, string code = "")
         {
             var res = new SubmissionPath(root);
-            if (metadata == null) metadata = new SubmissionMetadata();
+            if (metadata == null) metadata = new SubmissionMetadata() { CodeLength = 0, CodePath = "code.txt" };
             metadata.ID = res.ID;
             TextIO.WriteAllInUTF8(res.Profile, Newtonsoft.Json.JsonConvert.SerializeObject(metadata, Newtonsoft.Json.Formatting.Indented));
-            TextIO.WriteAllInUTF8(res.Code, code);
+            TextIO.WriteAllInUTF8(res.GetCodePath(), code);
             return res;
         }
     }

@@ -2,9 +2,13 @@
 @model LocalJudge.Server.Host.Pages.Submissions.IndexModel
 @{
     ViewData["Title"] = "Submissions";
+    ViewData["ID"] = "Submissions";
 }
 
-<h1>Submissions</h1>
+<ul class="breadcrumb">
+    <li class="breadcrumb-item"><a asp-page="/Index">LocalJudge</a></li>
+    <li class="breadcrumb-item active">Submissions</li>
+</ul>
 
 <table class="table">
     <thead>
@@ -29,23 +33,24 @@
     <tbody>
         @foreach (var item in Model.Submissions)
         {
-            <tr>
-                <td>
-                    <a asp-page="./View" asp-route-id="@item.Metadata.Id">@Html.DisplayFor(modelItem => item.Metadata.Id)</a>
-                </td>
-                <td>
-                    <a asp-page="../Problems/View" asp-route-id="@item.Metadata.ProblemID">@Html.DisplayFor(modelItem => item.Problem.Name)</a>
-                </td>
-                <th>
-                    <judge-state value="@item.Result.State"></judge-state>
-                </th>
-                <td>
-                    <prolang-display value="@item.Metadata.Language"></prolang-display>
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Metadata.Time)
-                </td>
-            </tr>
+        <tr>
+            <td>
+                <a asp-page="./View" asp-route-id="@item.Metadata.Id">@Html.DisplayFor(modelItem => item.Metadata.Id)</a>
+            </td>
+            <td>
+                <a asp-page="/Problems/View" asp-route-id="@item.Problem.Id">@Html.DisplayFor(modelItem => item.Problem.Name)</a>
+            </td>
+            <th>
+                <judge-state value="@item.Result.State"></judge-state>
+            </th>
+            <td>
+                <prolang-display value="@item.Metadata.Language"></prolang-display>
+                (<memory-display value="@item.Metadata.CodeLength"></memory-display>)
+            </td>
+            <td>
+                <timeoffset-display value="@item.Metadata.Time"></timeoffset-display>
+            </td>
+        </tr>
         }
     </tbody>
 </table>

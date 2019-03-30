@@ -2,16 +2,21 @@
 @model LocalJudge.Server.Host.Pages.Submissions.ViewModel
 @{
     ViewData["Title"] = "View";
+    ViewData["ID"] = "Submissions";
 }
 
 @section header{
     <link rel="stylesheet" data-name="vs/editor/editor.main" href="../lib/monaco-editor/min/vs/editor/editor.main.css">
 }
 
-<h1>Submission @Html.DisplayFor(model => model.Submission.Metadata.Id)</h1>
+<ul class="breadcrumb">
+    <li class="breadcrumb-item"><a asp-page="/Index">LocalJudge</a></li>
+    <li class="breadcrumb-item"><a asp-page="/Submissions/Index">Submissions</a></li>
+    <li class="breadcrumb-item active">@Html.DisplayFor(model => model.Submission.Metadata.Id)</li>
+</ul>
 
 <div class="row">
-    <div class="col-9">
+    <div class="col-8">
         <h2>
             <judge-state value="@Model.Submission.Result.State"></judge-state>
         </h2>
@@ -19,7 +24,7 @@
         <h2>Code</h2>
 
         <pre id="rawCode" style="display:none">@Html.DisplayFor(model=>model.Code)</pre>
-        <div id="code" style="min-height:500px"></div>
+        <div id="code" style="min-height:600px"></div>
 
         <br />
 
@@ -47,7 +52,7 @@
                 }
                 @for (int i = 0; i < Model.Submission.Result.Tests.Count; i++)
                 {
-                    var ci = Model.Submission.Result.Samples[i];
+                    var ci = Model.Submission.Result.Tests[i];
                     @foreach (var item in ci.Issues)
                     {
                         <li>
@@ -59,15 +64,18 @@
             </ul>
         }
     </div>
-    <div class="col-3">
+    <div class="col-4">
         <h2>Information</h2>
         <dl>
             <dt>@Html.DisplayNameFor(model => model.Submission.Problem)</dt>
-            <dd><a asp-page="../Problems/View" asp-route-id="@Model.Submission.Problem">@Html.DisplayFor(model => model.Submission.Problem.Name)</a></dd>
+            <dd><a asp-page="/Problems/View" asp-route-id="@Model.Submission.Problem.Id">@Html.DisplayFor(model => model.Submission.Problem.Name)</a></dd>
             <dt>@Html.DisplayNameFor(model => model.Submission.Metadata.Language)</dt>
-            <dd>@Html.DisplayFor(model => model.Submission.Metadata.Language)</dd>
+            <dd>
+                <prolang-display value="@Model.Submission.Metadata.Language"></prolang-display>
+                (<memory-display value="@Model.Submission.Metadata.CodeLength"></memory-display>)
+            </dd>
             <dt>@Html.DisplayNameFor(model => model.Submission.Metadata.Time)</dt>
-            <dd>@Html.DisplayFor(model => model.Submission.Metadata.Time)</dd>
+            <dd><timeoffset-display value="@Model.Submission.Metadata.Time"></timeoffset-display></dd>
         </dl>
         <br />
         @if (Model.Submission.Result.State != APIClients.JudgeState.Pending)

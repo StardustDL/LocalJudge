@@ -12,7 +12,7 @@ namespace LocalJudge.Core.Judgers
     {
         public const string V_CodeFile = "{codefile}", V_CompileOutput = "{compiled}";
 
-        public static JudgeResult Judge(string name, Command executor, TimeSpan timeLimit, long memoryLimit, TextReader input, TextReader output, IJudgeComparer comparer)
+        public static JudgeResult Judge(string name, Command executor,string workingDirectory, TimeSpan timeLimit, long memoryLimit, TextReader input, TextReader output, IJudgeComparer comparer)
         {
             JudgeResult res = new JudgeResult
             {
@@ -22,7 +22,11 @@ namespace LocalJudge.Core.Judgers
             };
             try
             {
-                using (var runner = new Runner(new System.Diagnostics.ProcessStartInfo(executor.Name, string.Join(" ", executor.Arguments)))
+                var startInfo = new System.Diagnostics.ProcessStartInfo(executor.Name, string.Join(" ", executor.Arguments))
+                {
+                    WorkingDirectory = workingDirectory
+                };
+                using (var runner = new Runner(startInfo)
                 {
                     TimeLimit = timeLimit,
                     MemoryLimit = memoryLimit,
@@ -55,7 +59,7 @@ namespace LocalJudge.Core.Judgers
                                 }
                                 else
                                 {
-                                    res.State = JudgeState.Accept;
+                                    res.State = JudgeState.Accepted;
                                 }
                                 break;
                             }

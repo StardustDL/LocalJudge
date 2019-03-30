@@ -2,11 +2,19 @@
 @model LocalJudge.Server.Host.Pages.Problems.ViewModel
 @{
     ViewData["Title"] = "View";
+    ViewData["ID"] = "Problems";
 }
 
 @section header{
     <link rel="stylesheet" data-name="vs/editor/editor.main" href="../lib/monaco-editor/min/vs/editor/editor.main.css">
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0-rc.1/katex.min.css">-->
 }
+
+<ul class="breadcrumb">
+    <li class="breadcrumb-item"><a asp-page="/Index">LocalJudge</a></li>
+    <li class="breadcrumb-item"><a asp-page="/Problems/Index">Problems</a></li>
+    <li class="breadcrumb-item active">@Html.DisplayFor(model => model.Metadata.Id)</li>
+</ul>
 
 <h1>@Html.DisplayFor(model => model.Metadata.Name)</h1>
 
@@ -14,19 +22,19 @@
     <div class="col-9">
         <h2>Description</h2>
 
-        <p>@Html.Raw(Markdig.Markdown.ToHtml(Model.Description.Description))</p>
+        <p>@Html.Raw(Markdig.Markdown.ToHtml(Model.Description.Description, Model.MarkdownBuilder.Build()))</p>
 
         <br />
 
         <h2>Input</h2>
 
-        <p>@Html.Raw(Markdig.Markdown.ToHtml(Model.Description.Input))</p>
+        <p>@Html.Raw(Markdig.Markdown.ToHtml(Model.Description.Input, Model.MarkdownBuilder.Build()))</p>
 
         <br />
 
         <h2>Output</h2>
 
-        <p>@Html.Raw(Markdig.Markdown.ToHtml(Model.Description.Output))</p>
+        <p>@Html.Raw(Markdig.Markdown.ToHtml(Model.Description.Output, Model.MarkdownBuilder.Build()))</p>
 
         <br />
 
@@ -51,7 +59,7 @@
 
         <h2>Hint</h2>
 
-        @Html.Raw(Markdig.Markdown.ToHtml(Model.Description.Hint))
+        @Html.Raw(Markdig.Markdown.ToHtml(Model.Description.Hint, Model.MarkdownBuilder.Build()))
     </div>
     <div class="col-3">
         <h2>Information</h2>
@@ -130,27 +138,31 @@
     </div>
 </div>
 
-<div class="row" style="margin-bottom:10px">
-    <label style="margin-right:10px; position:relative; top:6px; font-size:large">Language</label>
-    <select id="selCodeLanguage" style="font-size:medium; width:150px"></select>
-    <label style="margin-left:20px; margin-right:10px; position:relative; top:6px; font-size:large">Theme</label>
-    <select id="selCodeTheme" style="font-size:medium; width:150px">
-        <option>Visual Studio</option>
-        <option>Visual Studio Dark</option>
-        <option>High Contrast Dark</option>
-    </select>
+@if (Model.EnableCode)
+{
 
-    <form method="post" style="margin-left:20px;">
-        <textarea asp-for="SubmitData.ProblemID" style="display:none"></textarea>
-        <textarea asp-for="SubmitData.Language" id="formLang" style="display:none"></textarea>
-        <textarea asp-for="SubmitData.Code" id="formCode" style="display:none"></textarea>
-        <input type="submit" value="Submit" class="btn btn-primary" />
-    </form>
-</div>
+    <div class="row" style="margin-bottom:10px">
+        <label style="margin-right:10px; position:relative; top:6px; font-size:large">Language</label>
+        <select id="selCodeLanguage" style="font-size:medium; width:150px"></select>
+        <label style="margin-left:20px; margin-right:10px; position:relative; top:6px; font-size:large">Theme</label>
+        <select id="selCodeTheme" style="font-size:medium; width:150px">
+            <option>Light</option>
+            <option>Dark</option>
+            <option>High Contrast Dark</option>
+        </select>
 
-<div id="codeEditor" class="row" style="min-height:500px">
+        <form method="post" style="margin-left:20px;">
+            <textarea asp-for="SubmitData.ProblemID" style="display:none"></textarea>
+            <textarea asp-for="SubmitData.Language" id="formLang" style="display:none"></textarea>
+            <textarea asp-for="SubmitData.Code" id="formCode" style="display:none"></textarea>
+            <input type="submit" value="Submit" class="btn btn-primary" />
+        </form>
+    </div>
 
-</div>
+    <div id="codeEditor" class="row" style="min-height:500px">
+
+    </div>
+}
 
 @section scripts{
     <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
@@ -162,11 +174,25 @@
         }
         });
     </script>
-    <script>var require = { paths: { 'vs': '../lib/monaco-editor/min/vs' } }</script>
-    <script src="../lib/monaco-editor/min/vs/loader.js"></script>
-    <script src="../lib/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
-    <script src="../lib/monaco-editor/min/vs/editor/editor.main.js"></script>
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0-rc.1/katex.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0-rc.1/contrib/auto-render.min.js"></script>
     <script>
+        renderMathInElement(document.body,
+            {
+                delimiters: [
+                    { left: "$$", right: "$$", display: true },
+                    { left: "\(", right: "\)", display: false }
+                ]
+            }
+        );
+    </script>-->
+    @if (Model.EnableCode)
+    {
+        <script>var require = { paths: { 'vs': '../lib/monaco-editor/min/vs' } }</script>
+        <script src="../lib/monaco-editor/min/vs/loader.js"></script>
+        <script src="../lib/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
+        <script src="../lib/monaco-editor/min/vs/editor/editor.main.js"></script>
+        <script>
         "use strict";
 
         var editor = null;
@@ -177,31 +203,13 @@
                     // var modesIds = monaco.languages.getLanguages().map(function (lang) { return lang.id; });
                     // modesIds.sort();
 
-                    return [{
-                        editorID: "cpp",
-                        lang: "Cpp",
-                        show: "C++"
-                    },
-                    {
-                        editorID: "c",
-                        lang: "C",
-                        show: "C"
-                    },
-                    {
-                        editorID: "python",
-                        lang: "Python",
-                        show: "Python"
-                    }
-                    ]
+                    return [@Html.Raw(Model.LanguageConfig)]
                 })();
 
                 var startModeIndex = 0;
                 for (var i = 0; i < MODES.length; i++) {
                     var o = document.createElement('option');
                     o.textContent = MODES[i].show;
-                    if (MODES[i].lang === 'Cpp') {
-                        startModeIndex = i;
-                    }
                     $("#selCodeLanguage").append(o);
                 }
                 $("#selCodeLanguage").selectedIndex = startModeIndex;
@@ -248,7 +256,7 @@
             var newTheme = (theme === 1 ? 'vs-dark' : (theme === 0 ? 'vs' : 'hc-black'));
             monaco.editor.setTheme(newTheme);
         }
-                                    /*var editor = monaco.editor.create(document.getElementById('codeEditor'), {
+                                                                            /*var editor = monaco.editor.create(document.getElementById('codeEditor'), {
 value: [
 '#include <iostream>',
 'int main() {',
@@ -257,5 +265,6 @@ value: [
 ].join('\n'),
 language: 'cpp'
 });*/
-    </script>
+        </script>
+    }
 }

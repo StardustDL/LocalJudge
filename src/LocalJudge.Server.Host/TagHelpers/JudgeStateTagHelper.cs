@@ -14,7 +14,7 @@ namespace LocalJudge.Server.Host.TagHelpers
         {
             switch (state)
             {
-                case JudgeState.Accept:
+                case JudgeState.Accepted:
                     return "forestgreen";
                 case JudgeState.WrongAnswer:
                     return "red";
@@ -46,7 +46,7 @@ namespace LocalJudge.Server.Host.TagHelpers
             var icon = new TagBuilder("i");
             switch (Value)
             {
-                case JudgeState.Accept:
+                case JudgeState.Accepted:
                     icon.Attributes["class"] = "fa fa-check";
                     break;
                 case JudgeState.WrongAnswer:
@@ -80,8 +80,8 @@ namespace LocalJudge.Server.Host.TagHelpers
             text.Attributes["style"] = "margin-left: 5px";
             switch (Value)
             {
-                case JudgeState.Accept:
-                    text.InnerHtml.Append("Accept");
+                case JudgeState.Accepted:
+                    text.InnerHtml.Append("Accepted");
                     break;
                 case JudgeState.WrongAnswer:
                     text.InnerHtml.Append("Wrong Answer");

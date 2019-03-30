@@ -11,12 +11,12 @@ namespace LocalJudge.Core.Helpers
 
         public static string ReadAllInUTF8(string path)
         {
-            return File.ReadAllText(path, Encoding.UTF8);
+            return File.ReadAllText(path, UTF8WithoutBOM);
         }
 
         public static void WriteAllInUTF8(string path, string content)
         {
-            File.WriteAllText(path, content, Encoding.UTF8);
+            File.WriteAllText(path, content, UTF8WithoutBOM);
         }
 
         public static void ConvertToLF(TextReader reader, TextWriter writer)

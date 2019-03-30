@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LocalJudge.Core.Helpers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -69,6 +70,8 @@ namespace LocalJudge.Core.Judgers
             StartInfo.RedirectStandardError = true;
             StartInfo.RedirectStandardInput = true;
             StartInfo.RedirectStandardOutput = true;
+            // StartInfo.StandardOutputEncoding = TextIO.UTF8WithoutBOM;
+            // StartInfo.StandardErrorEncoding = TextIO.UTF8WithoutBOM;
 
             Process = new Process
             {

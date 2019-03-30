@@ -4,6 +4,8 @@ using LocalJudge.Core.Submissions;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.CommandLine;
+using System.CommandLine.Invocation;
 using System.IO;
 using System.IO.Pipes;
 using System.Text;
@@ -20,13 +22,30 @@ namespace LocalJudger.Server.Judger
 
         static void Main(string[] args)
         {
-            Directory.SetCurrentDirectory(@"G:\Program\LocalJudge\temp\test");
+            var rootCommand = new RootCommand
+            {
+                Description = "Judger for LocalJudge."
+            };
+
+            rootCommand.AddOption(new Option(new string[] { "--dir", "-d" }, "The path of working directory.", new Argument<string>()));
+            rootCommand.Handler = CommandHandler.Create((string dir) =>
+            {
+                Directory.SetCurrentDirectory(dir);
+            });
+
+            // Parse the incoming args and invoke the handler
+            int cmdExitCode = rootCommand.InvokeAsync(args).Result;
+
             Workspace = new Workspace(Directory.GetCurrentDirectory());
             WSConfig = Workspace.GetConfig();
 
             Console.WriteLine("Judger started.");
+            Console.WriteLine($"Working directory: {Workspace.Root}");
 
-            ThreadPool.SetMaxThreads(1, 1);
+            const int C_MaxThread = 1;
+            ThreadPool.SetMaxThreads(C_MaxThread, C_MaxThread);
+            Console.WriteLine($"Maximum threads: {C_MaxThread}");
+
             var buffer = new byte[1 << 15];
             string recieved = "";
             while (true)
@@ -39,11 +58,14 @@ namespace LocalJudger.Server.Judger
                 }
                 Console.WriteLine($"Recieved submission: {recieved}");
                 ThreadPool.QueueUserWorkItem(JudgeSubmission, recieved, false);
+                Console.WriteLine($"Queued submission: {recieved}");
             }
         }
 
         static void JudgeSubmission(string id)
         {
+            Console.WriteLine($"Judging submission: {id}");
+
             SubmissionResult result = new SubmissionResult
             {
                 State = JudgeState.Judging
@@ -63,7 +85,14 @@ namespace LocalJudger.Server.Judger
 
                     if (lang.CompileCommand != null)
                     {
-                        compileResult = Compiler.Compile(lang.CompileCommand, submission.Code, Path.Join(submission.Root, "compiled"), lang.CompileTimeLimit, lang.CompileMemoryLimit);
+                        string codePath = submission.GetCodePath();
+                        string outputPath = Path.Join(submission.Root, Path.GetFileNameWithoutExtension(codePath));
+
+                        // java Main.java -> Main.class
+                        // gcc/g++ code.c -> code.(out/exe)
+                        // csc code.cs -> code.exe
+
+                        compileResult = Compiler.Compile(lang.CompileCommand, submission.Root, codePath, outputPath, lang.CompileTimeLimit, lang.CompileMemoryLimit);
                         if (compileResult.State != CompileState.Compiled)
                         {
                             result.Issues.Add(new Issue(IssueLevel.Error, "Compiled error with internal error: " + compileResult.State.ToString()));
@@ -76,7 +105,7 @@ namespace LocalJudger.Server.Judger
                     {
                         Dictionary<string, string> vars = new Dictionary<string, string>()
                         {
-                            [LocalJudge.Core.Judgers.Judger.V_CodeFile] = submission.Code,
+                            [LocalJudge.Core.Judgers.Judger.V_CodeFile] = submission.GetCodePath(),
                         };
                         if (compileResult != null)
                             vars.Add(LocalJudge.Core.Judgers.Judger.V_CompileOutput, compileResult.OutputPath);
@@ -86,13 +115,19 @@ namespace LocalJudger.Server.Judger
                         foreach (var item in problem.GetSamples())
                         {
                             var casemdata = item.GetMetadata();
-                            var res = LocalJudge.Core.Judgers.Judger.Judge(casemdata.ID, lang.RunCommand.Resolve(vars), casemdata.TimeLimit, casemdata.MemoryLimit, File.OpenText(item.Input), File.OpenText(item.Output), comparer);
+                            JudgeResult res = null;
+                            using (var input = File.OpenText(item.Input))
+                            using (var output = File.OpenText(item.Output))
+                                res = LocalJudge.Core.Judgers.Judger.Judge(casemdata.ID, lang.RunCommand.Resolve(vars), submission.Root, casemdata.TimeLimit, casemdata.MemoryLimit, input, output, comparer);
                             result.Samples.Add(res);
                         }
                         foreach (var item in problem.GetTests())
                         {
                             var casemdata = item.GetMetadata();
-                            var res = LocalJudge.Core.Judgers.Judger.Judge(casemdata.ID, lang.RunCommand.Resolve(vars), casemdata.TimeLimit, casemdata.MemoryLimit, File.OpenText(item.Input), File.OpenText(item.Output), comparer);
+                            JudgeResult res = null;
+                            using (var input = File.OpenText(item.Input))
+                            using (var output = File.OpenText(item.Output))
+                                res = LocalJudge.Core.Judgers.Judger.Judge(casemdata.ID, lang.RunCommand.Resolve(vars), submission.Root, casemdata.TimeLimit, casemdata.MemoryLimit, input, output, comparer);
                             result.Tests.Add(res);
                         }
                     }
@@ -124,10 +159,12 @@ namespace LocalJudger.Server.Judger
                 else if (cnt[JudgeState.MemoryLimitExceeded] > 0) result.State = JudgeState.MemoryLimitExceeded;
                 else if (cnt[JudgeState.TimeLimitExceeded] > 0) result.State = JudgeState.TimeLimitExceeded;
                 else if (cnt[JudgeState.WrongAnswer] > 0) result.State = JudgeState.WrongAnswer;
-                else result.State = JudgeState.Accept;
+                else result.State = JudgeState.Accepted;
             }
 
             submission.SaveResult(result);
+
+            Console.WriteLine($"Judged submission: {id}");
         }
     }
 }
