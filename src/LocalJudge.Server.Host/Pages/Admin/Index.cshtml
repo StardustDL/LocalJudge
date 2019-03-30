@@ -1,0 +1,29 @@
+﻿@page
+@model LocalJudge.Server.Host.Pages.Admin.IndexModel
+@{
+    ViewData["Title"] = "Admin";
+    ViewData["ID"] = "Admin";
+}
+
+<ul class="breadcrumb">
+    <li class="breadcrumb-item"><a asp-page="/Index">LocalJudge</a></li>
+    <li class="breadcrumb-item active">Admin</li>
+</ul>
+
+<p>Connected to @Model.APIWorkspace</p>
+
+<div class="row" style="margin-left:0px">
+    <form method="post">
+        <input type="text" asp-for="Command" style="display:none" value="init" />
+        <button type="submit" class="btn btn-outline-primary">
+            Initialize
+        </button>
+    </form>
+    <form method="post" style="margin-left:10px">
+        <input type="text" asp-for="Command" style="display:none" value="seed" />
+        <button type="submit" class="btn btn-outline-secondary">
+            Initialize with seed data
+        </button>
+    </form>
+</div>
+

@@ -55,6 +55,12 @@
                                 Submissions
                             </a>
                         </li>
+                        <li class="nav-item @((string)ViewData["ID"] == "Admin" ? "active":"")">
+                            <a class="nav-link" asp-area="" asp-page="/Admin/Index">
+                                <i class="fa fa-cogs" style="margin-right:3px"></i>
+                                Admin
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
