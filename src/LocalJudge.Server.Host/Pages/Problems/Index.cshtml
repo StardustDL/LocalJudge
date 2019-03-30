@@ -22,22 +22,34 @@
             <th style="width:10%">
                 @Html.DisplayNameFor(model => model.Problems[0].Source)
             </th>
+            <th style="width:10%">Operations</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model.Problems)
         {
-            <tr>
-                <td>
-                    <a asp-page="./View" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Name)</a>
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Author)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Source)
-                </td>
-            </tr>
+        <tr>
+            <td>
+                <a asp-page="./View" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Name)</a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Author)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Source)
+            </td>
+            <td>
+                <div class="row" style="margin-left:0px">
+                    <form method="post" style="margin-left:0px">
+                        <input type="text" asp-for="PostData.Type" style="display:none" value="@ProblemItemOperationType.Delete" />
+                        <input type="text" asp-for="PostData.ID" style="display:none" value="@item.Id" />
+                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            </td>
+        </tr>
         }
     </tbody>
 </table>

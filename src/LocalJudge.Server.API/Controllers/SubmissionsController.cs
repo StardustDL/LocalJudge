@@ -63,6 +63,7 @@ namespace LocalJudge.Server.API.Controllers
             if (Program.Workspace.Problems.Has(data.ProblemID) == false)
                 return NotFound();
 
+            if (data.Code == null) data.Code = String.Empty;
             var meta = new SubmissionMetadata
             {
                 ProblemID = data.ProblemID,

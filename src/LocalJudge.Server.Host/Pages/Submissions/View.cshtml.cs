@@ -22,6 +22,9 @@ namespace LocalJudge.Server.Host.Pages.Submissions
 
         public string Code { get; set; }
 
+        [BindProperty]
+        public SubmissionItemOperation PostData { get; set; }
+
         public async Task<IActionResult> OnGetAsync(string id)
         {
             if (string.IsNullOrEmpty(id))
@@ -43,22 +46,27 @@ namespace LocalJudge.Server.Host.Pages.Submissions
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(SubmissionItemOperation oper)
+        public async Task<IActionResult> OnPostAsync()
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
             var httpclient = clientFactory.CreateClient();
             var client = new SubmissionsClient(httpclient);
             try
             {
-                switch (oper.Type)
+                switch (PostData.Type)
                 {
                     case SubmissionItemOperationType.Rejudge:
-                        await client.RejudgeAsync(oper.ID);
-                        return Redirect($"/Submissions/View?id={oper.ID}");
+                        await client.RejudgeAsync(PostData.ID);
+                        return Redirect($"/Submissions/View?id={PostData.ID}");
                     case SubmissionItemOperationType.Delete:
-                        await client.DeleteAsync(oper.ID);
+                        await client.DeleteAsync(PostData.ID);
                         return Redirect($"/Submissions/Index");
                 }
-                return NotFound();                
+                return BadRequest();                
             }
             catch
             {

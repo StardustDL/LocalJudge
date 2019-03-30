@@ -45,22 +45,6 @@ namespace LocalJudge.Server.API.Controllers
                 return NotFound();
         }
 
-        [HttpPut("{id}/description")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesDefaultResponseType]
-        public ActionResult SetDescription(string id,ProblemDescription description)
-        {
-            var res = Program.Workspace.Problems.Get(id);
-            if (res != null)
-            {
-                description.Extract(res.Description);
-                return Ok();
-            }
-            else
-                return NotFound();
-        }
-
         [HttpGet("{id}/samples")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

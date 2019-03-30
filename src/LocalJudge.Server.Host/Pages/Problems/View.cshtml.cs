@@ -37,7 +37,7 @@ namespace LocalJudge.Server.Host.Pages.Problems
         }
 
         [BindProperty]
-        public SubmitData SubmitData { get; set; }
+        public ProblemItemOperation PostData { get; set; }
 
         public ProblemMetadata Metadata { get; set; }
 
@@ -70,7 +70,15 @@ namespace LocalJudge.Server.Host.Pages.Problems
                 return NotFound();
             }
 
-            Samples = await client.GetSamplesAsync(id);
+            try
+            {
+                Samples = await client.GetSamplesAsync(id);
+            }
+            catch
+            {
+                Samples = Array.Empty<TestCaseMetadata>();
+            }
+
             List<TestCaseData> samples = new List<TestCaseData>();
             foreach (var s in Samples)
             {
@@ -84,13 +92,14 @@ namespace LocalJudge.Server.Host.Pages.Problems
             }
             SampleData = samples;
 
-            Tests = await client.GetTestsAsync(id);
-
-            SubmitData = new SubmitData
+            try
             {
-                Code = "",
-                ProblemID = Metadata.Id,
-            };
+                Tests = await client.GetTestsAsync(id);
+            }
+            catch
+            {
+                Tests = Array.Empty<TestCaseMetadata>();
+            }
 
             {
                 StringBuilder res = new StringBuilder();
@@ -133,7 +142,6 @@ namespace LocalJudge.Server.Host.Pages.Problems
                                 break;
                         }
                     }
-                    SubmitData.Language = langs[0];
                 }
                 LanguageConfig = res.ToString();
             }
@@ -143,22 +151,42 @@ namespace LocalJudge.Server.Host.Pages.Problems
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
-            {
-                return NotFound();
-            }
-
             var httpclient = clientFactory.CreateClient();
-            var client = new SubmissionsClient(httpclient);
             try
             {
-                var meta = await client.SubmitAsync(SubmitData);
-                return Redirect($"/Submissions/View?id={meta.Id}");
+                switch (PostData.Type)
+                {
+                    case ProblemItemOperationType.Submit:
+                        {
+                            var client = new SubmissionsClient(httpclient);
+                            if (!ModelState.IsValid)
+                            {
+                                return BadRequest();
+                            }
+                            try
+                            {
+                                var meta = await client.SubmitAsync(PostData.SubmitData);
+                                return Redirect($"/Submissions/View?id={meta.Id}");
+                            }
+                            catch
+                            {
+                                return NotFound();
+                            }
+                        }
+                    case ProblemItemOperationType.Delete:
+                        {
+                            var client = new ProblemsClient(httpclient);
+                            await client.DeleteAsync(PostData.ID);
+                            return Redirect($"/Problems/Index");
+                        }
+                }
+                return BadRequest();
             }
             catch
             {
                 return NotFound();
             }
         }
+
     }
 }

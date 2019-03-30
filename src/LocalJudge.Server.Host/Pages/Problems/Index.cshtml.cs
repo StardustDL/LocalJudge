@@ -20,11 +20,38 @@ namespace LocalJudge.Server.Host.Pages.Problems
 
         public IList<ProblemMetadata> Problems { get; set; }
 
+        [BindProperty]
+        public ProblemItemOperation PostData { get; set; }
+
         public async Task OnGetAsync()
         {
             var httpclient = clientFactory.CreateClient();
             var client = new ProblemsClient(httpclient);
             Problems = await client.GetAllAsync();
+        }
+
+        public async Task<IActionResult> OnPostAsync()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            var httpclient = clientFactory.CreateClient();
+            var client = new ProblemsClient(httpclient);
+            try
+            {
+                switch (PostData.Type)
+                {
+                    case ProblemItemOperationType.Delete:
+                        await client.DeleteAsync(PostData.ID);
+                        return Redirect($"/Problems/Index");
+                }
+                return BadRequest();
+            }
+            catch
+            {
+                return NotFound();
+            }
         }
     }
 }

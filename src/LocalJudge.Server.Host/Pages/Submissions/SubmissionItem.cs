@@ -70,7 +70,7 @@ namespace LocalJudge.Server.Host.Pages.Submissions
                 res.Problem = new ProblemMetadata
                 {
                     Id = res.Metadata.ProblemID,
-                    Name = $"ID: {res.Metadata.ProblemID}"
+                    Name = $"Not found: {res.Metadata.ProblemID}"
                 };
             }
             return res;

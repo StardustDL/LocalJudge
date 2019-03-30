@@ -108,6 +108,18 @@
             <dd>@Html.DisplayFor(model => model.Metadata.Author)</dd>
             <dt style="float:left; min-width:30px"><i class="fa fa-map-marker"></i></dt>
             <dd>@Html.DisplayFor(model => model.Metadata.Source)</dd>
+
+            <dd>
+                <div class="row" style="margin-left:0px">
+                    <form method="post" style="margin-left:0px">
+                        <input type="text" asp-for="PostData.Type" style="display:none" value="@ProblemItemOperationType.Delete" />
+                        <input type="text" asp-for="PostData.ID" style="display:none" value="@Model.Metadata.Id" />
+                        <button type="submit" class="btn btn-outline-danger">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            </dd>
         </dl>
         <br />
         <div class="card border-0">
@@ -207,9 +219,11 @@
     </select>
 
     <form method="post" style="margin-left:20px;">
-        <input type="text" asp-for="SubmitData.ProblemID" style="display:none" />
-        <input type="text" asp-for="SubmitData.Language" id="formLang" style="display:none" />
-        <textarea type="text" asp-for="SubmitData.Code" id="formCode" style="display:none"></textarea>
+        <input type="text" asp-for="PostData.Type" style="display:none" value="@ProblemItemOperationType.Submit" />
+        <input type="text" asp-for="PostData.ID" style="display:none" value="@Model.Metadata.Id" />
+        <input type="text" asp-for="PostData.SubmitData.ProblemID" style="display:none" value="@Model.Metadata.Id" />
+        <input type="text" asp-for="PostData.SubmitData.Language" id="formLang" style="display:none" />
+        <textarea type="text" asp-for="PostData.SubmitData.Code" id="formCode" style="display:none"></textarea>
         <input type="submit" value="Submit" class="btn btn-primary" style="width:100px" />
     </form>
 </div>
@@ -273,6 +287,7 @@
                 }
                 $("#selCodeLanguage").selectedIndex = startModeIndex;
                 loadSample(MODES[startModeIndex]);
+                document.getElementById('formLang').value = MODES[startModeIndex].lang;
                 $("#selCodeLanguage").change(function () {
                     loadSample(MODES[this.selectedIndex]);
                     document.getElementById('formLang').value = MODES[this.selectedIndex].lang;

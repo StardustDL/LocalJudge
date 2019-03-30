@@ -72,15 +72,15 @@
             <td>
                 <div class="row" style="margin-left:0px">
                     <form method="post">
-                        <input type="text" name="type" style="display:none" value="rejudge" />
-                        <input type="text" name="id" style="display:none" value="@item.Metadata.Id" />
+                        <input type="text" asp-for="PostData.Type" style="display:none" value="@SubmissionItemOperationType.Rejudge"/>
+                        <input type="text" asp-for="PostData.ID" style="display:none" value="@item.Metadata.Id" />
                         <button type="submit" class="btn btn-sm btn-outline-secondary">
                             <i class="fa fa-redo"></i>
                         </button>
                     </form>
                     <form method="post" style="margin-left:10px">
-                        <input type="text" name="type" style="display:none" value="delete" />
-                        <input type="text" name="id" style="display:none" value="@item.Metadata.Id" />
+                        <input type="text" asp-for="PostData.Type" style="display:none" value="@SubmissionItemOperationType.Delete"/>
+                        <input type="text" asp-for="PostData.ID" style="display:none" value="@item.Metadata.Id" />
                         <button type="submit" class="btn btn-sm btn-outline-danger">
                             <i class="fa fa-trash"></i>
                         </button>
