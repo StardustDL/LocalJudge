@@ -1,6 +1,7 @@
 ﻿using LocalJudge.Server.Host.APIClients;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Razor.TagHelpers;
+using Microsoft.Extensions.Localization;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,6 +11,13 @@ namespace LocalJudge.Server.Host.TagHelpers
     [HtmlTargetElement("judge-state")]
     public class JudgeStateTagHelper : TagHelper
     {
+        private readonly IStringLocalizer<JudgeStateTagHelper> _localizer;
+
+        public JudgeStateTagHelper(IStringLocalizer<JudgeStateTagHelper> localizer)
+        {
+            _localizer = localizer;
+        }
+
         static string GetStateColor(JudgeState state)
         {
             switch (state)
@@ -77,35 +85,35 @@ namespace LocalJudge.Server.Host.TagHelpers
             output.Content.AppendHtml(icon);
 
             var text = new TagBuilder("span");
-            text.Attributes["style"] = "margin-left: 5px";
+            text.Attributes["style"] = "margin-left: 10px";
             switch (Value)
             {
                 case JudgeState.Accepted:
-                    text.InnerHtml.Append("Accepted");
+                    text.InnerHtml.Append(_localizer["Accepted"]);
                     break;
                 case JudgeState.WrongAnswer:
-                    text.InnerHtml.Append("Wrong Answer");
+                    text.InnerHtml.Append(_localizer["Wrong Answer"]);
                     break;
                 case JudgeState.TimeLimitExceeded:
-                    text.InnerHtml.Append("Time Limit Exceeded");
+                    text.InnerHtml.Append(_localizer["Time Limit Exceeded"]);
                     break;
                 case JudgeState.MemoryLimitExceeded:
-                    text.InnerHtml.Append("Memory Limit Exceeded");
+                    text.InnerHtml.Append(_localizer["Memory Limit Exceeded"]);
                     break;
                 case JudgeState.Pending:
-                    text.InnerHtml.Append("Pending");
+                    text.InnerHtml.Append(_localizer["Pending"]);
                     break;
                 case JudgeState.Judging:
-                    text.InnerHtml.Append("Judging");
+                    text.InnerHtml.Append(_localizer["Judging"]);
                     break;
                 case JudgeState.CompileError:
-                    text.InnerHtml.Append("Compile Error");
+                    text.InnerHtml.Append(_localizer["Compile Error"]);
                     break;
                 case JudgeState.RuntimeError:
-                    text.InnerHtml.Append("Runtime Error");
+                    text.InnerHtml.Append(_localizer["Runtime Error"]);
                     break;
                 case JudgeState.SystemError:
-                    text.InnerHtml.Append("System Error");
+                    text.InnerHtml.Append(_localizer["System Error"]);
                     break;
             }
             output.Content.AppendHtml(text);

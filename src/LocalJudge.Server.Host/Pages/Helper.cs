@@ -37,6 +37,8 @@ namespace LocalJudge.Server.Host.Pages
                     return "python";
                 case ProgrammingLanguage.CSharp:
                     return "csharp";
+                case ProgrammingLanguage.Rust:
+                    return "rust";
             }
             return "plaintext";
         }

@@ -14,6 +14,7 @@ namespace LocalJudge.Core.Helpers
             [ProgrammingLanguage.CSharp] = "cs",
             [ProgrammingLanguage.Java] = "java",
             [ProgrammingLanguage.Python] = "py",
+            [ProgrammingLanguage.Rust] = "rs",
         };
     }
 }

@@ -21,6 +21,8 @@ namespace LocalJudge.Server.Host.TagHelpers
                     return "#b07219";
                 case ProgrammingLanguage.Python:
                     return "#3572A5";
+                case ProgrammingLanguage.Rust:
+                    return "#dea584";
             }
             return "white";
         }
@@ -54,6 +56,9 @@ namespace LocalJudge.Server.Host.TagHelpers
                     break;
                 case ProgrammingLanguage.CSharp:
                     name.InnerHtml.Append("C#");
+                    break;
+                case ProgrammingLanguage.Rust:
+                    name.InnerHtml.Append("Rust");
                     break;
             }
             output.Content.AppendHtml(name);

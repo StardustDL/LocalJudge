@@ -1,7 +1,9 @@
 ﻿@page
 @model LocalJudge.Server.Host.Pages.Submissions.ViewModel
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
 @{
-    ViewData["Title"] = "View";
+    ViewData["Title"] = SharedLocalizer["View"];
     ViewData["ID"] = "Submissions";
 }
 
@@ -11,7 +13,7 @@
 
 <ul class="breadcrumb">
     <li class="breadcrumb-item"><a asp-page="/Index">LocalJudge</a></li>
-    <li class="breadcrumb-item"><a asp-page="/Submissions/Index">Submissions</a></li>
+    <li class="breadcrumb-item"><a asp-page="/Submissions/Index">@SharedLocalizer["Submissions"]</a></li>
     <li class="breadcrumb-item active">@Html.DisplayFor(model => model.Submission.Metadata.Id)</li>
 </ul>
 
@@ -20,8 +22,8 @@
         <h1 class="display-4">
             <judge-state value="@Model.Submission.Result.State"></judge-state>
         </h1>
-        <br />
-        <h2>Code</h2>
+        <br/>
+        <h2>@SharedLocalizer["Code"]</h2>
 
         <pre id="rawCode" style="display:none">@Html.DisplayFor(model=>model.Code)</pre>
         <div id="code" style="min-height:600px"></div>
@@ -30,7 +32,7 @@
 
         @if (Model.Submission.Result.State != APIClients.JudgeState.Pending)
         {
-            <h3>Issues</h3>
+            <h3>@SharedLocalizer["Issues"]</h3>
             <ul>
                 @foreach (var item in Model.Submission.Result.Issues)
                 {
@@ -46,7 +48,7 @@
                     {
                         <li>
                             <span class="badge badge-@Helper.GetIssueClass(item.Level)">@item.Level</span>
-                            Sample @i: @item.Content
+                            @SharedLocalizer["Sample"] @i @item.Content
                         </li>
                     }
                 }
@@ -57,7 +59,7 @@
                     {
                         <li>
                             <span class="badge badge-@Helper.GetIssueClass(item.Level)">@item.Level</span>
-                            Test @i: @item.Content
+                            @SharedLocalizer["Test"] @i @item.Content
                         </li>
                     }
                 }
@@ -66,11 +68,11 @@
     </div>
     <div class="col-4">
         <dl>
-            <dt style="float:left; min-width:30px"><i class="fa fa-check-square"></i></dt>
-            <dd>@Model.Submission.AcceptedCase / @Model.Submission.TotalCase</dd>
-
             <dt style="float:left; min-width:30px"><i class="fa fa-question"></i></dt>
             <dd><a asp-page="/Problems/View" asp-route-id="@Model.Submission.Problem.Id">@Html.DisplayFor(model => model.Submission.Problem.Name)</a></dd>
+
+            <dt style="float:left; min-width:30px"><i class="fa fa-check-square"></i></dt>
+            <dd>@Model.Submission.AcceptedCase / @Model.Submission.TotalCase</dd>
 
             <dt style="float:left; min-width:30px"><i class="fa fa-clock"></i></dt>
             <dd><timespan-display value="@Model.Submission.TotalTime"></timespan-display></dd>
@@ -111,7 +113,7 @@
         {
             @if (Model.Submission.Result.Samples?.Count > 0)
             {
-                <h2>Sample Cases</h2>
+                <h2>@SharedLocalizer["Sample Cases"]</h2>
                 <table class="table table-sm table-striped">
                     <tbody>
                         @foreach (var item in Model.Submission.Result.Samples)
@@ -137,7 +139,7 @@
             }
             @if (Model.Submission.Result.Tests?.Count > 0)
             {
-                <h2>Test Cases</h2>
+                <h2>@SharedLocalizer["Test Cases"]</h2>
                 <table class="table table-sm table-striped">
                     <tbody>
                         @foreach (var item in Model.Submission.Result.Tests)

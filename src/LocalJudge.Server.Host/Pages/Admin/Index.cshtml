@@ -1,29 +1,53 @@
 ﻿@page
 @model LocalJudge.Server.Host.Pages.Admin.IndexModel
+
+@using Microsoft.AspNetCore.Builder
+@using Microsoft.Extensions.Options
+
+@inject IOptions<RequestLocalizationOptions> LocOptions
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+
 @{
-    ViewData["Title"] = "Admin";
+    ViewData["Title"] = SharedLocalizer["Admin"];
     ViewData["ID"] = "Admin";
+
+    var cultureItems = LocOptions.Value.SupportedUICultures
+        .Select(c => new SelectListItem { Value = c.Name, Text = c.DisplayName })
+        .ToList();
 }
 
 <ul class="breadcrumb">
     <li class="breadcrumb-item"><a asp-page="/Index">LocalJudge</a></li>
-    <li class="breadcrumb-item active">Admin</li>
+    <li class="breadcrumb-item active">@ViewData["Title"]</li>
 </ul>
 
 <p>Connected to @Model.APIWorkspace</p>
 
 <div class="row" style="margin-left:0px">
     <form method="post">
-        <input type="text" asp-for="Command" style="display:none" value="init" />
+        <input type="text" asp-for="PostData.Type" style="display:none" value="@SettingsItemType.Command" />
+        <input type="text" asp-for="PostData.Command" style="display:none" value="init" />
         <button type="submit" class="btn btn-outline-primary">
             Initialize
         </button>
     </form>
     <form method="post" style="margin-left:10px">
-        <input type="text" asp-for="Command" style="display:none" value="seed" />
+        <input type="text" asp-for="PostData.Type" style="display:none" value="@SettingsItemType.Command" />
+        <input type="text" asp-for="PostData.Command" style="display:none" value="seed" />
         <button type="submit" class="btn btn-outline-secondary">
             Initialize with seed data
         </button>
     </form>
 </div>
+
+<div class="row" style="margin-top:20px; margin-left:0px">
+    <form method="post">
+        <label style="margin-right:10px; font-size:large;">@SharedLocalizer["Language"]</label>
+        <input type="text" asp-for="PostData.Type" style="display:none;" value="@SettingsItemType.Language" />
+        <select asp-for="PostData.Language" asp-items="cultureItems" style="font-size:large;"></select>
+        <button type="submit" class="btn btn-primary" style="margin-left:20px;">@SharedLocalizer["Apply"]</button>
+    </form>
+</div>
+
 

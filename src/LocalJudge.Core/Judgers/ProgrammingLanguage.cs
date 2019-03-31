@@ -6,6 +6,7 @@
         Cpp,
         Java,
         CSharp,
-        Python
+        Python,
+        Rust
     }
 }

@@ -31,15 +31,11 @@ namespace LocalJudge.Server.API.Controllers
         {
             switch (lang)
             {
-                case ProgrammingLanguage.C:
-                case ProgrammingLanguage.Cpp:
-                case ProgrammingLanguage.CSharp:
-                case ProgrammingLanguage.Python:
-                    return $"code.{ProgrammingLanguageHelper.Extends[lang]}";
                 case ProgrammingLanguage.Java:
                     return $"Main.java";
+                default:
+                    return $"code.{ProgrammingLanguageHelper.Extends[lang]}";
             }
-            return "code.txt";
         }
 
         void SendJudgeRequest(string id)

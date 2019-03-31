@@ -1,7 +1,9 @@
 ﻿@page
 @model LocalJudge.Server.Host.Pages.Problems.ViewModel
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
 @{
-    ViewData["Title"] = "View";
+    ViewData["Title"] = Model.Metadata.Name;
     ViewData["ID"] = "Problems";
 }
 
@@ -13,7 +15,7 @@
 
 <ul class="breadcrumb">
     <li class="breadcrumb-item"><a asp-page="/Index">LocalJudge</a></li>
-    <li class="breadcrumb-item"><a asp-page="/Problems/Index">Problems</a></li>
+    <li class="breadcrumb-item"><a asp-page="/Problems/Index">@SharedLocalizer["Problems"]</a></li>
     <li class="breadcrumb-item active">@Html.DisplayFor(model => model.Metadata.Id)</li>
 </ul>
 
@@ -30,7 +32,7 @@
             <div class="card-header border-0">
                 <h2>
                     <a class="card-link" data-toggle="collapse" href="#divDescription">
-                        Description
+                        @SharedLocalizer["Description"]
                     </a>
                 </h2>
             </div>
@@ -42,7 +44,7 @@
             <div class="card-header border-0">
                 <h2>
                     <a class="card-link" data-toggle="collapse" href="#divInput">
-                        Input
+                        @SharedLocalizer["Input"]
                     </a>
                 </h2>
             </div>
@@ -54,7 +56,7 @@
             <div class="card-header border-0">
                 <h2>
                     <a class="card-link" data-toggle="collapse" href="#divOutput">
-                        Output
+                        @SharedLocalizer["Output"]
                     </a>
                 </h2>
             </div>
@@ -66,7 +68,7 @@
             <div class="card-header border-0">
                 <h2>
                     <a class="card-link" data-toggle="collapse" href="#divSamples">
-                        Samples
+                        @SharedLocalizer["Samples"]
                     </a>
                 </h2>
             </div>
@@ -74,14 +76,14 @@
                 @for (int i = 0; i < Model.SampleData.Count; i++)
                 {
                 var item = Model.SampleData[i];
-                <h3>Sample @i</h3>
+                <h3>@SharedLocalizer["Sample"] @i</h3>
                 <div class="row">
                     <div class="col">
-                        <h4>Input</h4>
+                        <h4>@SharedLocalizer["Input"]</h4>
                         <pre>@Html.DisplayFor(model => item.Input)</pre>
                     </div>
                     <div class="col">
-                        <h4>Output</h4>
+                        <h4>@SharedLocalizer["Output"]</h4>
                         <pre>@Html.DisplayFor(model => item.Output)</pre>
                     </div>
                 </div>
@@ -93,7 +95,7 @@
             <div class="card-header border-0">
                 <h2>
                     <a class="card-link" data-toggle="collapse" href="#divHint">
-                        Hint
+                        @SharedLocalizer["Hint"]
                     </a>
                 </h2>
             </div>
@@ -125,7 +127,7 @@
         <div class="card border-0">
             <div class="card-header border-0">
                 <a class="card-link" data-toggle="collapse" href="#divSampleCases">
-                    Sample Cases
+                    @SharedLocalizer["Sample Cases"]
                 </a>
             </div>
             <div id="divSampleCases" class="collapse show">
@@ -133,13 +135,13 @@
                     <thead>
                         <tr>
                             <th>
-                                @Html.DisplayNameFor(model => model.Samples[0].Id)
+                                @SharedLocalizer[Html.DisplayNameFor(model => model.Samples[0].Id)]
                             </th>
                             <th>
-                                @Html.DisplayNameFor(model => model.Samples[0].TimeLimit)
+                                @SharedLocalizer[Html.DisplayNameFor(model => model.Samples[0].TimeLimit)]
                             </th>
                             <th>
-                                @Html.DisplayNameFor(model => model.Samples[0].MemoryLimit)
+                                @SharedLocalizer[Html.DisplayNameFor(model => model.Samples[0].MemoryLimit)]
                             </th>
                         </tr>
                     </thead>
@@ -165,7 +167,7 @@
         <div class="card border-0" style="margin-top:10px">
             <div class="card-header border-0">
                 <a class="card-link" data-toggle="collapse" href="#divTestCases">
-                    Test Cases
+                    @SharedLocalizer["Test Cases"]
                 </a>
             </div>
             <div id="divTestCases" class="collapse">
@@ -173,13 +175,13 @@
                     <thead>
                         <tr>
                             <th>
-                                @Html.DisplayNameFor(model => model.Tests[0].Id)
+                                @SharedLocalizer[Html.DisplayNameFor(model => model.Tests[0].Id)]
                             </th>
                             <th>
-                                @Html.DisplayNameFor(model => model.Tests[0].TimeLimit)
+                                @SharedLocalizer[Html.DisplayNameFor(model => model.Tests[0].TimeLimit)]
                             </th>
                             <th>
-                                @Html.DisplayNameFor(model => model.Tests[0].MemoryLimit)
+                                @SharedLocalizer[Html.DisplayNameFor(model => model.Tests[0].MemoryLimit)]
                             </th>
                         </tr>
                     </thead>
@@ -209,13 +211,13 @@
 {
 
 <div class="row" style="margin-bottom:10px; margin-top:20px">
-    <label style="margin-right:10px; position:relative; top:6px; font-size:large">Language</label>
+    <label style="margin-right:10px; position:relative; top:6px; font-size:large">@SharedLocalizer["Language"]</label>
     <select id="selCodeLanguage" style="font-size:large; width:200px"></select>
-    <label style="margin-left:20px; margin-right:10px; position:relative; top:6px; font-size:large">Theme</label>
+    <label style="margin-left:20px; margin-right:10px; position:relative; top:6px; font-size:large">@Localizer["Theme"]</label>
     <select id="selCodeTheme" style="font-size:large; width:200px">
-        <option>Light</option>
-        <option>Dark</option>
-        <option>High Contrast Dark</option>
+        <option>@Localizer["Light"]</option>
+        <option>@Localizer["Dark"]</option>
+        <option>@Localizer["High Contrast Dark"]</option>
     </select>
 
     <form method="post" style="margin-left:20px;">
@@ -224,7 +226,7 @@
         <input type="text" asp-for="PostData.SubmitData.ProblemID" style="display:none" value="@Model.Metadata.Id" />
         <input type="text" asp-for="PostData.SubmitData.Language" id="formLang" style="display:none" />
         <textarea type="text" asp-for="PostData.SubmitData.Code" id="formCode" style="display:none"></textarea>
-        <input type="submit" value="Submit" class="btn btn-primary" style="width:100px" />
+        <input type="submit" value="@Localizer["Submit"]" class="btn btn-primary" style="width:100px" />
     </form>
 </div>
 

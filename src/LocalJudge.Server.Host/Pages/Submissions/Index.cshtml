@@ -1,43 +1,45 @@
 ﻿@page
 @model LocalJudge.Server.Host.Pages.Submissions.IndexModel
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
 @{
-    ViewData["Title"] = "Submissions";
+    ViewData["Title"] = SharedLocalizer["Submissions"];
     ViewData["ID"] = "Submissions";
 }
 
 <ul class="breadcrumb">
     <li class="breadcrumb-item"><a asp-page="/Index">LocalJudge</a></li>
-    <li class="breadcrumb-item active">Submissions</li>
+    <li class="breadcrumb-item active">@ViewData["Title"]</li>
 </ul>
 
 <table class="table table-hover">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Submissions[0].Metadata.Id)
+                @SharedLocalizer[Html.DisplayNameFor(model => model.Submissions[0].Metadata.Id)]
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Submissions[0].Problem)
+                @SharedLocalizer[Html.DisplayNameFor(model => model.Submissions[0].Problem)]
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Submissions[0].Result.State)
+                @SharedLocalizer[Html.DisplayNameFor(model => model.Submissions[0].Result.State)]
             </th>
             <th>
-                Accepted
+                @Localizer["Accepted"]
             </th>
             <th>
-                Time
+                @Localizer["Time"]
             </th>
             <th>
-                Memory
+                @Localizer["Memory"]
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Submissions[0].Metadata.Language)
+                @SharedLocalizer[Html.DisplayNameFor(model => model.Submissions[0].Metadata.Language)]
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Submissions[0].Metadata.Time)
+                @Localizer["Submission Time"]
             </th>
-            <th>Operations</th>
+            <th>@SharedLocalizer["Operations"]</th>
         </tr>
     </thead>
     <tbody>

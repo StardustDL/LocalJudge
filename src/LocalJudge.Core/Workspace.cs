@@ -125,7 +125,26 @@ namespace LocalJudge.Core
                                 Judger.V_CodeFile
                             },
                         }
-                    }
+                    },
+                    [ProgrammingLanguage.Rust] = new LanguageConfig
+                    {
+                        CompileMemoryLimit = 1024 * 1024 * 1024,
+                        CompileTimeLimit = TimeSpan.FromSeconds(20),
+                        CompileCommand = new Command
+                        {
+                            Name = "rustc",
+                            Arguments = new string[]
+                            {
+                                Compiler.V_CodeFile,
+                                "-o",
+                                Compiler.V_Output
+                            }
+                        },
+                        RunCommand = new Command
+                        {
+                            Name = Judger.V_CompileOutput,
+                        }
+                    },
                 }
             };
             TextIO.WriteAllInUTF8(res.Profile, Newtonsoft.Json.JsonConvert.SerializeObject(config, Newtonsoft.Json.Formatting.Indented));

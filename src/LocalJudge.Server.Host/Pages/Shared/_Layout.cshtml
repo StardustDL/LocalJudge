@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -37,28 +40,28 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item @((string)ViewData["ID"] == "Index" ? "active":"")">
+                        <li class="nav-item @((string)ViewData["ID"] == "Home" ? "active":"")" style="margin-left:10px;">
                             <a class="nav-link" asp-area="" asp-page="/Index">
                                 <i class="fa fa-home" style="margin-right:3px"></i>
-                                Home
+                                @SharedLocalizer["Home"]
                             </a>
                         </li>
-                        <li class="nav-item @((string)ViewData["ID"] == "Problems" ? "active":"")">
+                        <li class="nav-item @((string)ViewData["ID"] == "Problems" ? "active":"")" style="margin-left:10px;">
                             <a class="nav-link" asp-area="" asp-page="/Problems/Index">
                                 <i class="fa fa-list" style="margin-right:3px"></i>
-                                Problems
+                                @SharedLocalizer["Problems"]
                             </a>
                         </li>
-                        <li class="nav-item @((string)ViewData["ID"] == "Submissions" ? "active":"")">
+                        <li class="nav-item @((string)ViewData["ID"] == "Submissions" ? "active":"")" style="margin-left:10px;">
                             <a class="nav-link" asp-area="" asp-page="/Submissions/Index">
                                 <i class="fa fa-tasks" style="margin-right:3px"></i>
-                                Submissions
+                                @SharedLocalizer["Submissions"]
                             </a>
                         </li>
-                        <li class="nav-item @((string)ViewData["ID"] == "Admin" ? "active":"")">
+                        <li class="nav-item @((string)ViewData["ID"] == "Admin" ? "active":"")" style="margin-left:10px;">
                             <a class="nav-link" asp-area="" asp-page="/Admin/Index">
                                 <i class="fa fa-cogs" style="margin-right:3px"></i>
-                                Admin
+                                @SharedLocalizer["Admin"]
                             </a>
                         </li>
                     </ul>

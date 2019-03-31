@@ -122,23 +122,30 @@ namespace LocalJudge.Server.Host.Pages.Problems
                     EnableCode = true;
                     foreach (var item in langs)
                     {
+                        var editorId = Helper.GetEditorLanguage(item);
+                        if (editorId == "plaintext") continue;
+
+                        res.Append("{editorID: \"" + editorId + "\", ");
                         switch (item)
                         {
                             // editorID for editor, lang for enum, show for selector in html
                             case ProgrammingLanguage.C:
-                                res.Append("{editorID: \"c\", lang: \"C\", show: \"C\"},");
+                                res.Append("lang: \"C\", show: \"C\"},");
                                 break;
                             case ProgrammingLanguage.Cpp:
-                                res.Append("{editorID: \"cpp\", lang: \"Cpp\", show: \"C++\"},");
+                                res.Append("lang: \"Cpp\", show: \"C++\"},");
                                 break;
                             case ProgrammingLanguage.Java:
-                                res.Append("{editorID: \"java\", lang: \"Java\", show: \"Java\"},");
+                                res.Append("lang: \"Java\", show: \"Java\"},");
                                 break;
                             case ProgrammingLanguage.Python:
-                                res.Append("{editorID: \"python\", lang: \"Python\", show: \"Python\"},");
+                                res.Append("lang: \"Python\", show: \"Python\"},");
                                 break;
                             case ProgrammingLanguage.CSharp:
-                                res.Append("{editorID: \"csharp\", lang: \"CSharp\", show: \"C#\"},");
+                                res.Append("lang: \"CSharp\", show: \"C#\"},");
+                                break;
+                            case ProgrammingLanguage.Rust:
+                                res.Append("lang: \"Rust\", show: \"Rust\"},");
                                 break;
                         }
                     }
