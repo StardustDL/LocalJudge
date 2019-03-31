@@ -18,10 +18,10 @@ namespace LocalJudge.Server.Host.Pages.Submissions
             this.clientFactory = clientFactory;
         }
 
-        public IList<SubmissionItem> Submissions { get; set; }
+        public IList<SubmissionModel> Submissions { get; set; }
 
         [BindProperty]
-        public SubmissionItemOperation PostData { get; set; }
+        public SubmissionPostModel PostData { get; set; }
 
         public async Task OnGetAsync()
         {
@@ -29,15 +29,15 @@ namespace LocalJudge.Server.Host.Pages.Submissions
             var client = new SubmissionsClient(httpclient);
             var ms = (await client.GetAllAsync()).ToList();
             ms.Sort((x, y) => y.Time.CompareTo(x.Time));
-            var ss = new List<SubmissionItem>();
+            var ss = new List<SubmissionModel>();
             foreach (var v in ms)
             {
-                ss.Add(await SubmissionItem.Get(v, httpclient));
+                ss.Add(await SubmissionModel.Get(v, httpclient));
             }
             Submissions = ss;
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostDeleteAsync()
         {
             if (!ModelState.IsValid)
             {
@@ -47,16 +47,27 @@ namespace LocalJudge.Server.Host.Pages.Submissions
             var client = new SubmissionsClient(httpclient);
             try
             {
-                switch (PostData.Type)
-                {
-                    case SubmissionItemOperationType.Rejudge:
-                        await client.RejudgeAsync(PostData.ID);
-                        return Redirect($"/Submissions/Index");
-                    case SubmissionItemOperationType.Delete:
-                        await client.DeleteAsync(PostData.ID);
-                        return Redirect($"/Submissions/Index");
-                }
+                await client.DeleteAsync(PostData.ID);
+                return RedirectToPage();
+            }
+            catch
+            {
+                return NotFound();
+            }
+        }
+
+        public async Task<IActionResult> OnPostRejudgeAsync()
+        {
+            if (!ModelState.IsValid)
+            {
                 return BadRequest();
+            }
+            var httpclient = clientFactory.CreateClient();
+            var client = new SubmissionsClient(httpclient);
+            try
+            {
+                await client.RejudgeAsync(PostData.ID);
+                return RedirectToPage();
             }
             catch
             {

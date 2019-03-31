@@ -39,6 +39,8 @@ namespace LocalJudge.Server.Host.TagHelpers
                     return "#6cf";
                 case JudgeState.Judging:
                     return "blue";
+                case JudgeState.Compiling:
+                    return "#f1e05a";
             }
             return "black";
         }
@@ -70,6 +72,9 @@ namespace LocalJudge.Server.Host.TagHelpers
                     icon.Attributes["class"] = "fa fa-hourglass";
                     break;
                 case JudgeState.Judging:
+                    icon.Attributes["class"] = "fa fa-hourglass";
+                    break;
+                case JudgeState.Compiling:
                     icon.Attributes["class"] = "fa fa-hourglass";
                     break;
                 case JudgeState.CompileError:
@@ -105,6 +110,9 @@ namespace LocalJudge.Server.Host.TagHelpers
                     break;
                 case JudgeState.Judging:
                     text.InnerHtml.Append(_localizer["Judging"]);
+                    break;
+                case JudgeState.Compiling:
+                    text.InnerHtml.Append(_localizer["Compiling"]);
                     break;
                 case JudgeState.CompileError:
                     text.InnerHtml.Append(_localizer["Compile Error"]);

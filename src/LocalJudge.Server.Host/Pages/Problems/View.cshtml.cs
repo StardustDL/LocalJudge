@@ -37,7 +37,7 @@ namespace LocalJudge.Server.Host.Pages.Problems
         }
 
         [BindProperty]
-        public ProblemItemOperation PostData { get; set; }
+        public ProblemPostModel PostData { get; set; }
 
         public ProblemMetadata Metadata { get; set; }
 
@@ -156,38 +156,37 @@ namespace LocalJudge.Server.Host.Pages.Problems
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostDeleteAsync()
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
             var httpclient = clientFactory.CreateClient();
+            var client = new ProblemsClient(httpclient);
             try
             {
-                switch (PostData.Type)
-                {
-                    case ProblemItemOperationType.Submit:
-                        {
-                            var client = new SubmissionsClient(httpclient);
-                            if (!ModelState.IsValid)
-                            {
-                                return BadRequest();
-                            }
-                            try
-                            {
-                                var meta = await client.SubmitAsync(PostData.SubmitData);
-                                return Redirect($"/Submissions/View?id={meta.Id}");
-                            }
-                            catch
-                            {
-                                return NotFound();
-                            }
-                        }
-                    case ProblemItemOperationType.Delete:
-                        {
-                            var client = new ProblemsClient(httpclient);
-                            await client.DeleteAsync(PostData.ID);
-                            return Redirect($"/Problems/Index");
-                        }
-                }
+                await client.DeleteAsync(PostData.ID);
+                return RedirectToPage("/Problems/Index");
+            }
+            catch
+            {
+                return NotFound();
+            }
+        }
+
+        public async Task<IActionResult> OnPostSubmitAsync()
+        {
+            if (!ModelState.IsValid)
+            {
                 return BadRequest();
+            }
+            var httpclient = clientFactory.CreateClient();
+            var client = new SubmissionsClient(httpclient);
+            try
+            {
+                var meta = await client.SubmitAsync(PostData.SubmitData);
+                return RedirectToPage("/Submissions/View", new { id = meta.Id });
             }
             catch
             {

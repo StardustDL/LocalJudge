@@ -21,7 +21,7 @@ namespace LocalJudge.Server.Host.Pages.Problems
         public IList<ProblemMetadata> Problems { get; set; }
 
         [BindProperty]
-        public ProblemItemOperation PostData { get; set; }
+        public ProblemPostModel PostData { get; set; }
 
         public async Task OnGetAsync()
         {
@@ -30,23 +30,19 @@ namespace LocalJudge.Server.Host.Pages.Problems
             Problems = await client.GetAllAsync();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostDeleteAsync()
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
+
             var httpclient = clientFactory.CreateClient();
             var client = new ProblemsClient(httpclient);
             try
             {
-                switch (PostData.Type)
-                {
-                    case ProblemItemOperationType.Delete:
-                        await client.DeleteAsync(PostData.ID);
-                        return Redirect($"/Problems/Index");
-                }
-                return BadRequest();
+                await client.DeleteAsync(PostData.ID);
+                return RedirectToPage();
             }
             catch
             {

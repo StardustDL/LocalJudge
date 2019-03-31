@@ -8,7 +8,19 @@
 }
 
 @section header{
-    <link rel="stylesheet" data-name="vs/editor/editor.main" href="../lib/monaco-editor/min/vs/editor/editor.main.css">
+    @if (Model.Submission.Result.State == APIClients.JudgeState.Compiling || Model.Submission.Result.State == APIClients.JudgeState.Judging || Model.Submission.Result.State == APIClients.JudgeState.Pending)
+    {
+        <meta http-equiv="refresh" content="3"> // Auto refresh
+    }
+
+    <environment include="Development">
+        <link rel="stylesheet" data-name="vs/editor/editor.main" href="../lib/monaco-editor/min/vs/editor/editor.main.css">
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.16.2/min/vs/editor/editor.main.css"
+              asp-fallback-href="../lib/monaco-editor/min/vs/editor/editor.main.css"
+              crossorigin="anonymous" />
+    </environment>
 }
 
 <ul class="breadcrumb">
@@ -22,7 +34,7 @@
         <h1 class="display-4">
             <judge-state value="@Model.Submission.Result.State"></judge-state>
         </h1>
-        <br/>
+        <br />
         <h2>@SharedLocalizer["Code"]</h2>
 
         <pre id="rawCode" style="display:none">@Html.DisplayFor(model=>model.Code)</pre>
@@ -30,7 +42,7 @@
 
         <br />
 
-        @if (Model.Submission.Result.State != APIClients.JudgeState.Pending)
+        @if (Model.Submission.Result.HasIssue)
         {
             <h3>@SharedLocalizer["Issues"]</h3>
             <ul>
@@ -72,13 +84,22 @@
             <dd><a asp-page="/Problems/View" asp-route-id="@Model.Submission.Problem.Id">@Html.DisplayFor(model => model.Submission.Problem.Name)</a></dd>
 
             <dt style="float:left; min-width:30px"><i class="fa fa-check-square"></i></dt>
-            <dd>@Model.Submission.AcceptedCase / @Model.Submission.TotalCase</dd>
+            <dd>
+                @if (Model.Submission.Result.TotalCase.HasValue)
+                {
+                    <text> @Model.Submission.Result.AcceptedCase / @Model.Submission.Result.TotalCase </text>
+                }
+                else
+                {
+                    <text> N/A </text>
+                }
+            </dd>
 
             <dt style="float:left; min-width:30px"><i class="fa fa-clock"></i></dt>
-            <dd><timespan-display value="@Model.Submission.TotalTime"></timespan-display></dd>
+            <dd><timespan-display value="@Model.Submission.Result.TotalTime"></timespan-display></dd>
 
             <dt style="float:left; min-width:30px"><i class="fa fa-microchip"></i></dt>
-            <dd><memory-display value="@Model.Submission.MaximumMemory"></memory-display></dd>
+            <dd><memory-display value="@Model.Submission.Result.MaximumMemory"></memory-display></dd>
 
             <dt style="float:left; min-width:30px"><i class="fa fa-code"></i></dt>
             <dd>
@@ -92,16 +113,14 @@
             <dd>
                 <div class="row" style="margin-left:0px">
                     <form method="post">
-                        <input type="text" asp-for="PostData.Type" style="display:none" value="@SubmissionItemOperationType.Rejudge" />
                         <input type="text" asp-for="PostData.ID" style="display:none" value="@Model.Submission.Metadata.Id" />
-                        <button type="submit" class="btn btn-outline-secondary">
+                        <button type="submit" asp-page-handler="Rejudge" class="btn btn-outline-secondary">
                             <i class="fa fa-redo"></i>
                         </button>
                     </form>
                     <form method="post" style="margin-left:10px">
-                        <input type="text" asp-for="PostData.Type" style="display:none" value="@SubmissionItemOperationType.Delete" />
                         <input type="text" asp-for="PostData.ID" style="display:none" value="@Model.Submission.Metadata.Id" />
-                        <button type="submit" class="btn btn-outline-danger">
+                        <button type="submit" asp-page-handler="Delete" class="btn btn-outline-danger">
                             <i class="fa fa-trash"></i>
                         </button>
                     </form>
@@ -169,10 +188,22 @@
 </div>
 
 @section scripts{
-    <script>var require = { paths: { 'vs': '../lib/monaco-editor/min/vs' } }</script>
-    <script src="../lib/monaco-editor/min/vs/loader.js"></script>
-    <script src="../lib/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
-    <script src="../lib/monaco-editor/min/vs/editor/editor.main.js"></script>
+    <environment include="Development">
+        <script>var require = { paths: { 'vs': '../lib/monaco-editor/min/vs' } }</script>
+        <script src="../lib/monaco-editor/min/vs/loader.js"></script>
+        <script src="../lib/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
+        <script src="../lib/monaco-editor/min/vs/editor/editor.main.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script>var require = { paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.16.2/min/vs' } }</script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.16.2/min/vs/loader.js"
+                asp-fallback-src="../lib/monaco-editor/min/vs/loader.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.16.2/min/vs/editor/editor.main.nls.js"
+                asp-fallback-src="../lib/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.16.2/min/vs/editor/editor.main.js"
+                asp-fallback-src="../lib/monaco-editor/min/vs/editor/editor.main.js"></script>
+    </environment>
+
     <script>
         var editor = monaco.editor.create(document.getElementById("code"), {
             value: document.getElementById("rawCode").innerText,

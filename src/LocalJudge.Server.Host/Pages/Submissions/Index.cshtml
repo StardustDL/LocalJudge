@@ -56,13 +56,20 @@
                 <judge-state value="@item.Result.State"></judge-state>
             </td>
             <td>
-                @item.AcceptedCase / @item.TotalCase
+                @if (item.Result.TotalCase.HasValue)
+                {
+                    <text> @item.Result.AcceptedCase / @item.Result.TotalCase </text>
+                }
+                else
+                {
+                    <text> N/A </text>
+                }
             </td>
             <td>
-                <timespan-display value="@item.TotalTime"></timespan-display>
+                <timespan-display value="@item.Result.TotalTime"></timespan-display>
             </td>
             <td>
-                <memory-display value="@item.MaximumMemory"></memory-display>
+                <memory-display value="@item.Result.MaximumMemory"></memory-display>
             </td>
             <td>
                 <prolang-display value="@item.Metadata.Language"></prolang-display>
@@ -74,16 +81,14 @@
             <td>
                 <div class="row" style="margin-left:0px">
                     <form method="post">
-                        <input type="text" asp-for="PostData.Type" style="display:none" value="@SubmissionItemOperationType.Rejudge"/>
                         <input type="text" asp-for="PostData.ID" style="display:none" value="@item.Metadata.Id" />
-                        <button type="submit" class="btn btn-sm btn-outline-secondary">
+                        <button type="submit" asp-page-handler="Rejudge" class="btn btn-sm btn-outline-secondary">
                             <i class="fa fa-redo"></i>
                         </button>
                     </form>
                     <form method="post" style="margin-left:10px">
-                        <input type="text" asp-for="PostData.Type" style="display:none" value="@SubmissionItemOperationType.Delete"/>
                         <input type="text" asp-for="PostData.ID" style="display:none" value="@item.Metadata.Id" />
-                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                        <button type="submit" asp-page-handler="Delete" class="btn btn-sm btn-outline-danger">
                             <i class="fa fa-trash"></i>
                         </button>
                     </form>

@@ -1,5 +1,6 @@
 ﻿using LocalJudge.Core.Helpers;
 using LocalJudge.Core.Judgers;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -38,6 +39,11 @@ namespace LocalJudge.Core.Submissions
             TextIO.WriteAllInUTF8(Result, Newtonsoft.Json.JsonConvert.SerializeObject(result, Newtonsoft.Json.Formatting.Indented));
         }
 
+        public void ClearResult()
+        {
+            File.Delete(Result);
+        }
+
         public string GetCodePath()
         {
             var meta = GetMetadata();
@@ -45,6 +51,8 @@ namespace LocalJudge.Core.Submissions
         }
 
         public string GetCode() => TextIO.ReadAllInUTF8(GetCodePath());
+
+        public void SaveCode(string code) => TextIO.WriteAllInUTF8(GetCodePath(), code);
 
         public SubmissionPath(string root)
         {

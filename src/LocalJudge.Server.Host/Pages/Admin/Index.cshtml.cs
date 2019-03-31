@@ -31,11 +31,11 @@ namespace LocalJudge.Server.Host.Pages.Admin
         }
 
         [BindProperty]
-        public SettingsItem PostData { get; set; }
+        public SettingsPostModel PostData { get; set; }
 
         public async Task OnGetAsync()
         {
-            PostData = new SettingsItem
+            PostData = new SettingsPostModel
             {
                 Language = HttpContext.Features.Get<IRequestCultureFeature>().RequestCulture.UICulture.Name
             };
@@ -54,7 +54,7 @@ namespace LocalJudge.Server.Host.Pages.Admin
             }
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostInitializeAsync()
         {
             if (!ModelState.IsValid)
             {
@@ -63,33 +63,36 @@ namespace LocalJudge.Server.Host.Pages.Admin
 
             var httpclient = clientFactory.CreateClient();
             var client = new AdminClient(httpclient);
-            switch (PostData.Type)
-            {
-                case SettingsItemType.Command:
-                    {
-                        switch (PostData.Command)
-                        {
-                            case "init":
-                                await client.InitializeAsync();
-                                return Redirect("/Admin");
-                            case "seed":
-                                await client.SeedDataAsync();
-                                return Redirect("/Admin");
-                        }
-                        return BadRequest();
-                    }
-                case SettingsItemType.Language:
-                    {
-                        Response.Cookies.Append(
-                            CookieRequestCultureProvider.DefaultCookieName,
-                            CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(PostData.Language)),
-                            new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
-                        );
+            await client.InitializeAsync();
+            return RedirectToPage();
+        }
 
-                        return Redirect("/Admin");
-                    }
+        public async Task<IActionResult> OnPostSeedAsync()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
             }
-            return BadRequest();
+            var httpclient = clientFactory.CreateClient();
+            var client = new AdminClient(httpclient);
+            await client.SeedDataAsync();
+            return RedirectToPage();
+        }
+
+        public IActionResult OnPostChangeLanguage()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            Response.Cookies.Append(
+                CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(PostData.Language)),
+                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
+            );
+
+            return RedirectToPage();
         }
     }
 }

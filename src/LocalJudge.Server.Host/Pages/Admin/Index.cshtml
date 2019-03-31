@@ -26,16 +26,12 @@
 
 <div class="row" style="margin-left:0px">
     <form method="post">
-        <input type="text" asp-for="PostData.Type" style="display:none" value="@SettingsItemType.Command" />
-        <input type="text" asp-for="PostData.Command" style="display:none" value="init" />
-        <button type="submit" class="btn btn-outline-primary">
+        <button type="submit" asp-page-handler="Initialize" class="btn btn-outline-primary">
             Initialize
         </button>
     </form>
     <form method="post" style="margin-left:10px">
-        <input type="text" asp-for="PostData.Type" style="display:none" value="@SettingsItemType.Command" />
-        <input type="text" asp-for="PostData.Command" style="display:none" value="seed" />
-        <button type="submit" class="btn btn-outline-secondary">
+        <button type="submit" asp-page-handler="Seed" class="btn btn-outline-secondary">
             Initialize with seed data
         </button>
     </form>
@@ -44,9 +40,8 @@
 <div class="row" style="margin-top:20px; margin-left:0px">
     <form method="post">
         <label style="margin-right:10px; font-size:large;">@SharedLocalizer["Language"]</label>
-        <input type="text" asp-for="PostData.Type" style="display:none;" value="@SettingsItemType.Language" />
         <select asp-for="PostData.Language" asp-items="cultureItems" style="font-size:large;"></select>
-        <button type="submit" class="btn btn-primary" style="margin-left:20px;">@SharedLocalizer["Apply"]</button>
+        <button type="submit" asp-page-handler="ChangeLanguage" class="btn btn-primary" style="margin-left:20px;">@SharedLocalizer["Apply"]</button>
     </form>
 </div>
 

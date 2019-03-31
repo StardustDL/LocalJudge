@@ -2567,6 +2567,21 @@ namespace LocalJudge.Server.Host.APIClients
         [Newtonsoft.Json.JsonProperty("issues", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.IList<Issue> Issues { get; set; }
     
+        [Newtonsoft.Json.JsonProperty("hasIssue", Required = Newtonsoft.Json.Required.Always)]
+        public bool HasIssue { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("totalTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.TimeSpan? TotalTime { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("maximumMemory", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long? MaximumMemory { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("totalCase", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? TotalCase { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("acceptedCase", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? AcceptedCase { get; set; }
+    
         public string ToJson() 
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this);
@@ -2584,21 +2599,23 @@ namespace LocalJudge.Server.Host.APIClients
     {
         Pending = 0,
     
-        Judging = 1,
+        Compiling = 1,
     
-        Accepted = 2,
+        Judging = 2,
     
-        WrongAnswer = 3,
+        Accepted = 3,
     
-        TimeLimitExceeded = 4,
+        WrongAnswer = 4,
     
-        MemoryLimitExceeded = 5,
+        TimeLimitExceeded = 5,
     
-        RuntimeError = 6,
+        MemoryLimitExceeded = 6,
     
-        CompileError = 7,
+        RuntimeError = 7,
     
-        SystemError = 8,
+        CompileError = 8,
+    
+        SystemError = 9,
     
     }
     

@@ -43,9 +43,8 @@
                 <td>
                     <div class="row" style="margin-left:0px">
                         <form method="post" style="margin-left:0px">
-                            <input type="text" asp-for="PostData.Type" style="display:none" value="@ProblemItemOperationType.Delete" />
                             <input type="text" asp-for="PostData.ID" style="display:none" value="@item.Id" />
-                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                            <button type="submit" asp-page-handler="Delete" class="btn btn-sm btn-outline-danger">
                                 <i class="fa fa-trash"></i>
                             </button>
                         </form>

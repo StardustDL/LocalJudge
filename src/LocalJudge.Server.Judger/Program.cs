@@ -72,7 +72,7 @@ namespace LocalJudger.Server.Judger
 
             SubmissionResult result = new SubmissionResult
             {
-                State = JudgeState.Judging
+                State = JudgeState.Pending
             };
 
             var submission = Workspace.Submissions.Get(id);
@@ -89,6 +89,9 @@ namespace LocalJudger.Server.Judger
 
                     if (lang.CompileCommand != null)
                     {
+                        result.State = JudgeState.Compiling;
+                        submission.SaveResult(result);
+
                         string codePath = submission.GetCodePath();
                         string outputPath = Path.Join(submission.Root, Path.GetFileNameWithoutExtension(codePath));
 
@@ -103,10 +106,15 @@ namespace LocalJudger.Server.Judger
                             result.Issues.AddRange(compileResult.Issues);
                             result.State = JudgeState.CompileError;
                         }
+
+                        result.State = JudgeState.Pending;
                     }
 
-                    if (result.State == JudgeState.Judging)
+                    if (result.State == JudgeState.Pending)
                     {
+                        result.State = JudgeState.Judging;
+                        submission.SaveResult(result);
+
                         Dictionary<string, string> vars = new Dictionary<string, string>()
                         {
                             [LocalJudge.Core.Judgers.Judger.V_CodeFile] = submission.GetCodePath(),
@@ -134,19 +142,23 @@ namespace LocalJudger.Server.Judger
                                 res = LocalJudge.Core.Judgers.Judger.Judge(casemdata.ID, lang.RunCommand.Resolve(vars), submission.Root, casemdata.TimeLimit, casemdata.MemoryLimit, input, output, comparer);
                             result.Tests.Add(res);
                         }
+
+                        result.State = JudgeState.Pending;
                     }
                 }
                 else
                 {
                     result.Issues.Add(new Issue(IssueLevel.Error, "No support for language " + submdata.Language.ToString()));
+                    result.State = JudgeState.SystemError;
                 }
             }
             else
             {
                 result.Issues.Add(new Issue(IssueLevel.Error, "No problem " + submdata.ProblemID));
+                result.State = JudgeState.SystemError;
             }
 
-            if (result.State == JudgeState.Judging)
+            if (result.State == JudgeState.Pending)
             {
                 Dictionary<JudgeState, uint> cnt = new Dictionary<JudgeState, uint>
                 {
@@ -164,6 +176,32 @@ namespace LocalJudger.Server.Judger
                 else if (cnt[JudgeState.TimeLimitExceeded] > 0) result.State = JudgeState.TimeLimitExceeded;
                 else if (cnt[JudgeState.WrongAnswer] > 0) result.State = JudgeState.WrongAnswer;
                 else result.State = JudgeState.Accepted;
+
+                TimeSpan totalTime = TimeSpan.FromTicks(0);
+                long maxMemory = 0;
+                int totalCase = 0;
+                int acceptCase = 0;
+                if (result.Samples != null)
+                    foreach (var v in result.Samples)
+                    {
+                        totalTime += v.Time;
+                        maxMemory = Math.Max(maxMemory, v.Memory);
+                        totalCase++;
+                        if (v.State == JudgeState.Accepted) acceptCase++;
+                    }
+                if (result.Tests != null)
+                    foreach (var v in result.Tests)
+                    {
+                        totalTime += v.Time;
+                        maxMemory = Math.Max(maxMemory, v.Memory);
+                        totalCase++;
+                        if (v.State == JudgeState.Accepted) acceptCase++;
+                    }
+
+                result.TotalTime = totalTime;
+                result.MaximumMemory = maxMemory;
+                result.TotalCase = totalCase;
+                result.AcceptedCase = acceptCase;
             }
 
             submission.SaveResult(result);

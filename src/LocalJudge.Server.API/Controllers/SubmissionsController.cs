@@ -59,7 +59,7 @@ namespace LocalJudge.Server.API.Controllers
             if (Program.Workspace.Problems.Has(data.ProblemID) == false)
                 return NotFound();
 
-            if (data.Code == null) data.Code = String.Empty;
+            if (data.Code == null) data.Code = string.Empty;
             var meta = new SubmissionMetadata
             {
                 ProblemID = data.ProblemID,
@@ -72,7 +72,7 @@ namespace LocalJudge.Server.API.Controllers
             if (sub == null) return Forbid();
             try
             {
-                TextIO.WriteAllInUTF8(sub.GetCodePath(), data.Code);
+                sub.SaveCode(data.Code);
                 SendJudgeRequest(sub.ID);
                 return Created($"submissions/{meta.ID}", meta);
             }
@@ -112,7 +112,7 @@ namespace LocalJudge.Server.API.Controllers
             var res = Program.Workspace.Submissions.Get(id);
             if (res != null)
             {
-                System.IO.File.Delete(res.Result);
+                res.ClearResult();
                 try
                 {
                     SendJudgeRequest(res.ID);

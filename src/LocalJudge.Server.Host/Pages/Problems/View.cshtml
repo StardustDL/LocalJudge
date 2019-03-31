@@ -8,9 +8,18 @@
 }
 
 @section header{
-<link rel="stylesheet" data-name="vs/editor/editor.main" href="../lib/monaco-editor/min/vs/editor/editor.main.css">
-    @*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0-rc.1/katex.min.css">*@
-<link rel="stylesheet" href="~/lib/highlight.js/styles/default.min.css">
+    <environment include="Development">
+        <link rel="stylesheet" data-name="vs/editor/editor.main" href="../lib/monaco-editor/min/vs/editor/editor.main.css">
+        <link rel="stylesheet" href="~/lib/highlight.js/styles/default.css">
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.16.2/min/vs/editor/editor.main.css"
+              asp-fallback-href="../lib/monaco-editor/min/vs/editor/editor.main.css"
+              crossorigin="anonymous" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css"
+              asp-fallback-href="~/lib/highlight.js/styles/default.css"
+              crossorigin="anonymous" />
+    </environment>
 }
 
 <ul class="breadcrumb">
@@ -25,7 +34,7 @@
     <div class="col-9">
         <style>
             .card-content {
-                padding:20px;
+                padding: 20px;
             }
         </style>
         <div class="card border-0">
@@ -75,19 +84,19 @@
             <div id="divSamples" class="collapse show card-content">
                 @for (int i = 0; i < Model.SampleData.Count; i++)
                 {
-                var item = Model.SampleData[i];
-                <h3>@SharedLocalizer["Sample"] @i</h3>
-                <div class="row">
-                    <div class="col">
-                        <h4>@SharedLocalizer["Input"]</h4>
-                        <pre>@Html.DisplayFor(model => item.Input)</pre>
+                    var item = Model.SampleData[i];
+                    <h3>@SharedLocalizer["Sample"] @i</h3>
+                    <div class="row">
+                        <div class="col">
+                            <h4>@SharedLocalizer["Input"]</h4>
+                            <pre>@Html.DisplayFor(model => item.Input)</pre>
+                        </div>
+                        <div class="col">
+                            <h4>@SharedLocalizer["Output"]</h4>
+                            <pre>@Html.DisplayFor(model => item.Output)</pre>
+                        </div>
                     </div>
-                    <div class="col">
-                        <h4>@SharedLocalizer["Output"]</h4>
-                        <pre>@Html.DisplayFor(model => item.Output)</pre>
-                    </div>
-                </div>
-                <br />
+                    <br />
                 }
             </div>
         </div>
@@ -114,9 +123,8 @@
             <dd>
                 <div class="row" style="margin-left:0px">
                     <form method="post" style="margin-left:0px">
-                        <input type="text" asp-for="PostData.Type" style="display:none" value="@ProblemItemOperationType.Delete" />
                         <input type="text" asp-for="PostData.ID" style="display:none" value="@Model.Metadata.Id" />
-                        <button type="submit" class="btn btn-outline-danger">
+                        <button type="submit" asp-page-handler="Delete" class="btn btn-outline-danger">
                             <i class="fa fa-trash"></i>
                         </button>
                     </form>
@@ -148,17 +156,17 @@
                     <tbody>
                         @foreach (var item in Model.Samples)
                         {
-                        <tr>
-                            <td>
-                                @item.Id
-                            </td>
-                            <td>
-                                <timespan-display value="@item.TimeLimit"></timespan-display>
-                            </td>
-                            <td>
-                                <memory-display value="@item.MemoryLimit"></memory-display>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td>
+                                    @item.Id
+                                </td>
+                                <td>
+                                    <timespan-display value="@item.TimeLimit"></timespan-display>
+                                </td>
+                                <td>
+                                    <memory-display value="@item.MemoryLimit"></memory-display>
+                                </td>
+                            </tr>
                         }
                     </tbody>
                 </table>
@@ -188,17 +196,17 @@
                     <tbody>
                         @foreach (var item in Model.Tests)
                         {
-                        <tr>
-                            <td>
-                                @item.Id
-                            </td>
-                            <td>
-                                <timespan-display value="@item.TimeLimit"></timespan-display>
-                            </td>
-                            <td>
-                                <memory-display value="@item.MemoryLimit"></memory-display>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td>
+                                    @item.Id
+                                </td>
+                                <td>
+                                    <timespan-display value="@item.TimeLimit"></timespan-display>
+                                </td>
+                                <td>
+                                    <memory-display value="@item.MemoryLimit"></memory-display>
+                                </td>
+                            </tr>
                         }
                     </tbody>
                 </table>
@@ -210,64 +218,83 @@
 @if (Model.EnableCode)
 {
 
-<div class="row" style="margin-bottom:10px; margin-top:20px">
-    <label style="margin-right:10px; position:relative; top:6px; font-size:large">@SharedLocalizer["Language"]</label>
-    <select id="selCodeLanguage" style="font-size:large; width:200px"></select>
-    <label style="margin-left:20px; margin-right:10px; position:relative; top:6px; font-size:large">@Localizer["Theme"]</label>
-    <select id="selCodeTheme" style="font-size:large; width:200px">
-        <option>@Localizer["Light"]</option>
-        <option>@Localizer["Dark"]</option>
-        <option>@Localizer["High Contrast Dark"]</option>
-    </select>
+    <div class="row" style="margin-bottom:10px; margin-top:20px">
+        <label style="margin-right:10px; position:relative; top:6px; font-size:large">@SharedLocalizer["Language"]</label>
+        <select id="selCodeLanguage" style="font-size:large; width:200px"></select>
+        <label style="margin-left:20px; margin-right:10px; position:relative; top:6px; font-size:large">@Localizer["Theme"]</label>
+        <select id="selCodeTheme" style="font-size:large; width:200px">
+            <option>@Localizer["Light"]</option>
+            <option>@Localizer["Dark"]</option>
+            <option>@Localizer["High Contrast Dark"]</option>
+        </select>
 
-    <form method="post" style="margin-left:20px;">
-        <input type="text" asp-for="PostData.Type" style="display:none" value="@ProblemItemOperationType.Submit" />
-        <input type="text" asp-for="PostData.ID" style="display:none" value="@Model.Metadata.Id" />
-        <input type="text" asp-for="PostData.SubmitData.ProblemID" style="display:none" value="@Model.Metadata.Id" />
-        <input type="text" asp-for="PostData.SubmitData.Language" id="formLang" style="display:none" />
-        <textarea type="text" asp-for="PostData.SubmitData.Code" id="formCode" style="display:none"></textarea>
-        <input type="submit" value="@Localizer["Submit"]" class="btn btn-primary" style="width:100px" />
-    </form>
-</div>
+        <form method="post" style="margin-left:20px;">
+            <input type="text" asp-for="PostData.ID" style="display:none" value="@Model.Metadata.Id" />
+            <input type="text" asp-for="PostData.SubmitData.ProblemID" style="display:none" value="@Model.Metadata.Id" />
+            <input type="text" asp-for="PostData.SubmitData.Language" id="formLang" style="display:none" />
+            <textarea type="text" asp-for="PostData.SubmitData.Code" id="formCode" style="display:none"></textarea>
+            <input type="submit" value="@Localizer["Submit"]" asp-page-handler="Submit" class="btn btn-primary" style="width:100px" />
+        </form>
+    </div>
 
-<div id="codeEditor" class="row" style="min-height:500px">
+    <div id="codeEditor" class="row" style="min-height:500px">
 
-</div>
+    </div>
 }
 
 @section scripts{
-<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-    tex2jax: {
-    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-    displayMath: [ ['$$','$$'], ["\\[","\\]"] ]
-    }
-    });
-</script>
-
-<script src="~/lib/highlight.js/highlight.min.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
-    @*
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0-rc.1/katex.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0-rc.1/contrib/auto-render.min.js"></script>
-<script>
-    renderMathInElement(document.body,
-        {
-            delimiters: [
-                { left: "$$", right: "$$", display: true },
-                { left: "\(", right: "\)", display: false }
-            ]
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+        tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ]
         }
-    );
-</script>*@
+        });
+    </script>
+
+    <environment include="Development">
+        <script src="~/lib/highlight.js/highlight.min.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"
+                asp-fallback-src="~/lib/highlight.js/highlight.min.js"
+                crossorigin="anonymous"></script>
+    </environment>
+
+    <script>hljs.initHighlightingOnLoad();</script>
+    @*
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0-rc.1/katex.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0-rc.1/contrib/auto-render.min.js"></script>
+        <script>
+            renderMathInElement(document.body,
+                {
+                    delimiters: [
+                        { left: "$$", right: "$$", display: true },
+                        { left: "\(", right: "\)", display: false }
+                    ]
+                }
+            );
+        </script>*@
     @if (Model.EnableCode)
     {
-<script>var require = { paths: { 'vs': '../lib/monaco-editor/min/vs' } }</script>
-<script src="../lib/monaco-editor/min/vs/loader.js"></script>
-<script src="../lib/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
-<script src="../lib/monaco-editor/min/vs/editor/editor.main.js"></script>
-<script>
+        <environment include="Development">
+            <script>var require = { paths: { 'vs': '../lib/monaco-editor/min/vs' } }</script>
+            <script src="../lib/monaco-editor/min/vs/loader.js"></script>
+            <script src="../lib/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
+            <script src="../lib/monaco-editor/min/vs/editor/editor.main.js"></script>
+        </environment>
+        <environment exclude="Development">
+            <script>var require = { paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.16.2/min/vs' } }</script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.16.2/min/vs/loader.js" 
+                    asp-fallback-src="../lib/monaco-editor/min/vs/loader.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.16.2/min/vs/editor/editor.main.nls.js"
+                    asp-fallback-src="../lib/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.16.2/min/vs/editor/editor.main.js"
+                    asp-fallback-src="../lib/monaco-editor/min/vs/editor/editor.main.js"></script>
+        </environment>
+
+        <script>
         "use strict";
 
         var editor = null;
@@ -332,6 +359,6 @@
             var newTheme = (theme === 1 ? 'vs-dark' : (theme === 0 ? 'vs' : 'hc-black'));
             monaco.editor.setTheme(newTheme);
         }
-</script>
+        </script>
     }
 }

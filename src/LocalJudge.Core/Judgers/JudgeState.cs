@@ -3,6 +3,7 @@
     public enum JudgeState
     {
         Pending,
+        Compiling,
         Judging,
         Accepted,
         WrongAnswer,

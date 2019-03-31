@@ -123,6 +123,9 @@
   <data name="Compile Error" xml:space="preserve">
     <value>编译错误</value>
   </data>
+  <data name="Compiling" xml:space="preserve">
+    <value>正在编译</value>
+  </data>
   <data name="Judging" xml:space="preserve">
     <value>正在评测</value>
   </data>
