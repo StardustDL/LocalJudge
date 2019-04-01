@@ -32,7 +32,7 @@ namespace LocalJudge.Server.Host.Pages.Submissions
             var ss = new List<SubmissionModel>();
             foreach (var v in ms)
             {
-                ss.Add(await SubmissionModel.Get(v, httpclient));
+                ss.Add(await SubmissionModel.GetAsync(v, httpclient));
             }
             Submissions = ss;
         }

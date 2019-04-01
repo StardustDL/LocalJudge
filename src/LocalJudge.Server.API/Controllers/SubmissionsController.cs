@@ -120,7 +120,6 @@ namespace LocalJudge.Server.API.Controllers
                 }
                 catch
                 {
-                    Program.Workspace.Submissions.Delete(res.ID);
                     return Forbid();
                 }
             }

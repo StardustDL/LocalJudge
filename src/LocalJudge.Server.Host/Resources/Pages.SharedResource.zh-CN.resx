@@ -129,6 +129,9 @@
   <data name="Code" xml:space="preserve">
     <value>代码</value>
   </data>
+  <data name="Data" xml:space="preserve">
+    <value>数据</value>
+  </data>
   <data name="Description" xml:space="preserve">
     <value>描述</value>
   </data>
@@ -185,6 +188,9 @@
   </data>
   <data name="Submissions" xml:space="preserve">
     <value>评测</value>
+  </data>
+  <data name="Test" xml:space="preserve">
+    <value>测试</value>
   </data>
   <data name="Test Cases" xml:space="preserve">
     <value>测试集</value>

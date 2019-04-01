@@ -113,6 +113,12 @@
             <dd>
                 <div class="row" style="margin-left:0px">
                     <form method="post">
+                        <input type="text" asp-for="PostData.ProblemID" style="display:none" value="@Model.Submission.Metadata.ProblemID" />
+                        <button type="submit" asp-page-handler="Data" class="btn btn-outline-primary">
+                            <i class="fa fa-database"></i>
+                        </button>
+                    </form>
+                    <form method="post" style="margin-left:10px">
                         <input type="text" asp-for="PostData.ID" style="display:none" value="@Model.Submission.Metadata.Id" />
                         <button type="submit" asp-page-handler="Rejudge" class="btn btn-outline-secondary">
                             <i class="fa fa-redo"></i>

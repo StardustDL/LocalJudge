@@ -11,6 +11,59 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace LocalJudge.Server.Host.Pages.Problems
 {
+    public class ProblemModel
+    {
+        public ProblemMetadata Metadata { get; set; }
+
+        public ProblemDescription Description { get; set; }
+
+        public IList<TestCaseMetadata> Samples { get; set; }
+
+        public IList<TestCaseMetadata> Tests { get; set; }
+
+        public static async Task<ProblemModel> GetAsync(ProblemMetadata metadata, HttpClient client, bool loadDescription, bool loadData)
+        {
+            var res = new ProblemModel
+            {
+                Metadata = metadata,
+            };
+
+            var pcli = new ProblemsClient(client);
+
+            if (loadDescription)
+            {
+                try
+                {
+                    res.Description = await pcli.GetDescriptionAsync(metadata.Id);
+                }
+                catch { }
+            }
+
+            if (loadData)
+            {
+                try
+                {
+                    res.Samples = await pcli.GetSamplesAsync(metadata.Id);
+                }
+                catch
+                {
+                    res.Samples = Array.Empty<TestCaseMetadata>();
+                }
+
+                try
+                {
+                    res.Tests = await pcli.GetTestsAsync(metadata.Id);
+                }
+                catch
+                {
+                    res.Tests = Array.Empty<TestCaseMetadata>();
+                }
+            }
+
+            return res;
+        }
+    }
+
     public class ViewModel : PageModel
     {
         public class TestCaseData
@@ -39,15 +92,9 @@ namespace LocalJudge.Server.Host.Pages.Problems
         [BindProperty]
         public ProblemPostModel PostData { get; set; }
 
-        public ProblemMetadata Metadata { get; set; }
-
-        public ProblemDescription Description { get; set; }
+        public ProblemModel Problem { get; set; }
 
         public IList<TestCaseData> SampleData { get; set; }
-
-        public IList<TestCaseMetadata> Samples { get; set; }
-
-        public IList<TestCaseMetadata> Tests { get; set; }
 
         public string LanguageConfig { get; set; }
 
@@ -62,44 +109,28 @@ namespace LocalJudge.Server.Host.Pages.Problems
             var client = new ProblemsClient(httpclient);
             try
             {
-                Metadata = await client.GetAsync(id);
-                Description = await client.GetDescriptionAsync(id);
+                var metadata = await client.GetAsync(id);
+                Problem = await ProblemModel.GetAsync(metadata, httpclient, true, true);
             }
             catch
             {
                 return NotFound();
             }
 
-            try
-            {
-                Samples = await client.GetSamplesAsync(id);
-            }
-            catch
-            {
-                Samples = Array.Empty<TestCaseMetadata>();
-            }
-
             List<TestCaseData> samples = new List<TestCaseData>();
-            foreach (var s in Samples)
+            foreach (var s in Problem.Samples)
             {
+                var input = await client.GetSampleInputAsync(id, s.Id, int.MaxValue);
+                var output = await client.GetSampleOutputAsync(id, s.Id, int.MaxValue);
                 TestCaseData td = new TestCaseData
                 {
                     Metadata = s,
-                    Input = await client.GetSampleInputAsync(id, s.Id),
-                    Output = await client.GetSampleOutputAsync(id, s.Id),
+                    Input = input.Content,
+                    Output = output.Content,
                 };
                 samples.Add(td);
             }
             SampleData = samples;
-
-            try
-            {
-                Tests = await client.GetTestsAsync(id);
-            }
-            catch
-            {
-                Tests = Array.Empty<TestCaseMetadata>();
-            }
 
             {
                 StringBuilder res = new StringBuilder();
@@ -173,6 +204,15 @@ namespace LocalJudge.Server.Host.Pages.Problems
             {
                 return NotFound();
             }
+        }
+
+        public IActionResult OnPostDataAsync()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            return RedirectToPage("/Problems/Data", new { id = PostData.ID });
         }
 
         public async Task<IActionResult> OnPostSubmitAsync()

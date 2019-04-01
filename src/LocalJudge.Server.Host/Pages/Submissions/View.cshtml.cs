@@ -35,7 +35,7 @@ namespace LocalJudge.Server.Host.Pages.Submissions
             try
             {
                 var metadata = await client.GetAsync(id);
-                Submission = await SubmissionModel.Get(metadata, httpclient);
+                Submission = await SubmissionModel.GetAsync(metadata, httpclient);
                 Code = await client.GetCodeAsync(id);
             }
             catch
@@ -82,6 +82,15 @@ namespace LocalJudge.Server.Host.Pages.Submissions
             {
                 return NotFound();
             }
+        }
+
+        public IActionResult OnPostDataAsync()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            return RedirectToPage("/Problems/Data", new { id = PostData.ProblemID });
         }
     }
 }

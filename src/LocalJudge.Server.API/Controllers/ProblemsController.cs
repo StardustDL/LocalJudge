@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using LocalJudge.Core;
 using LocalJudge.Core.Problems;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace LocalJudge.Server.API.Controllers
 {
@@ -71,28 +73,58 @@ namespace LocalJudge.Server.API.Controllers
                 return NotFound();
         }
 
-        [HttpGet("{id}/samples/{tid}/input")]
+        [HttpGet("{id}/samples/{tid}/input/{num}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<string> GetSampleInput(string id, string tid)
+        public ActionResult<DataPreview> GetSampleInput(string id, string tid, int num)
         {
             var res = Program.Workspace.Problems.Get(id)?.GetSample(tid);
             if (res != null)
-                return Ok(res.GetInput());
+                return Ok(res.GetInput(num));
             else
                 return NotFound();
         }
 
-        [HttpGet("{id}/samples/{tid}/output")]
+        [HttpGet("{id}/samples/{tid}/inputfile")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<string> GetSampleOutput(string id, string tid)
+        public ActionResult<byte[]> GetSampleInputFile(string id, string tid)
         {
             var res = Program.Workspace.Problems.Get(id)?.GetSample(tid);
             if (res != null)
-                return Ok(res.GetOutput());
+            {
+                return Ok(System.IO.File.ReadAllBytes(res.Input));
+            }
+            else
+                return NotFound();
+        }
+
+        [HttpGet("{id}/samples/{tid}/output/{num}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public ActionResult<DataPreview> GetSampleOutput(string id, string tid, int num)
+        {
+            var res = Program.Workspace.Problems.Get(id)?.GetSample(tid);
+            if (res != null)
+                return Ok(res.GetOutput(num));
+            else
+                return NotFound();
+        }
+
+        [HttpGet("{id}/samples/{tid}/outputfile")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public ActionResult<byte[]> GetSampleOutputFile(string id, string tid)
+        {
+            var res = Program.Workspace.Problems.Get(id)?.GetSample(tid);
+            if (res != null)
+            {
+                return Ok(System.IO.File.ReadAllBytes(res.Output));
+            }
             else
                 return NotFound();
         }
@@ -123,28 +155,58 @@ namespace LocalJudge.Server.API.Controllers
                 return NotFound();
         }
 
-        [HttpGet("{id}/tests/{tid}/input")]
+        [HttpGet("{id}/tests/{tid}/input/{num}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<string> GetTestInput(string id, string tid)
+        public ActionResult<DataPreview> GetTestInput(string id, string tid, int num)
         {
             var res = Program.Workspace.Problems.Get(id)?.GetTest(tid);
             if (res != null)
-                return Ok(res.GetInput());
+                return Ok(res.GetInput(num));
             else
                 return NotFound();
         }
 
-        [HttpGet("{id}/tests/{tid}/output")]
+        [HttpGet("{id}/tests/{tid}/inputfile")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<string> GetTestOutput(string id, string tid)
+        public ActionResult<byte[]> GetTestInputFile(string id, string tid)
         {
             var res = Program.Workspace.Problems.Get(id)?.GetTest(tid);
             if (res != null)
-                return Ok(res.GetOutput());
+            {
+                return Ok(System.IO.File.ReadAllBytes(res.Input));
+            }
+            else
+                return NotFound();
+        }
+
+        [HttpGet("{id}/tests/{tid}/output/{num}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public ActionResult<DataPreview> GetTestOutput(string id, string tid, int num)
+        {
+            var res = Program.Workspace.Problems.Get(id)?.GetTest(tid);
+            if (res != null)
+                return Ok(res.GetOutput(num));
+            else
+                return NotFound();
+        }
+
+        [HttpGet("{id}/tests/{tid}/outputfile")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public ActionResult<byte[]> GetTestOutputFile(string id, string tid)
+        {
+            var res = Program.Workspace.Problems.Get(id)?.GetTest(tid);
+            if (res != null)
+            {
+                return Ok(System.IO.File.ReadAllBytes(res.Output));
+            }
             else
                 return NotFound();
         }

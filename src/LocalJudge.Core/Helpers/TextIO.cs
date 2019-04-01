@@ -9,6 +9,20 @@ namespace LocalJudge.Core.Helpers
     {
         public static readonly Encoding UTF8WithoutBOM = new UTF8Encoding(false);
 
+        public static DataPreview GetPreviewInUTF8(string path, int maxLength)
+        {
+            using (var fs = File.OpenRead(path))
+            using (var br = new BinaryReader(fs))
+            {
+                var bs = br.ReadBytes((int)Math.Min(maxLength, fs.Length));
+                return new DataPreview
+                {
+                    Content = UTF8WithoutBOM.GetString(bs),
+                    RemainBytes = fs.Length - bs.Length,
+                };
+            }
+        }
+
         public static string ReadAllInUTF8(string path)
         {
             return File.ReadAllText(path, UTF8WithoutBOM);

@@ -23,11 +23,11 @@ namespace LocalJudge.Core.Problems
 
         public string Input { get; private set; }
 
-        public string GetInput() => TextIO.ReadAllInUTF8(Input);
+        public DataPreview GetInput(int maxbytes) => TextIO.GetPreviewInUTF8(Input, maxbytes);
 
         public string Output { get; set; }
 
-        public string GetOutput() => TextIO.ReadAllInUTF8(Output);
+        public DataPreview GetOutput(int maxbytes) => TextIO.GetPreviewInUTF8(Output, maxbytes);
 
         public TestCasePath(string root)
         {

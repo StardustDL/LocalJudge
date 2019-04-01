@@ -14,7 +14,7 @@ namespace LocalJudge.Server.Host.Pages.Submissions
 
         public ProblemMetadata Problem { get; set; }
 
-        public static async Task<SubmissionModel> Get(SubmissionMetadata metadata, HttpClient client)
+        public static async Task<SubmissionModel> GetAsync(SubmissionMetadata metadata, HttpClient client)
         {
             var res = new SubmissionModel
             {

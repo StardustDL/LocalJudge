@@ -3,7 +3,7 @@
 @inject IViewLocalizer Localizer
 @inject IHtmlLocalizer<SharedResource> SharedLocalizer
 @{
-    ViewData["Title"] = Model.Metadata.Name;
+    ViewData["Title"] = Model.Problem.Metadata.Name;
     ViewData["ID"] = "Problems";
 }
 
@@ -25,10 +25,10 @@
 <ul class="breadcrumb">
     <li class="breadcrumb-item"><a asp-page="/Index">LocalJudge</a></li>
     <li class="breadcrumb-item"><a asp-page="/Problems/Index">@SharedLocalizer["Problems"]</a></li>
-    <li class="breadcrumb-item active">@Html.DisplayFor(model => model.Metadata.Id)</li>
+    <li class="breadcrumb-item active">@Html.DisplayFor(model => model.Problem.Metadata.Id)</li>
 </ul>
 
-<h1 class="display-4">@Html.DisplayFor(model => model.Metadata.Name)</h1>
+<h1 class="display-4">@Html.DisplayFor(model => model.Problem.Metadata.Name)</h1>
 
 <div class="row" style="margin-top:20px">
     <div class="col-9">
@@ -46,7 +46,7 @@
                 </h2>
             </div>
             <div id="divDescription" class="collapse show card-content">
-                @Html.Raw(Markdig.Markdown.ToHtml(Model.Description.Description, Model.MarkdownBuilder.Build()))
+                @Html.Raw(Markdig.Markdown.ToHtml(Model.Problem.Description.Description, Model.MarkdownBuilder.Build()))
             </div>
         </div>
         <div class="card border-0">
@@ -58,7 +58,7 @@
                 </h2>
             </div>
             <div id="divInput" class="collapse show card-content">
-                @Html.Raw(Markdig.Markdown.ToHtml(Model.Description.Input, Model.MarkdownBuilder.Build()))
+                @Html.Raw(Markdig.Markdown.ToHtml(Model.Problem.Description.Input, Model.MarkdownBuilder.Build()))
             </div>
         </div>
         <div class="card border-0">
@@ -70,7 +70,7 @@
                 </h2>
             </div>
             <div id="divOutput" class="collapse show card-content">
-                @Html.Raw(Markdig.Markdown.ToHtml(Model.Description.Output, Model.MarkdownBuilder.Build()))
+                @Html.Raw(Markdig.Markdown.ToHtml(Model.Problem.Description.Output, Model.MarkdownBuilder.Build()))
             </div>
         </div>
         <div class="card border-0">
@@ -82,10 +82,8 @@
                 </h2>
             </div>
             <div id="divSamples" class="collapse show card-content">
-                @for (int i = 0; i < Model.SampleData.Count; i++)
-                {
-                    var item = Model.SampleData[i];
-                    <h3>@SharedLocalizer["Sample"] @i</h3>
+                @foreach(var item in Model.SampleData) {
+                    <h3>@SharedLocalizer["Sample"] # @item.Metadata.Id</h3>
                     <div class="row">
                         <div class="col">
                             <h4>@SharedLocalizer["Input"]</h4>
@@ -109,21 +107,27 @@
                 </h2>
             </div>
             <div id="divHint" class="collapse show card-content">
-                @Html.Raw(Markdig.Markdown.ToHtml(Model.Description.Hint, Model.MarkdownBuilder.Build()))
+                @Html.Raw(Markdig.Markdown.ToHtml(Model.Problem.Description.Hint, Model.MarkdownBuilder.Build()))
             </div>
         </div>
     </div>
     <div class="col-3">
         <dl>
             <dt style="float:left; min-width:30px"><i class="fa fa-user"></i></dt>
-            <dd>@Html.DisplayFor(model => model.Metadata.Author)</dd>
+            <dd>@Html.DisplayFor(model => model.Problem.Metadata.Author)</dd>
             <dt style="float:left; min-width:30px"><i class="fa fa-map-marker"></i></dt>
-            <dd>@Html.DisplayFor(model => model.Metadata.Source)</dd>
+            <dd>@Html.DisplayFor(model => model.Problem.Metadata.Source)</dd>
 
             <dd>
                 <div class="row" style="margin-left:0px">
-                    <form method="post" style="margin-left:0px">
-                        <input type="text" asp-for="PostData.ID" style="display:none" value="@Model.Metadata.Id" />
+                    <form method="post">
+                        <input type="text" asp-for="PostData.ID" style="display:none" value="@Model.Problem.Metadata.Id" />
+                        <button type="submit" asp-page-handler="Data" class="btn btn-outline-primary">
+                            <i class="fa fa-database"></i>
+                        </button>
+                    </form>
+                    <form method="post" style="margin-left:10px">
+                        <input type="text" asp-for="PostData.ID" style="display:none" value="@Model.Problem.Metadata.Id" />
                         <button type="submit" asp-page-handler="Delete" class="btn btn-outline-danger">
                             <i class="fa fa-trash"></i>
                         </button>
@@ -143,22 +147,22 @@
                     <thead>
                         <tr>
                             <th>
-                                @SharedLocalizer[Html.DisplayNameFor(model => model.Samples[0].Id)]
+                                @SharedLocalizer[Html.DisplayNameFor(model => model.Problem.Samples[0].Id)]
                             </th>
                             <th>
-                                @SharedLocalizer[Html.DisplayNameFor(model => model.Samples[0].TimeLimit)]
+                                @SharedLocalizer[Html.DisplayNameFor(model => model.Problem.Samples[0].TimeLimit)]
                             </th>
                             <th>
-                                @SharedLocalizer[Html.DisplayNameFor(model => model.Samples[0].MemoryLimit)]
+                                @SharedLocalizer[Html.DisplayNameFor(model => model.Problem.Samples[0].MemoryLimit)]
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model.Samples)
+                        @foreach (var item in Model.Problem.Samples)
                         {
                             <tr>
                                 <td>
-                                    @item.Id
+                                    #@item.Id
                                 </td>
                                 <td>
                                     <timespan-display value="@item.TimeLimit"></timespan-display>
@@ -183,22 +187,22 @@
                     <thead>
                         <tr>
                             <th>
-                                @SharedLocalizer[Html.DisplayNameFor(model => model.Tests[0].Id)]
+                                @SharedLocalizer[Html.DisplayNameFor(model => model.Problem.Tests[0].Id)]
                             </th>
                             <th>
-                                @SharedLocalizer[Html.DisplayNameFor(model => model.Tests[0].TimeLimit)]
+                                @SharedLocalizer[Html.DisplayNameFor(model => model.Problem.Tests[0].TimeLimit)]
                             </th>
                             <th>
-                                @SharedLocalizer[Html.DisplayNameFor(model => model.Tests[0].MemoryLimit)]
+                                @SharedLocalizer[Html.DisplayNameFor(model => model.Problem.Tests[0].MemoryLimit)]
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model.Tests)
+                        @foreach (var item in Model.Problem.Tests)
                         {
                             <tr>
                                 <td>
-                                    @item.Id
+                                    #@item.Id
                                 </td>
                                 <td>
                                     <timespan-display value="@item.TimeLimit"></timespan-display>
@@ -229,8 +233,8 @@
         </select>
 
         <form method="post" style="margin-left:20px;">
-            <input type="text" asp-for="PostData.ID" style="display:none" value="@Model.Metadata.Id" />
-            <input type="text" asp-for="PostData.SubmitData.ProblemID" style="display:none" value="@Model.Metadata.Id" />
+            <input type="text" asp-for="PostData.ID" style="display:none" value="@Model.Problem.Metadata.Id" />
+            <input type="text" asp-for="PostData.SubmitData.ProblemID" style="display:none" value="@Model.Problem.Metadata.Id" />
             <input type="text" asp-for="PostData.SubmitData.Language" id="formLang" style="display:none" />
             <textarea type="text" asp-for="PostData.SubmitData.Code" id="formCode" style="display:none"></textarea>
             <input type="submit" value="@Localizer["Submit"]" asp-page-handler="Submit" class="btn btn-primary" style="width:100px" />
@@ -249,7 +253,8 @@
         tex2jax: {
         inlineMath: [ ['$','$'], ["\\(","\\)"] ],
         displayMath: [ ['$$','$$'], ["\\[","\\]"] ]
-        }
+        },
+        jax: ["input/TeX","output/SVG"]
         });
     </script>
 
@@ -286,7 +291,7 @@
         </environment>
         <environment exclude="Development">
             <script>var require = { paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.16.2/min/vs' } }</script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.16.2/min/vs/loader.js" 
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.16.2/min/vs/loader.js"
                     asp-fallback-src="../lib/monaco-editor/min/vs/loader.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.16.2/min/vs/editor/editor.main.nls.js"
                     asp-fallback-src="../lib/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
