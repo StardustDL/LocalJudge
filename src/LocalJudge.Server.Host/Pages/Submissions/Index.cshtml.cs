@@ -47,7 +47,7 @@ namespace LocalJudge.Server.Host.Pages.Submissions
             var client = new SubmissionsClient(httpclient);
             try
             {
-                await client.DeleteAsync(PostData.ID);
+                await client.DeleteAsync(PostData.Id);
                 return RedirectToPage();
             }
             catch
@@ -66,7 +66,7 @@ namespace LocalJudge.Server.Host.Pages.Submissions
             var client = new SubmissionsClient(httpclient);
             try
             {
-                await client.RejudgeAsync(PostData.ID);
+                await client.RejudgeAsync(PostData.Id);
                 return RedirectToPage();
             }
             catch

@@ -4,7 +4,7 @@
 @inject IHtmlLocalizer<SharedResource> SharedLocalizer
 @{
     ViewData["Title"] = SharedLocalizer["Submissions"];
-    ViewData["ID"] = "Submissions";
+    ViewData["Id"] = "Submissions";
 }
 
 <ul class="breadcrumb">
@@ -81,13 +81,13 @@
             <td>
                 <div class="row" style="margin-left:0px">
                     <form method="post">
-                        <input type="text" asp-for="PostData.ID" style="display:none" value="@item.Metadata.Id" />
+                        <input type="text" asp-for="PostData.Id" style="display:none" value="@item.Metadata.Id" />
                         <button type="submit" asp-page-handler="Rejudge" class="btn btn-sm btn-outline-secondary">
                             <i class="fa fa-redo"></i>
                         </button>
                     </form>
                     <form method="post" style="margin-left:10px">
-                        <input type="text" asp-for="PostData.ID" style="display:none" value="@item.Metadata.Id" />
+                        <input type="text" asp-for="PostData.Id" style="display:none" value="@item.Metadata.Id" />
                         <button type="submit" asp-page-handler="Delete" class="btn btn-sm btn-outline-danger">
                             <i class="fa fa-trash"></i>
                         </button>

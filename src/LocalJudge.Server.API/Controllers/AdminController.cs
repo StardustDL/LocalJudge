@@ -29,16 +29,5 @@ namespace LocalJudge.Server.API.Controllers
                 Workspace.Initialize(Program.Workspace.Root);
             }
         }
-
-        [HttpPut("seed")]
-        public void SeedData()
-        {
-            lock (lock_admin)
-            {
-                string workspace = Program.Workspace.Root;
-                var ws = Workspace.Initialize(workspace);
-                ws.Problems.Create("0");
-            }
-        }
     }
 }

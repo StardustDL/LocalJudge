@@ -156,10 +156,10 @@ namespace LocalJudge.Server.Host.Pages.Problems
                         var editorId = Helper.GetEditorLanguage(item);
                         if (editorId == "plaintext") continue;
 
-                        res.Append("{editorID: \"" + editorId + "\", ");
+                        res.Append("{editorId: \"" + editorId + "\", ");
                         switch (item)
                         {
-                            // editorID for editor, lang for enum, show for selector in html
+                            // editorId for editor, lang for enum, show for selector in html
                             case ProgrammingLanguage.C:
                                 res.Append("lang: \"C\", show: \"C\"},");
                                 break;
@@ -177,6 +177,30 @@ namespace LocalJudge.Server.Host.Pages.Problems
                                 break;
                             case ProgrammingLanguage.Rust:
                                 res.Append("lang: \"Rust\", show: \"Rust\"},");
+                                break;
+                            case ProgrammingLanguage.VisualBasic:
+                                res.Append("lang: \"VisualBasic\", show: \"Visual Basic\"},");
+                                break;
+                            case ProgrammingLanguage.Go:
+                                res.Append("lang: \"Go\", show: \"Go\"},");
+                                break;
+                            case ProgrammingLanguage.Haskell:
+                                res.Append("lang: \"Haskell\", show: \"Haskell\"},");
+                                break;
+                            case ProgrammingLanguage.Javascript:
+                                res.Append("lang: \"Javascript\", show: \"Javascript\"},");
+                                break;
+                            case ProgrammingLanguage.Kotlin:
+                                res.Append("lang: \"Kotlin\", show: \"Kotlin\"},");
+                                break;
+                            case ProgrammingLanguage.Php:
+                                res.Append("lang: \"Php\", show: \"PHP\"},");
+                                break;
+                            case ProgrammingLanguage.Ruby:
+                                res.Append("lang: \"Ruby\", show: \"Ruby\"},");
+                                break;
+                            case ProgrammingLanguage.Scala:
+                                res.Append("lang: \"Scala\", show: \"Scala\"},");
                                 break;
                         }
                     }
@@ -197,7 +221,7 @@ namespace LocalJudge.Server.Host.Pages.Problems
             var client = new ProblemsClient(httpclient);
             try
             {
-                await client.DeleteAsync(PostData.ID);
+                await client.DeleteAsync(PostData.Id);
                 return RedirectToPage("/Problems/Index");
             }
             catch
@@ -212,7 +236,7 @@ namespace LocalJudge.Server.Host.Pages.Problems
             {
                 return BadRequest();
             }
-            return RedirectToPage("/Problems/Data", new { id = PostData.ID });
+            return RedirectToPage("/Problems/Data", new { id = PostData.Id });
         }
 
         public async Task<IActionResult> OnPostSubmitAsync()

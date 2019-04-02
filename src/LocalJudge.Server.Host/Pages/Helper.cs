@@ -39,6 +39,22 @@ namespace LocalJudge.Server.Host.Pages
                     return "csharp";
                 case ProgrammingLanguage.Rust:
                     return "rust";
+                case ProgrammingLanguage.VisualBasic:
+                    return "vb";
+                case ProgrammingLanguage.Go:
+                    return "go";
+                case ProgrammingLanguage.Haskell:
+                    return "haskell";
+                case ProgrammingLanguage.Javascript:
+                    return "javascript";
+                case ProgrammingLanguage.Kotlin:
+                    return "kotlin";
+                case ProgrammingLanguage.Php:
+                    return "php";
+                case ProgrammingLanguage.Ruby:
+                    return "ruby";
+                case ProgrammingLanguage.Scala:
+                    return "scala";
             }
             return "plaintext";
         }

@@ -3,11 +3,11 @@ using System;
 
 namespace LocalJudge.Core.Submissions
 {
-    public class SubmissionMetadata
+    public class SubmissionMetadata : IHasId<string>
     {
-        public string ID { get; set; }
+        public string Id { get; set; }
 
-        public string ProblemID { get; set; }
+        public string ProblemId { get; set; }
 
         public ProgrammingLanguage Language { get; set; }
 

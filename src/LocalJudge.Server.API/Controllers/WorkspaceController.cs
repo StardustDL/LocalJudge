@@ -14,5 +14,11 @@ namespace LocalJudge.Server.API.Controllers
         {
             return Ok(Program.Workspace.GetConfig().GetSupportLanguages());
         }
+
+        [HttpGet("hasinit")]
+        public ActionResult<bool> GetHasInitialized()
+        {
+            return Ok(Program.Workspace.HasInitialized);
+        }
     }
 }

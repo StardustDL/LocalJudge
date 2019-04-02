@@ -9,7 +9,7 @@ namespace LocalJudge.Server.Host.Pages.Problems
 {
     public class ProblemPostModel
     {
-        public string ID { get; set; }
+        public string Id { get; set; }
 
         public SubmitData SubmitData { get; set; }
     }

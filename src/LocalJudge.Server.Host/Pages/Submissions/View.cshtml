@@ -4,7 +4,7 @@
 @inject IHtmlLocalizer<SharedResource> SharedLocalizer
 @{
     ViewData["Title"] = SharedLocalizer["View"];
-    ViewData["ID"] = "Submissions";
+    ViewData["Id"] = "Submissions";
 }
 
 @section header{
@@ -35,7 +35,17 @@
             <judge-state value="@Model.Submission.Result.State"></judge-state>
         </h1>
         <br />
-        <h2>@SharedLocalizer["Code"]</h2>
+        <div class="row">
+            <h2 style="display:inline">@SharedLocalizer["Code"]</h2>
+            <form method="post" style="margin-left:10px">
+                <input type="text" asp-for="PostData.Language" style="display:none" value="@Model.Submission.Metadata.Language" />
+                <input type="text" asp-for="PostData.Id" style="display:none" value="@Model.Submission.Metadata.Id" />
+                <button type="submit" asp-page-handler="DownloadCode" class="btn btn-sm btn-outline-primary">
+                    <i class="fa fa-download"></i>
+                </button>
+            </form>
+        </div>
+        
 
         <pre id="rawCode" style="display:none">@Html.DisplayFor(model=>model.Code)</pre>
         <div id="code" style="min-height:600px"></div>
@@ -113,19 +123,19 @@
             <dd>
                 <div class="row" style="margin-left:0px">
                     <form method="post">
-                        <input type="text" asp-for="PostData.ProblemID" style="display:none" value="@Model.Submission.Metadata.ProblemID" />
+                        <input type="text" asp-for="PostData.ProblemId" style="display:none" value="@Model.Submission.Metadata.ProblemId" />
                         <button type="submit" asp-page-handler="Data" class="btn btn-outline-primary">
                             <i class="fa fa-database"></i>
                         </button>
                     </form>
                     <form method="post" style="margin-left:10px">
-                        <input type="text" asp-for="PostData.ID" style="display:none" value="@Model.Submission.Metadata.Id" />
+                        <input type="text" asp-for="PostData.Id" style="display:none" value="@Model.Submission.Metadata.Id" />
                         <button type="submit" asp-page-handler="Rejudge" class="btn btn-outline-secondary">
                             <i class="fa fa-redo"></i>
                         </button>
                     </form>
                     <form method="post" style="margin-left:10px">
-                        <input type="text" asp-for="PostData.ID" style="display:none" value="@Model.Submission.Metadata.Id" />
+                        <input type="text" asp-for="PostData.Id" style="display:none" value="@Model.Submission.Metadata.Id" />
                         <button type="submit" asp-page-handler="Delete" class="btn btn-outline-danger">
                             <i class="fa fa-trash"></i>
                         </button>

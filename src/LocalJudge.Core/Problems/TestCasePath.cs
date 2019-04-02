@@ -4,20 +4,20 @@ using System.IO;
 
 namespace LocalJudge.Core.Problems
 {
-    public class TestCasePath
+    public class TestCasePath : IHasRoot, IHasId<string>
     {
         public const string PF_Profile = "profile.json", PF_Input = "input.data", PF_Output = "output.data";
 
         public string Root { get; private set; }
 
-        public string ID { get; private set; }
+        public string Id { get; private set; }
 
         public string Profile { get; private set; }
 
         public TestCaseMetadata GetMetadata()
         {
             var res = Newtonsoft.Json.JsonConvert.DeserializeObject<TestCaseMetadata>(TextIO.ReadAllInUTF8(Profile));
-            res.ID = Path.GetFileName(Root);
+            res.Id = Path.GetFileName(Root);
             return res;
         }
 
@@ -32,7 +32,7 @@ namespace LocalJudge.Core.Problems
         public TestCasePath(string root)
         {
             Root = root;
-            ID = Path.GetFileName(Root);
+            Id = Path.GetFileName(Root);
             Profile = Path.Combine(Root, PF_Profile);
             Input = Path.Combine(Root, PF_Input);
             Output = Path.Combine(Root, PF_Output);
@@ -42,7 +42,7 @@ namespace LocalJudge.Core.Problems
         {
             var res = new TestCasePath(root);
             if (metadata == null) metadata = new TestCaseMetadata { TimeLimit = TimeSpan.FromSeconds(1), MemoryLimit = 128 * 1024 * 1024 };
-            metadata.ID = res.ID;
+            metadata.Id = res.Id;
             TextIO.WriteAllInUTF8(res.Profile, Newtonsoft.Json.JsonConvert.SerializeObject(metadata, Newtonsoft.Json.Formatting.Indented));
             TextIO.WriteAllInUTF8(res.Input, input);
             TextIO.WriteAllInUTF8(res.Output, output);

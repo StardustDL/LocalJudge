@@ -7,20 +7,20 @@ using System.Text;
 
 namespace LocalJudge.Core.Submissions
 {
-    public class SubmissionPath
+    public class SubmissionPath : IHasRoot, IHasId<string>
     {
         public const string PF_Profile = "profile.json", PF_Result = "result.json";
 
         public string Root { get; private set; }
 
-        public string ID { get; private set; }
+        public string Id { get; private set; }
 
         public string Profile { get; private set; }
 
         public SubmissionMetadata GetMetadata()
         {
             var res = Newtonsoft.Json.JsonConvert.DeserializeObject<SubmissionMetadata>(TextIO.ReadAllInUTF8(Profile));
-            res.ID = Path.GetFileName(Root);
+            res.Id = Path.GetFileName(Root);
             return res;
         }
 
@@ -34,7 +34,7 @@ namespace LocalJudge.Core.Submissions
                 return null;
         }
 
-        public void SaveResult(SubmissionResult result)
+        public void SetResult(SubmissionResult result)
         {
             TextIO.WriteAllInUTF8(Result, Newtonsoft.Json.JsonConvert.SerializeObject(result, Newtonsoft.Json.Formatting.Indented));
         }
@@ -57,7 +57,7 @@ namespace LocalJudge.Core.Submissions
         public SubmissionPath(string root)
         {
             Root = root;
-            ID = Path.GetFileName(Root);
+            Id = Path.GetFileName(Root);
             Profile = Path.Combine(Root, PF_Profile);
             Result = Path.Combine(Root, PF_Result);
         }
@@ -66,7 +66,7 @@ namespace LocalJudge.Core.Submissions
         {
             var res = new SubmissionPath(root);
             if (metadata == null) metadata = new SubmissionMetadata() { CodeLength = 0, CodePath = "code.txt" };
-            metadata.ID = res.ID;
+            metadata.Id = res.Id;
             TextIO.WriteAllInUTF8(res.Profile, Newtonsoft.Json.JsonConvert.SerializeObject(metadata, Newtonsoft.Json.Formatting.Indented));
             TextIO.WriteAllInUTF8(res.GetCodePath(), code);
             return res;

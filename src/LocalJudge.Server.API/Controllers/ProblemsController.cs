@@ -225,7 +225,7 @@ namespace LocalJudge.Server.API.Controllers
         {
             var res = Program.Workspace.Problems.Create(id);
             if (res != null)
-                return Created($"problems/{id}", res);
+                return Created($"problems/{id}", res.GetMetadata());
             else
                 return Conflict();
         }

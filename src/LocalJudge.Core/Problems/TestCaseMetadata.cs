@@ -2,9 +2,9 @@
 
 namespace LocalJudge.Core.Problems
 {
-    public class TestCaseMetadata
+    public class TestCaseMetadata : IHasId<string>
     {
-        public string ID { get; set; }
+        public string Id { get; set; }
 
         public TimeSpan TimeLimit { get; set; }
 

@@ -6,17 +6,13 @@ using System.Text;
 
 namespace LocalJudge.Core.Problems
 {
-    public class ProblemManager
+    public class ProblemManager : IPathItemManager<ProblemPath>
     {
         public string Root { get; private set; }
 
         public IEnumerable<ProblemPath> GetAll() => Directory.GetDirectories(Root).Select(path => new ProblemPath(path));
 
-        public bool Has(string id)
-        {
-            string path = Path.Combine(Root, id);
-            return Directory.Exists(path);
-        }
+        public bool Has(string id) => Directory.Exists(Path.Combine(Root, id));
 
         public ProblemPath Get(string id)
         {
@@ -32,15 +28,10 @@ namespace LocalJudge.Core.Problems
             return ProblemPath.Initialize(path, metadata, description);
         }
 
-        public void Delete(string id)
-        {
-            string path = Path.Combine(Root, id);
-            Directory.Delete(path, true);
-        }
+        public ProblemPath Create(string id) => Create(id, null, null);
 
-        public ProblemManager(string root)
-        {
-            Root = root;
-        }
+        public void Delete(string id) => Directory.Delete(Path.Combine(Root, id), true);
+
+        public ProblemManager(string root) => Root = root;
     }
 }

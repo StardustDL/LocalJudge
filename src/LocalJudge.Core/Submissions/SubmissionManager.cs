@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace LocalJudge.Core.Submissions
 {
-    public class SubmissionManager
+    public class SubmissionManager : IPathItemManager<SubmissionPath>
     {
         public string Root { get; private set; }
 
@@ -29,6 +29,8 @@ namespace LocalJudge.Core.Submissions
             Directory.CreateDirectory(path);
             return SubmissionPath.Initialize(path, metadata, code);
         }
+
+        public SubmissionPath Create(string id) => Create(id, null, null);
 
         public void Delete(string id)
         {

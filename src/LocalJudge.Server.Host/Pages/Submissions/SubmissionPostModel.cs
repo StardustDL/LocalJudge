@@ -1,11 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using LocalJudge.Server.Host.APIClients;
+using System.ComponentModel.DataAnnotations;
 
 namespace LocalJudge.Server.Host.Pages.Submissions
 {
     public class SubmissionPostModel
     {
-        public string ProblemID { get; set; }
+        public string ProblemId { get; set; }
 
-        public string ID { get; set; }
+        public string Id { get; set; }
+
+        public ProgrammingLanguage Language { get; set; }
     }
 }

@@ -4,9 +4,17 @@
     {
         C,
         Cpp,
-        Java,
         CSharp,
+        VisualBasic,
+        Java,
+        Kotlin,
+        Scala,
+        Go,
+        Rust,
         Python,
-        Rust
+        Ruby,
+        Php,
+        Javascript,
+        Haskell,
     }
 }

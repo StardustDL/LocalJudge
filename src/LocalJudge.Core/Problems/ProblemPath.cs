@@ -7,21 +7,21 @@ using System.Text;
 
 namespace LocalJudge.Core.Problems
 {
-    public class ProblemPath
+    public class ProblemPath : IHasRoot, IHasId<string>
     {
         public const string PF_Profile = "profile.json";
         public const string PD_Description = "description", PD_Sample = "samples", PD_Test = "tests", PD_Extra = "extra";
 
         public string Root { get; private set; }
 
-        public string ID { get; private set; }
+        public string Id { get; private set; }
 
         public string Profile { get; private set; }
 
         public ProblemMetadata GetMetadata()
         {
             var res = Newtonsoft.Json.JsonConvert.DeserializeObject<ProblemMetadata>(TextIO.ReadAllInUTF8(Profile));
-            res.ID = Path.GetFileName(Root);
+            res.Id = Path.GetFileName(Root);
             return res;
         }
 
@@ -54,7 +54,7 @@ namespace LocalJudge.Core.Problems
         public ProblemPath(string root)
         {
             Root = root;
-            ID = Path.GetFileName(Root);
+            Id = Path.GetFileName(Root);
             Profile = Path.Combine(Root, PF_Profile);
             Description = Path.Combine(Root, PD_Description);
             Sample = Path.Combine(Root, PD_Sample);
@@ -66,7 +66,7 @@ namespace LocalJudge.Core.Problems
         {
             var res = new ProblemPath(root);
             if (metadata == null) metadata = new ProblemMetadata { Author = "", Name = "Untitled", Source = "" };
-            metadata.ID = res.ID;
+            metadata.Id = res.Id;
 
             TextIO.WriteAllInUTF8(res.Profile, Newtonsoft.Json.JsonConvert.SerializeObject(metadata, Newtonsoft.Json.Formatting.Indented));
             Directory.CreateDirectory(res.Description);

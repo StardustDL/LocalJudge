@@ -12,9 +12,17 @@ namespace LocalJudge.Core.Helpers
             [ProgrammingLanguage.C] = "c",
             [ProgrammingLanguage.Cpp] = "cpp",
             [ProgrammingLanguage.CSharp] = "cs",
+            [ProgrammingLanguage.VisualBasic] = "vb",
             [ProgrammingLanguage.Java] = "java",
             [ProgrammingLanguage.Python] = "py",
             [ProgrammingLanguage.Rust] = "rs",
+            [ProgrammingLanguage.Go] = "go",
+            [ProgrammingLanguage.Haskell] = "hs",
+            [ProgrammingLanguage.Javascript] = "js",
+            [ProgrammingLanguage.Kotlin] = "kt",
+            [ProgrammingLanguage.Php] = "php",
+            [ProgrammingLanguage.Ruby] = "rb",
+            [ProgrammingLanguage.Scala] = "scala",
         };
     }
 }

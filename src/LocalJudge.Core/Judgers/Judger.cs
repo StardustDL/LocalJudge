@@ -16,7 +16,7 @@ namespace LocalJudge.Core.Judgers
         {
             JudgeResult res = new JudgeResult
             {
-                ID = name,
+                Id = name,
                 State = JudgeState.Pending,
                 Issues = new List<Issue>()
             };

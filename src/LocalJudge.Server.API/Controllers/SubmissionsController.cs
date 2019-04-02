@@ -20,7 +20,7 @@ namespace LocalJudge.Server.API.Controllers
 
         public class SubmitData
         {
-            public string ProblemID { get; set; }
+            public string ProblemId { get; set; }
 
             public string Code { get; set; }
 
@@ -56,13 +56,13 @@ namespace LocalJudge.Server.API.Controllers
         [ProducesDefaultResponseType]
         public ActionResult<SubmissionMetadata> Submit([FromBody] SubmitData data)
         {
-            if (Program.Workspace.Problems.Has(data.ProblemID) == false)
+            if (Program.Workspace.Problems.Has(data.ProblemId) == false)
                 return NotFound();
 
             if (data.Code == null) data.Code = string.Empty;
             var meta = new SubmissionMetadata
             {
-                ProblemID = data.ProblemID,
+                ProblemId = data.ProblemId,
                 Language = data.Language,
                 Time = DateTimeOffset.Now,
                 CodeLength = (uint)Encoding.UTF8.GetByteCount(data.Code),
@@ -73,12 +73,12 @@ namespace LocalJudge.Server.API.Controllers
             try
             {
                 sub.SaveCode(data.Code);
-                SendJudgeRequest(sub.ID);
-                return Created($"submissions/{meta.ID}", meta);
+                SendJudgeRequest(sub.Id);
+                return Created($"submissions/{meta.Id}", sub.GetMetadata());
             }
             catch
             {
-                Program.Workspace.Submissions.Delete(sub.ID);
+                Program.Workspace.Submissions.Delete(sub.Id);
                 return Forbid();
             }
         }
@@ -115,7 +115,7 @@ namespace LocalJudge.Server.API.Controllers
                 res.ClearResult();
                 try
                 {
-                    SendJudgeRequest(res.ID);
+                    SendJudgeRequest(res.Id);
                     return Accepted();
                 }
                 catch
@@ -149,6 +149,19 @@ namespace LocalJudge.Server.API.Controllers
             var res = Program.Workspace.Submissions.Get(id)?.GetCode();
             if (res != null)
                 return Ok(res);
+            else
+                return NotFound();
+        }
+
+        [HttpGet("{id}/codefile")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public ActionResult<byte[]> GetCodeFile(string id)
+        {
+            var res = Program.Workspace.Submissions.Get(id)?.GetCodePath();
+            if (res != null)
+                return Ok(System.IO.File.ReadAllBytes(res));
             else
                 return NotFound();
         }

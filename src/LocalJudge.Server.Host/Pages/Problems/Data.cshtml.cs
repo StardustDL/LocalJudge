@@ -24,9 +24,9 @@ namespace LocalJudge.Server.Host.Pages.Problems
 
         public class TestCaseDownloadModel
         {
-            public string ProblemID { get; set; }
+            public string ProblemId { get; set; }
 
-            public string TestCaseID { get; set; }
+            public string TestCaseId { get; set; }
         }
 
         private readonly IHttpClientFactory clientFactory;
@@ -104,8 +104,8 @@ namespace LocalJudge.Server.Host.Pages.Problems
             var client = new ProblemsClient(httpclient);
             try
             {
-                var bytes = await client.GetSampleInputFileAsync(PostData.ProblemID, PostData.TestCaseID);
-                return File(bytes, "text/plain", $"sample{PostData.TestCaseID}.in");
+                var bytes = await client.GetSampleInputFileAsync(PostData.ProblemId, PostData.TestCaseId);
+                return File(bytes, "text/plain", $"sample{PostData.TestCaseId}.in");
             }
             catch
             {
@@ -124,8 +124,8 @@ namespace LocalJudge.Server.Host.Pages.Problems
             var client = new ProblemsClient(httpclient);
             try
             {
-                var bytes = await client.GetSampleOutputFileAsync(PostData.ProblemID, PostData.TestCaseID);
-                return File(bytes, "text/plain", $"sample{PostData.TestCaseID}.out");
+                var bytes = await client.GetSampleOutputFileAsync(PostData.ProblemId, PostData.TestCaseId);
+                return File(bytes, "text/plain", $"sample{PostData.TestCaseId}.out");
             }
             catch
             {
@@ -144,8 +144,8 @@ namespace LocalJudge.Server.Host.Pages.Problems
             var client = new ProblemsClient(httpclient);
             try
             {
-                var bytes = await client.GetTestInputFileAsync(PostData.ProblemID, PostData.TestCaseID);
-                return File(bytes, "text/plain", $"test{PostData.TestCaseID}.in");
+                var bytes = await client.GetTestInputFileAsync(PostData.ProblemId, PostData.TestCaseId);
+                return File(bytes, "text/plain", $"test{PostData.TestCaseId}.in");
             }
             catch
             {
@@ -164,8 +164,8 @@ namespace LocalJudge.Server.Host.Pages.Problems
             var client = new ProblemsClient(httpclient);
             try
             {
-                var bytes = await client.GetTestOutputFileAsync(PostData.ProblemID, PostData.TestCaseID);
-                return File(bytes, "text/plain", $"test{PostData.TestCaseID}.out");
+                var bytes = await client.GetTestOutputFileAsync(PostData.ProblemId, PostData.TestCaseId);
+                return File(bytes, "text/plain", $"test{PostData.TestCaseId}.out");
             }
             catch
             {

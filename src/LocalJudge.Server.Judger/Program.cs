@@ -77,7 +77,7 @@ namespace LocalJudger.Server.Judger
 
             var submission = Workspace.Submissions.Get(id);
             var submdata = submission.GetMetadata();
-            var problem = Workspace.Problems.Get(submdata.ProblemID);
+            var problem = Workspace.Problems.Get(submdata.ProblemId);
 
             if (problem != null)
             {
@@ -90,7 +90,7 @@ namespace LocalJudger.Server.Judger
                     if (lang.CompileCommand != null)
                     {
                         result.State = JudgeState.Compiling;
-                        submission.SaveResult(result);
+                        submission.SetResult(result);
 
                         string codePath = submission.GetCodePath();
                         string outputPath = Path.Join(submission.Root, Path.GetFileNameWithoutExtension(codePath));
@@ -113,7 +113,7 @@ namespace LocalJudger.Server.Judger
                     if (result.State == JudgeState.Pending)
                     {
                         result.State = JudgeState.Judging;
-                        submission.SaveResult(result);
+                        submission.SetResult(result);
 
                         Dictionary<string, string> vars = new Dictionary<string, string>()
                         {
@@ -130,7 +130,7 @@ namespace LocalJudger.Server.Judger
                             JudgeResult res = null;
                             using (var input = File.OpenText(item.Input))
                             using (var output = File.OpenText(item.Output))
-                                res = LocalJudge.Core.Judgers.Judger.Judge(casemdata.ID, lang.RunCommand.Resolve(vars), submission.Root, casemdata.TimeLimit, casemdata.MemoryLimit, input, output, comparer);
+                                res = LocalJudge.Core.Judgers.Judger.Judge(casemdata.Id, lang.RunCommand.Resolve(vars), submission.Root, casemdata.TimeLimit, casemdata.MemoryLimit, input, output, comparer);
                             result.Samples.Add(res);
                         }
                         foreach (var item in problem.GetTests())
@@ -139,7 +139,7 @@ namespace LocalJudger.Server.Judger
                             JudgeResult res = null;
                             using (var input = File.OpenText(item.Input))
                             using (var output = File.OpenText(item.Output))
-                                res = LocalJudge.Core.Judgers.Judger.Judge(casemdata.ID, lang.RunCommand.Resolve(vars), submission.Root, casemdata.TimeLimit, casemdata.MemoryLimit, input, output, comparer);
+                                res = LocalJudge.Core.Judgers.Judger.Judge(casemdata.Id, lang.RunCommand.Resolve(vars), submission.Root, casemdata.TimeLimit, casemdata.MemoryLimit, input, output, comparer);
                             result.Tests.Add(res);
                         }
 
@@ -154,7 +154,7 @@ namespace LocalJudger.Server.Judger
             }
             else
             {
-                result.Issues.Add(new Issue(IssueLevel.Error, "No problem " + submdata.ProblemID));
+                result.Issues.Add(new Issue(IssueLevel.Error, "No problem " + submdata.ProblemId));
                 result.State = JudgeState.SystemError;
             }
 
@@ -204,7 +204,7 @@ namespace LocalJudger.Server.Judger
                 result.AcceptedCase = acceptCase;
             }
 
-            submission.SaveResult(result);
+            submission.SetResult(result);
 
             Console.WriteLine($"Judged submission: {id}");
         }

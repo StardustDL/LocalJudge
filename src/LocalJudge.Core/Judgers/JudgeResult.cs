@@ -5,7 +5,7 @@ namespace LocalJudge.Core.Judgers
 {
     public class JudgeResult
     {
-        public string ID { get; set; }
+        public string Id { get; set; }
 
         public JudgeState State { get; set; }
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using LocalJudge.Server.Host.APIClients;
+using LocalJudge.Server.Host.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -46,6 +47,25 @@ namespace LocalJudge.Server.Host.Pages.Submissions
             return Page();
         }
 
+        public async Task<IActionResult> OnPostDownloadCodeAsync()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            var httpclient = clientFactory.CreateClient();
+            var client = new SubmissionsClient(httpclient);
+            try
+            {
+                var bytes = await client.GetCodeFileAsync(PostData.Id);
+                return File(bytes, "text/plain", $"{PostData.Id}.{ProgrammingLanguageHelper.Extends[PostData.Language]}");
+            }
+            catch
+            {
+                return NotFound();
+            }
+        }
+
         public async Task<IActionResult> OnPostDeleteAsync()
         {
             if (!ModelState.IsValid)
@@ -56,7 +76,7 @@ namespace LocalJudge.Server.Host.Pages.Submissions
             var client = new SubmissionsClient(httpclient);
             try
             {
-                await client.DeleteAsync(PostData.ID);
+                await client.DeleteAsync(PostData.Id);
                 return RedirectToPage("/Submissions/Index");
             }
             catch
@@ -75,7 +95,7 @@ namespace LocalJudge.Server.Host.Pages.Submissions
             var client = new SubmissionsClient(httpclient);
             try
             {
-                await client.RejudgeAsync(PostData.ID);
+                await client.RejudgeAsync(PostData.Id);
                 return RedirectToPage();
             }
             catch
@@ -90,7 +110,7 @@ namespace LocalJudge.Server.Host.Pages.Submissions
             {
                 return BadRequest();
             }
-            return RedirectToPage("/Problems/Data", new { id = PostData.ProblemID });
+            return RedirectToPage("/Problems/Data", new { id = PostData.ProblemId });
         }
     }
 }

@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalJudge.Server.API", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalJudge.Server.Host", "src\LocalJudge.Server.Host\LocalJudge.Server.Host.csproj", "{04D73560-D7A4-4E2D-ACC7-EB2384374FDE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalJudge.Server.Judger", "src\LocalJudge.Server.Judger\LocalJudge.Server.Judger.csproj", "{E336BA89-0393-4C47-8E4C-886B0146ABAE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalJudge.Server.Judger", "src\LocalJudge.Server.Judger\LocalJudge.Server.Judger.csproj", "{E336BA89-0393-4C47-8E4C-886B0146ABAE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

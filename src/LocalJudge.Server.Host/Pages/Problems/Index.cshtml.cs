@@ -41,7 +41,7 @@ namespace LocalJudge.Server.Host.Pages.Problems
             var client = new ProblemsClient(httpclient);
             try
             {
-                await client.DeleteAsync(PostData.ID);
+                await client.DeleteAsync(PostData.Id);
                 return RedirectToPage();
             }
             catch

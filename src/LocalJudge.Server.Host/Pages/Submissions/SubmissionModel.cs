@@ -35,14 +35,14 @@ namespace LocalJudge.Server.Host.Pages.Submissions
             try
             {
                 var pcli = new ProblemsClient(client);
-                res.Problem = await pcli.GetAsync(metadata.ProblemID);
+                res.Problem = await pcli.GetAsync(metadata.ProblemId);
             }
             catch
             {
                 res.Problem = new ProblemMetadata
                 {
-                    Id = res.Metadata.ProblemID,
-                    Name = $"Not found: {res.Metadata.ProblemID}"
+                    Id = res.Metadata.ProblemId,
+                    Name = $"Not found: {res.Metadata.ProblemId}"
                 };
             }
             return res;

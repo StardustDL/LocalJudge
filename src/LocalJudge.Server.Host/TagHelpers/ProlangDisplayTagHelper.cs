@@ -23,6 +23,22 @@ namespace LocalJudge.Server.Host.TagHelpers
                     return "#3572A5";
                 case ProgrammingLanguage.Rust:
                     return "#dea584";
+                case ProgrammingLanguage.VisualBasic:
+                    return "#945db7";
+                case ProgrammingLanguage.Go:
+                    return "#00add8";
+                case ProgrammingLanguage.Haskell:
+                    return "#5e5086";
+                case ProgrammingLanguage.Javascript:
+                    return "#f1e05a";
+                case ProgrammingLanguage.Kotlin:
+                    return "#f18e33";
+                case ProgrammingLanguage.Php:
+                    return "#4f5d95";
+                case ProgrammingLanguage.Ruby:
+                    return "#701516";
+                case ProgrammingLanguage.Scala:
+                    return "#c22d40";
             }
             return "white";
         }
@@ -59,6 +75,9 @@ namespace LocalJudge.Server.Host.TagHelpers
                     break;
                 case ProgrammingLanguage.Rust:
                     name.InnerHtml.Append("Rust");
+                    break;
+                case ProgrammingLanguage.VisualBasic:
+                    name.InnerHtml.Append("Visual Basic");
                     break;
             }
             output.Content.AppendHtml(name);
