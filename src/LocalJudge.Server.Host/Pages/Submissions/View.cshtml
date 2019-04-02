@@ -2,6 +2,7 @@
 @model LocalJudge.Server.Host.Pages.Submissions.ViewModel
 @inject IViewLocalizer Localizer
 @inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@inject IAuthorizationService AuthorizationService
 @{
     ViewData["Title"] = SharedLocalizer["View"];
     ViewData["Id"] = "Submissions";
@@ -10,7 +11,7 @@
 @section header{
     @if (Model.Submission.Result.State == APIClients.JudgeState.Compiling || Model.Submission.Result.State == APIClients.JudgeState.Judging || Model.Submission.Result.State == APIClients.JudgeState.Pending)
     {
-        <meta http-equiv="refresh" content="3"> // Auto refresh
+        <meta http-equiv="refresh" content="3">// Auto refresh
     }
 
     <environment include="Development">
@@ -35,7 +36,7 @@
             <judge-state value="@Model.Submission.Result.State"></judge-state>
         </h1>
         <br />
-        <div class="row">
+        <div class="row" style="margin-left:0px">
             <h2 style="display:inline">@SharedLocalizer["Code"]</h2>
             <form method="post" style="margin-left:10px">
                 <input type="text" asp-for="PostData.Language" style="display:none" value="@Model.Submission.Metadata.Language" />
@@ -45,7 +46,6 @@
                 </button>
             </form>
         </div>
-        
 
         <pre id="rawCode" style="display:none">@Html.DisplayFor(model=>model.Code)</pre>
         <div id="code" style="min-height:600px"></div>
@@ -105,6 +105,9 @@
                 }
             </dd>
 
+            <dt style="float:left; min-width:30px"><i class="fa fa-user"></i></dt>
+            <dd>@Model.Submission.User.Name</dd>
+
             <dt style="float:left; min-width:30px"><i class="fa fa-clock"></i></dt>
             <dd><timespan-display value="@Model.Submission.Result.TotalTime"></timespan-display></dd>
 
@@ -128,18 +131,21 @@
                             <i class="fa fa-database"></i>
                         </button>
                     </form>
-                    <form method="post" style="margin-left:10px">
-                        <input type="text" asp-for="PostData.Id" style="display:none" value="@Model.Submission.Metadata.Id" />
-                        <button type="submit" asp-page-handler="Rejudge" class="btn btn-outline-secondary">
-                            <i class="fa fa-redo"></i>
-                        </button>
-                    </form>
-                    <form method="post" style="margin-left:10px">
-                        <input type="text" asp-for="PostData.Id" style="display:none" value="@Model.Submission.Metadata.Id" />
-                        <button type="submit" asp-page-handler="Delete" class="btn btn-outline-danger">
-                            <i class="fa fa-trash"></i>
-                        </button>
-                    </form>
+                    @if ((await AuthorizationService.AuthorizeAsync(User, Helpers.Authorizations.Administrator)).Succeeded)
+                    {
+                        <form method="post" style="margin-left:10px">
+                            <input type="text" asp-for="PostData.Id" style="display:none" value="@Model.Submission.Metadata.Id" />
+                            <button type="submit" asp-page-handler="Rejudge" class="btn btn-outline-secondary">
+                                <i class="fa fa-redo"></i>
+                            </button>
+                        </form>
+                        <form method="post" style="margin-left:10px">
+                            <input type="text" asp-for="PostData.Id" style="display:none" value="@Model.Submission.Metadata.Id" />
+                            <button type="submit" asp-page-handler="Delete" class="btn btn-outline-danger">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </form>
+                    }
                 </div>
             </dd>
         </dl>

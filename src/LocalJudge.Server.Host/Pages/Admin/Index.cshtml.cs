@@ -103,7 +103,11 @@ namespace LocalJudge.Server.Host.Pages.Admin
 
         public async Task<IActionResult> OnPostInitializeAsync()
         {
-            if (!ModelState.IsValid || (await CanAdmin()) == false)
+            if((await CanAdmin()) == false)
+            {
+                return Forbid();
+            }
+            if (!ModelState.IsValid)
             {
                 return BadRequest();
             }

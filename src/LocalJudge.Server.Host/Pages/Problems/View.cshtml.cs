@@ -5,64 +5,15 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using LocalJudge.Server.Host.APIClients;
+using LocalJudge.Server.Host.Helpers;
 using Markdig;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace LocalJudge.Server.Host.Pages.Problems
 {
-    public class ProblemModel
-    {
-        public ProblemMetadata Metadata { get; set; }
-
-        public ProblemDescription Description { get; set; }
-
-        public IList<TestCaseMetadata> Samples { get; set; }
-
-        public IList<TestCaseMetadata> Tests { get; set; }
-
-        public static async Task<ProblemModel> GetAsync(ProblemMetadata metadata, HttpClient client, bool loadDescription, bool loadData)
-        {
-            var res = new ProblemModel
-            {
-                Metadata = metadata,
-            };
-
-            var pcli = new ProblemsClient(client);
-
-            if (loadDescription)
-            {
-                try
-                {
-                    res.Description = await pcli.GetDescriptionAsync(metadata.Id);
-                }
-                catch { }
-            }
-
-            if (loadData)
-            {
-                try
-                {
-                    res.Samples = await pcli.GetSamplesAsync(metadata.Id);
-                }
-                catch
-                {
-                    res.Samples = Array.Empty<TestCaseMetadata>();
-                }
-
-                try
-                {
-                    res.Tests = await pcli.GetTestsAsync(metadata.Id);
-                }
-                catch
-                {
-                    res.Tests = Array.Empty<TestCaseMetadata>();
-                }
-            }
-
-            return res;
-        }
-    }
 
     public class ViewModel : PageModel
     {
@@ -80,19 +31,25 @@ namespace LocalJudge.Server.Host.Pages.Problems
         }
 
         private readonly IHttpClientFactory clientFactory;
+        private readonly UserManager<User> _userManager;
+        private readonly IAuthorizationService _authorizationService;
 
         public MarkdownPipelineBuilder MarkdownBuilder { get; private set; }
 
-        public ViewModel(IHttpClientFactory clientFactory)
+        public ViewModel(IHttpClientFactory clientFactory, UserManager<User> userManager, IAuthorizationService authorizationService)
         {
             this.clientFactory = clientFactory;
             MarkdownBuilder = new MarkdownPipelineBuilder().UseAdvancedExtensions();
+            _userManager = userManager;
+            _authorizationService = authorizationService;
         }
 
         [BindProperty]
         public ProblemPostModel PostData { get; set; }
 
         public ProblemModel Problem { get; set; }
+
+        public User CurrentUser { get; set; }
 
         public IList<TestCaseData> SampleData { get; set; }
 
@@ -132,6 +89,10 @@ namespace LocalJudge.Server.Host.Pages.Problems
             }
             SampleData = samples;
 
+            CurrentUser = await _userManager.GetUserAsync(User);
+            EnableCode = CurrentUser != null;
+
+            if (EnableCode)
             {
                 StringBuilder res = new StringBuilder();
                 var wclient = new WorkspaceClient(httpclient);
@@ -213,6 +174,10 @@ namespace LocalJudge.Server.Host.Pages.Problems
 
         public async Task<IActionResult> OnPostDeleteAsync()
         {
+            if ((await _authorizationService.AuthorizeAsync(User, Authorizations.Administrator)).Succeeded == false)
+            {
+                return Forbid();
+            }
             if (!ModelState.IsValid)
             {
                 return BadRequest();
@@ -241,6 +206,10 @@ namespace LocalJudge.Server.Host.Pages.Problems
 
         public async Task<IActionResult> OnPostSubmitAsync()
         {
+            if ((await _authorizationService.AuthorizeAsync(User, Authorizations.Administrator)).Succeeded == false)
+            {
+                return Forbid();
+            }
             if (!ModelState.IsValid)
             {
                 return BadRequest();

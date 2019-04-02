@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace LocalJudge.Server.Host.Helpers
 {
-    public class UserStore : IUserStore<User>, IUserPasswordStore<User>, IUserRoleStore<User>
+    public class UserStore : IUserStore<User>, IUserPasswordStore<User>, IUserRoleStore<User>, IUserEmailStore<User>
     {
         private readonly IHttpClientFactory clientFactory;
 
@@ -70,6 +70,11 @@ namespace LocalJudge.Server.Host.Helpers
 
         }
 
+        public Task<User> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<User> FindByIdAsync(string userId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -93,6 +98,27 @@ namespace LocalJudge.Server.Host.Helpers
             {
                 return null;
             }
+        }
+
+        public Task<string> GetEmailAsync(User user, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return Task.FromResult(user.Email);
+        }
+
+        public Task<bool> GetEmailConfirmedAsync(User user, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return Task.FromResult(user.EmailConfirmed);
+        }
+
+        public Task<string> GetNormalizedEmailAsync(User user, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            return Task.FromResult(user.NormalizedEmail);
         }
 
         public Task<string> GetNormalizedUserNameAsync(User user, CancellationToken cancellationToken)
@@ -164,6 +190,33 @@ namespace LocalJudge.Server.Host.Helpers
             if (index == -1) return Task.CompletedTask;
 
             user.Roles.RemoveAt(index);
+            return Task.CompletedTask;
+        }
+
+        public Task SetEmailAsync(User user, string email, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            user.Email = email;
+
+            return Task.CompletedTask;
+        }
+
+        public Task SetEmailConfirmedAsync(User user, bool confirmed, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            user.EmailConfirmed = confirmed;
+
+            return Task.CompletedTask;
+        }
+
+        public Task SetNormalizedEmailAsync(User user, string normalizedEmail, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            user.NormalizedEmail = normalizedEmail;
+
             return Task.CompletedTask;
         }
 

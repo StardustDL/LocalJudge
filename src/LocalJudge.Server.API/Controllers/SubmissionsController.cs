@@ -22,6 +22,8 @@ namespace LocalJudge.Server.API.Controllers
         {
             public string ProblemId { get; set; }
 
+            public string UserId { get; set; }
+
             public string Code { get; set; }
 
             public ProgrammingLanguage Language { get; set; }
@@ -59,10 +61,14 @@ namespace LocalJudge.Server.API.Controllers
             if (Program.Workspace.Problems.Has(data.ProblemId) == false)
                 return NotFound();
 
+            if (Program.Workspace.Users.Has(data.UserId) == false)
+                return NotFound();
+
             if (data.Code == null) data.Code = string.Empty;
             var meta = new SubmissionMetadata
             {
                 ProblemId = data.ProblemId,
+                UserId = data.UserId,
                 Language = data.Language,
                 Time = DateTimeOffset.Now,
                 CodeLength = (uint)Encoding.UTF8.GetByteCount(data.Code),

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using LocalJudge.Server.Host.APIClients;
+using LocalJudge.Server.Host.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -12,10 +14,12 @@ namespace LocalJudge.Server.Host.Pages.Problems
     public class IndexModel : PageModel
     {
         private readonly IHttpClientFactory clientFactory;
+        private readonly IAuthorizationService _authorizationService;
 
-        public IndexModel(IHttpClientFactory clientFactory)
+        public IndexModel(IHttpClientFactory clientFactory, IAuthorizationService authorizationService)
         {
             this.clientFactory = clientFactory;
+            _authorizationService = authorizationService;
         }
 
         public IList<ProblemMetadata> Problems { get; set; }
@@ -32,6 +36,10 @@ namespace LocalJudge.Server.Host.Pages.Problems
 
         public async Task<IActionResult> OnPostDeleteAsync()
         {
+            if ((await _authorizationService.AuthorizeAsync(User, Authorizations.Administrator)).Succeeded == false)
+            {
+                return Forbid();
+            }
             if (!ModelState.IsValid)
             {
                 return BadRequest();

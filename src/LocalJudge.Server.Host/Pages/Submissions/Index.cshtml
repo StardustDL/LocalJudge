@@ -2,6 +2,7 @@
 @model LocalJudge.Server.Host.Pages.Submissions.IndexModel
 @inject IViewLocalizer Localizer
 @inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@inject IAuthorizationService AuthorizationService
 @{
     ViewData["Title"] = SharedLocalizer["Submissions"];
     ViewData["Id"] = "Submissions";
@@ -37,6 +38,9 @@
                 @SharedLocalizer[Html.DisplayNameFor(model => model.Submissions[0].Metadata.Language)]
             </th>
             <th>
+                @SharedLocalizer["User"]
+            </th>
+            <th>
                 @Localizer["Submission Time"]
             </th>
             <th>@SharedLocalizer["Operations"]</th>
@@ -45,56 +49,62 @@
     <tbody>
         @foreach (var item in Model.Submissions)
         {
-        <tr>
-            <td>
-                <a asp-page="./View" asp-route-id="@item.Metadata.Id">@item.Metadata.Id.Substring(30)</a>
-            </td>
-            <td>
-                <a asp-page="/Problems/View" asp-route-id="@item.Problem.Id">@Html.DisplayFor(modelItem => item.Problem.Name)</a>
-            </td>
-            <td>
-                <judge-state value="@item.Result.State"></judge-state>
-            </td>
-            <td>
-                @if (item.Result.TotalCase.HasValue)
-                {
-                    <text> @item.Result.AcceptedCase / @item.Result.TotalCase </text>
-                }
-                else
-                {
-                    <text> N/A </text>
-                }
-            </td>
-            <td>
-                <timespan-display value="@item.Result.TotalTime"></timespan-display>
-            </td>
-            <td>
-                <memory-display value="@item.Result.MaximumMemory"></memory-display>
-            </td>
-            <td>
-                <prolang-display value="@item.Metadata.Language"></prolang-display>
-                (<memory-display value="@item.Metadata.CodeLength"></memory-display>)
-            </td>
-            <td>
-                <timeoffset-display value="@item.Metadata.Time"></timeoffset-display>
-            </td>
-            <td>
-                <div class="row" style="margin-left:0px">
-                    <form method="post">
-                        <input type="text" asp-for="PostData.Id" style="display:none" value="@item.Metadata.Id" />
-                        <button type="submit" asp-page-handler="Rejudge" class="btn btn-sm btn-outline-secondary">
-                            <i class="fa fa-redo"></i>
-                        </button>
-                    </form>
-                    <form method="post" style="margin-left:10px">
-                        <input type="text" asp-for="PostData.Id" style="display:none" value="@item.Metadata.Id" />
-                        <button type="submit" asp-page-handler="Delete" class="btn btn-sm btn-outline-danger">
-                            <i class="fa fa-trash"></i>
-                        </button>
-                    </form>
-                </div>
-            </td>
-        </tr>
+            <tr>
+                <td>
+                    <a asp-page="./View" asp-route-id="@item.Metadata.Id">@item.Metadata.Id.Substring(30)</a>
+                </td>
+                <td>
+                    <a asp-page="/Problems/View" asp-route-id="@item.Problem.Id">@Html.DisplayFor(modelItem => item.Problem.Name)</a>
+                </td>
+                <td>
+                    <judge-state value="@item.Result.State"></judge-state>
+                </td>
+                <td>
+                    @if (item.Result.TotalCase.HasValue)
+                    {
+                        <text> @item.Result.AcceptedCase / @item.Result.TotalCase </text>
+                    }
+                    else
+                    {
+                        <text> N/A </text>
+                    }
+                </td>
+                <td>
+                    <timespan-display value="@item.Result.TotalTime"></timespan-display>
+                </td>
+                <td>
+                    <memory-display value="@item.Result.MaximumMemory"></memory-display>
+                </td>
+                <td>
+                    <prolang-display value="@item.Metadata.Language"></prolang-display>
+                    (<memory-display value="@item.Metadata.CodeLength"></memory-display>)
+                </td>
+                <td>
+                    @item.User.Name
+                </td>
+                <td>
+                    <timeoffset-display value="@item.Metadata.Time"></timeoffset-display>
+                </td>
+                <td>
+                    <div class="row" style="margin-left:0px">
+                        @if ((await AuthorizationService.AuthorizeAsync(User, Helpers.Authorizations.Administrator)).Succeeded)
+                        {
+                            <form method="post">
+                                <input type="text" asp-for="PostData.Id" style="display:none" value="@item.Metadata.Id" />
+                                <button type="submit" asp-page-handler="Rejudge" class="btn btn-sm btn-outline-secondary">
+                                    <i class="fa fa-redo"></i>
+                                </button>
+                            </form>
+                            <form method="post" style="margin-left:10px">
+                                <input type="text" asp-for="PostData.Id" style="display:none" value="@item.Metadata.Id" />
+                                <button type="submit" asp-page-handler="Delete" class="btn btn-sm btn-outline-danger">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </td>
+            </tr>
         }
     </tbody>
 </table>

@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using LocalJudge.Server.Host.APIClients;
 using LocalJudge.Server.Host.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -13,10 +14,12 @@ namespace LocalJudge.Server.Host.Pages.Submissions
     public class ViewModel : PageModel
     {
         private readonly IHttpClientFactory clientFactory;
+        private readonly IAuthorizationService _authorizationService;
 
-        public ViewModel(IHttpClientFactory clientFactory)
+        public ViewModel(IHttpClientFactory clientFactory, IAuthorizationService authorizationService)
         {
             this.clientFactory = clientFactory;
+            _authorizationService = authorizationService;
         }
 
         public SubmissionModel Submission { get; set; }
@@ -68,6 +71,10 @@ namespace LocalJudge.Server.Host.Pages.Submissions
 
         public async Task<IActionResult> OnPostDeleteAsync()
         {
+            if((await _authorizationService.AuthorizeAsync(User,Authorizations.Administrator)).Succeeded == false)
+            {
+                return Forbid();
+            }
             if (!ModelState.IsValid)
             {
                 return BadRequest();
@@ -87,6 +94,10 @@ namespace LocalJudge.Server.Host.Pages.Submissions
 
         public async Task<IActionResult> OnPostRejudgeAsync()
         {
+            if ((await _authorizationService.AuthorizeAsync(User, Authorizations.Administrator)).Succeeded == false)
+            {
+                return Forbid();
+            }
             if (!ModelState.IsValid)
             {
                 return BadRequest();
@@ -96,7 +107,7 @@ namespace LocalJudge.Server.Host.Pages.Submissions
             try
             {
                 await client.RejudgeAsync(PostData.Id);
-                return RedirectToPage();
+                return RedirectToPage("./View",new { id = PostData.Id });
             }
             catch
             {

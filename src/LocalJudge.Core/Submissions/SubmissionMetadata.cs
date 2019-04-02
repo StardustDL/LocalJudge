@@ -9,6 +9,8 @@ namespace LocalJudge.Core.Submissions
 
         public string ProblemId { get; set; }
 
+        public string UserId { get; set; }
+
         public ProgrammingLanguage Language { get; set; }
 
         public DateTimeOffset Time { get; set; }

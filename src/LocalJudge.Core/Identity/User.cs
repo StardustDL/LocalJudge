@@ -19,6 +19,8 @@ namespace LocalJudge.Core.Identity
 
         public string NormalizedName { get; set; }
 
+        public string NormalizedEmail { get; set; }
+
         public List<Role> Roles { get; set; } = new List<Role>();
     }
 }

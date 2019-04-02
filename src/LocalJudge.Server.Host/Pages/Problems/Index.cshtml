@@ -2,6 +2,7 @@
 @model LocalJudge.Server.Host.Pages.Problems.IndexModel
 @inject IViewLocalizer Localizer
 @inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@inject IAuthorizationService AuthorizationService
 @{
     ViewData["Title"] = SharedLocalizer["Problems"];
     ViewData["Id"] = "Problems";
@@ -42,12 +43,15 @@
                 </td>
                 <td>
                     <div class="row" style="margin-left:0px">
-                        <form method="post" style="margin-left:0px">
-                            <input type="text" asp-for="PostData.Id" style="display:none" value="@item.Id" />
-                            <button type="submit" asp-page-handler="Delete" class="btn btn-sm btn-outline-danger">
-                                <i class="fa fa-trash"></i>
-                            </button>
-                        </form>
+                        @if ((await AuthorizationService.AuthorizeAsync(User, Helpers.Authorizations.Administrator)).Succeeded)
+                        {
+                            <form method="post" style="margin-left:0px">
+                                <input type="text" asp-for="PostData.Id" style="display:none" value="@item.Id" />
+                                <button type="submit" asp-page-handler="Delete" class="btn btn-sm btn-outline-danger">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </form>
+                        }
                     </div>
                 </td>
             </tr>

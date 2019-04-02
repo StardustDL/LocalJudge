@@ -2,6 +2,7 @@
 @model LocalJudge.Server.Host.Pages.Problems.ViewModel
 @inject IViewLocalizer Localizer
 @inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@inject IAuthorizationService AuthorizationService
 @{
     ViewData["Title"] = Model.Problem.Metadata.Name;
     ViewData["Id"] = "Problems";
@@ -82,7 +83,8 @@
                 </h2>
             </div>
             <div id="divSamples" class="collapse show card-content">
-                @foreach(var item in Model.SampleData) {
+                @foreach (var item in Model.SampleData)
+                {
                     <h3>@SharedLocalizer["Sample"] #@item.Metadata.Id</h3>
                     <div class="row">
                         <div class="col">
@@ -126,12 +128,15 @@
                             <i class="fa fa-database"></i>
                         </button>
                     </form>
-                    <form method="post" style="margin-left:10px">
-                        <input type="text" asp-for="PostData.Id" style="display:none" value="@Model.Problem.Metadata.Id" />
-                        <button type="submit" asp-page-handler="Delete" class="btn btn-outline-danger">
-                            <i class="fa fa-trash"></i>
-                        </button>
-                    </form>
+                    @if ((await AuthorizationService.AuthorizeAsync(User, Helpers.Authorizations.Administrator)).Succeeded)
+                    {
+                        <form method="post" style="margin-left:10px">
+                            <input type="text" asp-for="PostData.Id" style="display:none" value="@Model.Problem.Metadata.Id" />
+                            <button type="submit" asp-page-handler="Delete" class="btn btn-outline-danger">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </form>
+                    }
                 </div>
             </dd>
         </dl>
@@ -221,7 +226,6 @@
 
 @if (Model.EnableCode)
 {
-
     <div class="row" style="margin-bottom:10px; margin-top:20px">
         <label style="margin-right:10px; position:relative; top:6px; font-size:large">@SharedLocalizer["Language"]</label>
         <select id="selCodeLanguage" style="font-size:large; width:200px"></select>
@@ -235,6 +239,7 @@
         <form method="post" style="margin-left:20px;">
             <input type="text" asp-for="PostData.Id" style="display:none" value="@Model.Problem.Metadata.Id" />
             <input type="text" asp-for="PostData.SubmitData.ProblemId" style="display:none" value="@Model.Problem.Metadata.Id" />
+            <input type="text" asp-for="PostData.SubmitData.UserId" style="display:none" value="@Model.CurrentUser.Id" />
             <input type="text" asp-for="PostData.SubmitData.Language" id="formLang" style="display:none" />
             <textarea type="text" asp-for="PostData.SubmitData.Code" id="formCode" style="display:none"></textarea>
             <input type="submit" value="@Localizer["Submit"]" asp-page-handler="Submit" class="btn btn-primary" style="width:100px" />

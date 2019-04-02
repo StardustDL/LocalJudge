@@ -153,6 +153,12 @@
   <data name="Language" xml:space="preserve">
     <value>语言</value>
   </data>
+  <data name="Login" xml:space="preserve">
+    <value>登录</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>登出</value>
+  </data>
   <data name="MemoryLimit" xml:space="preserve">
     <value>空间限制</value>
   </data>
@@ -170,6 +176,9 @@
   </data>
   <data name="Problems" xml:space="preserve">
     <value>题库</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>注册</value>
   </data>
   <data name="Sample" xml:space="preserve">
     <value>样例</value>
@@ -200,6 +209,9 @@
   </data>
   <data name="TimeLimit" xml:space="preserve">
     <value>时间限制</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>用户</value>
   </data>
   <data name="View" xml:space="preserve">
     <value>查看</value>

@@ -14,6 +14,8 @@ namespace LocalJudge.Server.Host.Pages.Submissions
 
         public ProblemMetadata Problem { get; set; }
 
+        public User User { get; set; }
+
         public static async Task<SubmissionModel> GetAsync(SubmissionMetadata metadata, HttpClient client)
         {
             var res = new SubmissionModel
@@ -45,6 +47,20 @@ namespace LocalJudge.Server.Host.Pages.Submissions
                     Name = $"Not found: {res.Metadata.ProblemId}"
                 };
             }
+            try
+            {
+                var ucli = new UsersClient(client);
+                res.User = await ucli.GetAsync(metadata.UserId);
+            }
+            catch
+            {
+                res.User = new User
+                {
+                    Id = res.Metadata.UserId,
+                    Name = $"Not found: {res.Metadata.UserId}"
+                };
+            }
+
             return res;
         }
     }
