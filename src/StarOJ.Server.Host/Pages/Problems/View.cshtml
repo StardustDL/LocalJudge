@@ -1,0 +1,371 @@
+﻿@page
+@model StarOJ.Server.Host.Pages.Problems.ViewModel
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewData["Title"] = Model.Problem.Metadata.Name;
+    ViewData["Id"] = "Problems";
+}
+
+@section header{
+    <environment include="Development">
+        <link rel="stylesheet" data-name="vs/editor/editor.main" href="../lib/monaco-editor/min/vs/editor/editor.main.css">
+        <link rel="stylesheet" href="~/lib/highlight.js/styles/default.min.css">
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.16.2/min/vs/editor/editor.main.css"
+              asp-fallback-href="../lib/monaco-editor/min/vs/editor/editor.main.css"
+              crossorigin="anonymous" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css"
+              asp-fallback-href="~/lib/highlight.js/styles/default.css"
+              crossorigin="anonymous" />
+    </environment>
+}
+
+<ul class="breadcrumb">
+    <li class="breadcrumb-item"><a asp-page="/Index">StarOJ</a></li>
+    <li class="breadcrumb-item"><a asp-page="/Problems/Index">@SharedLocalizer["Problems"]</a></li>
+    <li class="breadcrumb-item active">@Html.DisplayFor(model => model.Problem.Metadata.Id)</li>
+</ul>
+
+<h1 class="display-4">@Html.DisplayFor(model => model.Problem.Metadata.Name)</h1>
+
+<div class="row" style="margin-top:20px">
+    <div class="col-9">
+        <style>
+            .card-content {
+                padding: 20px;
+            }
+        </style>
+        <div class="card border-0">
+            <div class="card-header border-0">
+                <h2>
+                    <a class="card-link" data-toggle="collapse" href="#divDescription">
+                        @SharedLocalizer["Description"]
+                    </a>
+                </h2>
+            </div>
+            <div id="divDescription" class="collapse show card-content">
+                @Html.Raw(Markdig.Markdown.ToHtml(Model.Problem.Description.Description, Model.MarkdownBuilder.Build()))
+            </div>
+        </div>
+        <div class="card border-0">
+            <div class="card-header border-0">
+                <h2>
+                    <a class="card-link" data-toggle="collapse" href="#divInput">
+                        @SharedLocalizer["Input"]
+                    </a>
+                </h2>
+            </div>
+            <div id="divInput" class="collapse show card-content">
+                @Html.Raw(Markdig.Markdown.ToHtml(Model.Problem.Description.Input, Model.MarkdownBuilder.Build()))
+            </div>
+        </div>
+        <div class="card border-0">
+            <div class="card-header border-0">
+                <h2>
+                    <a class="card-link" data-toggle="collapse" href="#divOutput">
+                        @SharedLocalizer["Output"]
+                    </a>
+                </h2>
+            </div>
+            <div id="divOutput" class="collapse show card-content">
+                @Html.Raw(Markdig.Markdown.ToHtml(Model.Problem.Description.Output, Model.MarkdownBuilder.Build()))
+            </div>
+        </div>
+        <div class="card border-0">
+            <div class="card-header border-0">
+                <h2>
+                    <a class="card-link" data-toggle="collapse" href="#divSamples">
+                        @SharedLocalizer["Samples"]
+                    </a>
+                </h2>
+            </div>
+            <div id="divSamples" class="collapse show card-content">
+                @foreach (var item in Model.SampleData)
+                {
+                    <h3>@SharedLocalizer["Sample"] #@item.Metadata.Id</h3>
+                    <div class="row">
+                        <div class="col">
+                            <h4>@SharedLocalizer["Input"]</h4>
+                            <pre>@Html.DisplayFor(model => item.Input)</pre>
+                        </div>
+                        <div class="col">
+                            <h4>@SharedLocalizer["Output"]</h4>
+                            <pre>@Html.DisplayFor(model => item.Output)</pre>
+                        </div>
+                    </div>
+                    <br />
+                }
+            </div>
+        </div>
+        <div class="card border-0">
+            <div class="card-header border-0">
+                <h2>
+                    <a class="card-link" data-toggle="collapse" href="#divHint">
+                        @SharedLocalizer["Hint"]
+                    </a>
+                </h2>
+            </div>
+            <div id="divHint" class="collapse show card-content">
+                @Html.Raw(Markdig.Markdown.ToHtml(Model.Problem.Description.Hint, Model.MarkdownBuilder.Build()))
+            </div>
+        </div>
+    </div>
+    <div class="col-3">
+        <dl>
+            <dt style="float:left; min-width:30px"><i class="fa fa-user"></i></dt>
+            <dd>@Html.DisplayFor(model => model.Problem.Metadata.Author)</dd>
+            <dt style="float:left; min-width:30px"><i class="fa fa-map-marker"></i></dt>
+            <dd>@Html.DisplayFor(model => model.Problem.Metadata.Source)</dd>
+
+            <dd>
+                <div class="row" style="margin-left:0px">
+                    <a asp-page="./Data" asp-route-id="@Model.Problem.Metadata.Id" class="btn btn-outline-primary">
+                        <i class="fa fa-database"></i>
+                    </a>
+                    @if ((await AuthorizationService.AuthorizeAsync(User, Helpers.Authorizations.Administrator)).Succeeded)
+                    {
+                        <form method="post" style="margin-left:10px">
+                            <input type="text" asp-for="PostData.Id" style="display:none" value="@Model.Problem.Metadata.Id" />
+                            <button type="submit" asp-page-handler="Delete" class="btn btn-outline-danger">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </form>
+                    }
+                </div>
+            </dd>
+        </dl>
+        <br />
+        <div class="card border-0">
+            <div class="card-header border-0">
+                <a class="card-link" data-toggle="collapse" href="#divSampleCases">
+                    @SharedLocalizer["Sample Cases"]
+                </a>
+            </div>
+            <div id="divSampleCases" class="collapse show">
+                <table class="table table-sm table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+                                @SharedLocalizer[Html.DisplayNameFor(model => model.Problem.Samples[0].Id)]
+                            </th>
+                            <th>
+                                @SharedLocalizer[Html.DisplayNameFor(model => model.Problem.Samples[0].TimeLimit)]
+                            </th>
+                            <th>
+                                @SharedLocalizer[Html.DisplayNameFor(model => model.Problem.Samples[0].MemoryLimit)]
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Problem.Samples)
+                        {
+                            <tr>
+                                <td>
+                                    #@item.Id
+                                </td>
+                                <td>
+                                    <timespan-display value="@item.TimeLimit"></timespan-display>
+                                </td>
+                                <td>
+                                    <memory-display value="@item.MemoryLimit"></memory-display>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card border-0" style="margin-top:10px">
+            <div class="card-header border-0">
+                <a class="card-link" data-toggle="collapse" href="#divTestCases">
+                    @SharedLocalizer["Test Cases"]
+                </a>
+            </div>
+            <div id="divTestCases" class="collapse">
+                <table class="table table-sm table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+                                @SharedLocalizer[Html.DisplayNameFor(model => model.Problem.Tests[0].Id)]
+                            </th>
+                            <th>
+                                @SharedLocalizer[Html.DisplayNameFor(model => model.Problem.Tests[0].TimeLimit)]
+                            </th>
+                            <th>
+                                @SharedLocalizer[Html.DisplayNameFor(model => model.Problem.Tests[0].MemoryLimit)]
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Problem.Tests)
+                        {
+                            <tr>
+                                <td>
+                                    #@item.Id
+                                </td>
+                                <td>
+                                    <timespan-display value="@item.TimeLimit"></timespan-display>
+                                </td>
+                                <td>
+                                    <memory-display value="@item.MemoryLimit"></memory-display>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.EnableCode)
+{
+    <div class="row" style="margin-bottom:10px; margin-top:20px">
+        <label style="margin-right:10px; position:relative; top:6px; font-size:large">@SharedLocalizer["Language"]</label>
+        <select id="selCodeLanguage" style="font-size:large; width:200px"></select>
+        <label style="margin-left:20px; margin-right:10px; position:relative; top:6px; font-size:large">@Localizer["Theme"]</label>
+        <select id="selCodeTheme" style="font-size:large; width:200px">
+            <option>@Localizer["Light"]</option>
+            <option>@Localizer["Dark"]</option>
+            <option>@Localizer["High Contrast Dark"]</option>
+        </select>
+
+        <form method="post" style="margin-left:20px;">
+            <input type="text" asp-for="PostData.Id" style="display:none" value="@Model.Problem.Metadata.Id" />
+            <input type="text" asp-for="PostData.SubmitData.ProblemId" style="display:none" value="@Model.Problem.Metadata.Id" />
+            <input type="text" asp-for="PostData.SubmitData.UserId" style="display:none" value="@Model.CurrentUser.Id" />
+            <input type="text" asp-for="PostData.SubmitData.Language" id="formLang" style="display:none" />
+            <textarea type="text" asp-for="PostData.SubmitData.Code" id="formCode" style="display:none"></textarea>
+            <input type="submit" value="@Localizer["Submit"]" asp-page-handler="Submit" class="btn btn-primary" style="width:100px" />
+        </form>
+    </div>
+
+    <div id="codeEditor" class="row" style="min-height:500px">
+
+    </div>
+}
+
+@section scripts{
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+        tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ]
+        },
+        jax: ["input/TeX","output/SVG"]
+        });
+    </script>
+
+    <environment include="Development">
+        <script src="~/lib/highlight.js/highlight.min.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"
+                asp-fallback-src="~/lib/highlight.js/highlight.min.js"
+                crossorigin="anonymous"></script>
+    </environment>
+
+    <script>hljs.initHighlightingOnLoad();</script>
+    @*
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0-rc.1/katex.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0-rc.1/contrib/auto-render.min.js"></script>
+        <script>
+            renderMathInElement(document.body,
+                {
+                    delimiters: [
+                        { left: "$$", right: "$$", display: true },
+                        { left: "\(", right: "\)", display: false }
+                    ]
+                }
+            );
+        </script>*@
+    @if (Model.EnableCode)
+    {
+        <environment include="Development">
+            <script>var require = { paths: { 'vs': '../lib/monaco-editor/min/vs' } }</script>
+            <script src="../lib/monaco-editor/min/vs/loader.js"></script>
+            <script src="../lib/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
+            <script src="../lib/monaco-editor/min/vs/editor/editor.main.js"></script>
+        </environment>
+        <environment exclude="Development">
+            <script>var require = { paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.16.2/min/vs' } }</script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.16.2/min/vs/loader.js"
+                    asp-fallback-src="../lib/monaco-editor/min/vs/loader.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.16.2/min/vs/editor/editor.main.nls.js"
+                    asp-fallback-src="../lib/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.16.2/min/vs/editor/editor.main.js"
+                    asp-fallback-src="../lib/monaco-editor/min/vs/editor/editor.main.js"></script>
+        </environment>
+
+        <script>
+        "use strict";
+
+        var editor = null;
+
+        $(document).ready(function () {
+            require(['vs/editor/editor.main'], function () {
+                var MODES = (function () {
+                    // var modesIds = monaco.languages.getLanguages().map(function (lang) { return lang.id; });
+                    // modesIds.sort();
+
+                    return [@Html.Raw(Model.LanguageConfig)]
+                })();
+
+                var startModeIndex = 0;
+                for (var i = 0; i < MODES.length; i++) {
+                    var o = document.createElement('option');
+                    o.textContent = MODES[i].show;
+                    $("#selCodeLanguage").append(o);
+                }
+                $("#selCodeLanguage").selectedIndex = startModeIndex;
+                loadSample(MODES[startModeIndex]);
+                document.getElementById('formLang').value = MODES[startModeIndex].lang;
+                $("#selCodeLanguage").change(function () {
+                    loadSample(MODES[this.selectedIndex]);
+                    document.getElementById('formLang').value = MODES[this.selectedIndex].lang;
+                });
+
+                $("#selCodeTheme").change(function () {
+                    changeTheme(this.selectedIndex);
+                });
+            });
+
+            window.onresize = function () {
+                if (editor) {
+                    editor.layout();
+                }
+            };
+        });
+
+        function loadSample(mode) {
+            if (!editor) {
+                $('#codeEditor').empty();
+                editor = monaco.editor.create(document.getElementById('codeEditor'), {
+                    model: null,
+                });
+            }
+
+            var oldModel = editor.getModel();
+            var newModel = monaco.editor.createModel("", mode.editorId);
+            editor.setModel(newModel);
+            if (oldModel) {
+                oldModel.dispose();
+            }
+
+            document.getElementById('formCode').value = editor.getValue();
+            editor.onDidChangeModelContent((e) => {
+                document.getElementById('formCode').value = editor.getValue();
+            });
+        }
+
+        function changeTheme(theme) {
+            var newTheme = (theme === 1 ? 'vs-dark' : (theme === 0 ? 'vs' : 'hc-black'));
+            monaco.editor.setTheme(newTheme);
+        }
+        </script>
+    }
+}

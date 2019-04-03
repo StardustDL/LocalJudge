@@ -1,4 +1,4 @@
-LocalJudge
+StarOJ
 
 Copyright (c) StardustDL. All rights reserved.
 

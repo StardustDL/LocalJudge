@@ -1,0 +1,101 @@
+﻿@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - StarOJ</title>
+
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/twitter-bootstrap/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/lib/font-awesome/css/all.css">
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/twitter-bootstrap/css/bootstrap.min.css"
+              crossorigin="anonymous" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/all.min.css"
+              asp-fallback-href="~/lib/font-awesome/css/all.min.css"
+              crossorigin="anonymous" />
+    </environment>
+
+    <link rel="stylesheet" href="~/css/site.css" />
+
+    @RenderSection("Header", required: false)
+</head>
+<body style="padding-top:70px">
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3 fixed-top bg-white">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-page="/Index">StarOJ</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                    <partial name="_LoginPartial" />
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item @((string)ViewData["Id"] == "Home" ? "active":"")" style="margin-left:10px;">
+                            <a class="nav-link" asp-area="" asp-page="/Index">
+                                <i class="fa fa-home" style="margin-right:3px"></i>
+                                @SharedLocalizer["Home"]
+                            </a>
+                        </li>
+                        <li class="nav-item @((string)ViewData["Id"] == "Problems" ? "active":"")" style="margin-left:10px;">
+                            <a class="nav-link" asp-area="" asp-page="/Problems/Index">
+                                <i class="fa fa-list" style="margin-right:3px"></i>
+                                @SharedLocalizer["Problems"]
+                            </a>
+                        </li>
+                        <li class="nav-item @((string)ViewData["Id"] == "Submissions" ? "active":"")" style="margin-left:10px;">
+                            <a class="nav-link" asp-area="" asp-page="/Submissions/Index">
+                                <i class="fa fa-tasks" style="margin-right:3px"></i>
+                                @SharedLocalizer["Submissions"]
+                            </a>
+                        </li>
+                        <li class="nav-item @((string)ViewData["Id"] == "Admin" ? "active":"")" style="margin-left:10px;">
+                            <a class="nav-link" asp-area="" asp-page="/Admin/Index">
+                                <i class="fa fa-cogs" style="margin-right:3px"></i>
+                                @SharedLocalizer["Admin"]
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <partial name="_CookieConsentPartial" />
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            <i class="fa fa-copyright"></i> 2019 - StarOJ - <a asp-area="" asp-page="/Privacy"><i class="fa fa-user-secret"></i></a> - <a href="https://github.com/StardustDL/StarOJ"><i class="fa fa-code-branch"></i></a>
+        </div>
+    </footer>
+
+    <environment include="Development">
+        <script src="~/lib/jquery/jquery.js"></script>
+        <script src="~/lib/twitter-bootstrap/js/bootstrap.min.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+                asp-fallback-src="~/lib/jquery/jquery.min.js"
+                crossorigin="anonymous">
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"
+                asp-fallback-src="~/lib/twitter-bootstrap/js/bootstrap.min.js"
+                crossorigin="anonymous">
+        </script>
+    </environment>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

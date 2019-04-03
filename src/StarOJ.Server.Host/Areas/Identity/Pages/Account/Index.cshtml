@@ -1,0 +1,34 @@
+﻿@page
+@model IndexModel
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<ul class="breadcrumb">
+    <li class="breadcrumb-item"><a asp-page="/Index">StarOJ</a></li>
+    <li class="breadcrumb-item active">@Model.CurrentUser.Name</li>
+</ul>
+
+<div class="row">
+    <div class="col-3">
+        <div class="card">
+            <img class="card-img-top" gravatar="@Model.CurrentUser.Email" size="256" default="mp" />
+            <div class="card-body">
+                <h4 class="card-title">@Model.CurrentUser.Name</h4>
+                <p class="card-text"></p>
+                @if (Model.CurrentUser.Name == User.Identity.Name)
+                {
+                    <a asp-page="./Settings/Index" class="btn btn-primary btn-block">@SharedLocalizer["Settings"]</a>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-9">
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

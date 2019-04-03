@@ -1,0 +1,176 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO.Pipes;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using StarOJ.Core;
+using StarOJ.Core.Helpers;
+using StarOJ.Core.Judgers;
+using StarOJ.Core.Submissions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+
+namespace StarOJ.Server.API.Controllers
+{
+    [Route("[controller]")]
+    [ApiController]
+    public class SubmissionsController : ControllerBase
+    {
+        const string PipeStreamName = "StarOJr.Server.Judger";
+        private readonly IWorkspace _workspace;
+
+        public SubmissionsController(IWorkspace workspace)
+        {
+            _workspace = workspace;
+        }
+
+        public class SubmitData
+        {
+            public string ProblemId { get; set; }
+
+            public string UserId { get; set; }
+
+            public string Code { get; set; }
+
+            public ProgrammingLanguage Language { get; set; }
+        }
+
+        static string GetCodePath(ProgrammingLanguage lang)
+        {
+            switch (lang)
+            {
+                case ProgrammingLanguage.Java:
+                    return $"Main.java";
+                default:
+                    return $"code.{ProgrammingLanguageHelper.Extends[lang]}";
+            }
+        }
+
+        void SendJudgeRequest(string id)
+        {
+            using (var pipe = new NamedPipeClientStream(".", PipeStreamName, PipeDirection.Out))
+            {
+                pipe.Connect(10 * 1000);// Wait for 10s
+                var buffer = Encoding.UTF8.GetBytes(id);
+                pipe.Write(buffer, 0, buffer.Length);
+                pipe.WaitForPipeDrain();
+            }
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public ActionResult<SubmissionMetadata> Submit([FromBody] SubmitData data)
+        {
+            if (_workspace.Problems.Has(data.ProblemId) == false)
+                return NotFound();
+
+            if (_workspace.Users.Has(data.UserId) == false)
+                return NotFound();
+
+            if (data.Code == null) data.Code = string.Empty;
+            var meta = new SubmissionMetadata
+            {
+                Id = Guid.NewGuid().ToString(),
+                ProblemId = data.ProblemId,
+                UserId = data.UserId,
+                Language = data.Language,
+                Time = DateTimeOffset.Now,
+                CodeLength = (uint)Encoding.UTF8.GetByteCount(data.Code),
+                CodeName = GetCodePath(data.Language),
+            };
+            var sub = _workspace.Submissions.Create(meta);
+            if (sub == null) return Forbid();
+            try
+            {
+                sub.SetCode(data.Code);
+                SendJudgeRequest(sub.Id);
+                return Created($"submissions/{meta.Id}", sub.GetMetadata());
+            }
+            catch
+            {
+                _workspace.Submissions.Delete(sub.Id);
+                return Forbid();
+            }
+        }
+
+        [HttpGet]
+        public ActionResult<IEnumerable<SubmissionMetadata>> GetAll()
+        {
+            return Ok(_workspace.Submissions.GetAll().Select(item => item.GetMetadata()));
+        }
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public ActionResult<SubmissionMetadata> Get(string id)
+        {
+            var res = _workspace.Submissions.Get(id)?.GetMetadata();
+            if (res != null)
+                return Ok(res);
+            else
+                return NotFound();
+        }
+
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public ActionResult Rejudge(string id)
+        {
+            var res = _workspace.Submissions.Get(id);
+            if (res != null)
+            {
+                res.SetResult(null);
+                try
+                {
+                    SendJudgeRequest(res.Id);
+                    return Accepted();
+                }
+                catch
+                {
+                    return Forbid();
+                }
+            }
+            else
+                return NotFound();
+        }
+
+        [HttpGet("{id}/result")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public ActionResult<SubmissionResult> GetResult(string id)
+        {
+            var res = _workspace.Submissions.Get(id)?.GetResult();
+            if (res != null)
+                return Ok(res);
+            else
+                return NotFound();
+        }
+
+        [HttpGet("{id}/code")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public ActionResult<string> GetCode(string id)
+        {
+            var res = _workspace.Submissions.Get(id)?.GetCode();
+            if (res != null)
+                return Ok(res);
+            else
+                return NotFound();
+        }
+
+        [HttpDelete("{id}")]
+        public void Delete(string id)
+        {
+            _workspace.Submissions.Delete(id);
+        }
+    }
+}

@@ -1,0 +1,44 @@
+﻿@page
+@model StarOJ.Server.Host.Pages.Admin.IndexModel
+
+@using Microsoft.AspNetCore.Builder
+@using Microsoft.Extensions.Options
+
+@inject IOptions<RequestLocalizationOptions> LocOptions
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+
+@{
+    ViewData["Title"] = SharedLocalizer["Admin"];
+    ViewData["Id"] = "Admin";
+
+    var cultureItems = LocOptions.Value.SupportedUICultures
+        .Select(c => new SelectListItem { Value = c.Name, Text = c.DisplayName })
+        .ToList();
+}
+
+<ul class="breadcrumb">
+    <li class="breadcrumb-item"><a asp-page="/Index">StarOJ</a></li>
+    <li class="breadcrumb-item active">@ViewData["Title"]</li>
+</ul>
+
+@if (Model.EnableAdmin)
+{
+    <div class="row" style="margin-left:0px">
+        <form method="post">
+            <button type="submit" asp-page-handler="Initialize" class="btn btn-outline-primary">
+                Initialize
+            </button>
+        </form>
+    </div>
+}
+
+<div class="row" style="margin-top:20px; margin-left:0px">
+    <form method="post">
+        <label style="margin-right:10px; font-size:large;">@SharedLocalizer["Language"]</label>
+        <select asp-for="PostData.Language" asp-items="cultureItems" style="font-size:large;"></select>
+        <button type="submit" asp-page-handler="ChangeLanguage" class="btn btn-primary" style="margin-left:20px;">@SharedLocalizer["Apply"]</button>
+    </form>
+</div>
+
+
