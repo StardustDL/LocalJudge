@@ -16,13 +16,13 @@ namespace LocalJudge.Server.Host.Areas.Identity.Pages.Account.Settings
     [Authorize]
     public partial class IndexModel : PageModel
     {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<UserMetadata> _userManager;
+        private readonly SignInManager<UserMetadata> _signInManager;
         // private readonly IEmailSender _emailSender;
 
         public IndexModel(
-            UserManager<User> userManager,
-            SignInManager<User> signInManager)
+            UserManager<UserMetadata> userManager,
+            SignInManager<UserMetadata> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;

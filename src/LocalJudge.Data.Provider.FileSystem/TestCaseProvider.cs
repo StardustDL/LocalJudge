@@ -1,10 +1,14 @@
-﻿using LocalJudge.Core.Helpers;
+﻿using LocalJudge.Core;
+using LocalJudge.Core.Helpers;
+using LocalJudge.Core.Problems;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
-namespace LocalJudge.Core.Problems
+namespace LocalJudge.Data.Provider.FileSystem
 {
-    public class TestCasePath : IHasRoot, IHasId<string>
+    public class TestCaseProvider : ITestCaseProvider
     {
         public const string PF_Profile = "profile.json", PF_Input = "input.data", PF_Output = "output.data";
 
@@ -14,6 +18,12 @@ namespace LocalJudge.Core.Problems
 
         public string Profile { get; private set; }
 
+        public string Input { get; private set; }
+
+        public string Output { get; private set; }
+
+        public DataPreview GetInputPreview(int maxbytes) => TextIO.GetPreviewInUTF8(Input, maxbytes);
+
         public TestCaseMetadata GetMetadata()
         {
             var res = Newtonsoft.Json.JsonConvert.DeserializeObject<TestCaseMetadata>(TextIO.ReadAllInUTF8(Profile));
@@ -21,15 +31,14 @@ namespace LocalJudge.Core.Problems
             return res;
         }
 
-        public string Input { get; private set; }
 
-        public DataPreview GetInput(int maxbytes) => TextIO.GetPreviewInUTF8(Input, maxbytes);
+        public DataPreview GetOutputPreview(int maxbytes) => TextIO.GetPreviewInUTF8(Output, maxbytes);
 
-        public string Output { get; set; }
+        public string GetInput() => TextIO.ReadAllInUTF8(Input);
 
-        public DataPreview GetOutput(int maxbytes) => TextIO.GetPreviewInUTF8(Output, maxbytes);
+        public string GetOutput() => TextIO.ReadAllInUTF8(Output);
 
-        public TestCasePath(string root)
+        public TestCaseProvider(string root)
         {
             Root = root;
             Id = Path.GetFileName(Root);
@@ -38,9 +47,9 @@ namespace LocalJudge.Core.Problems
             Output = Path.Combine(Root, PF_Output);
         }
 
-        public static TestCasePath Initialize(string root, TestCaseMetadata metadata = null, string input = "", string output = "")
+        public static TestCaseProvider Initialize(string root, TestCaseMetadata metadata = null, string input = "", string output = "")
         {
-            var res = new TestCasePath(root);
+            var res = new TestCaseProvider(root);
             if (metadata == null) metadata = new TestCaseMetadata { TimeLimit = TimeSpan.FromSeconds(1), MemoryLimit = 128 * 1024 * 1024 };
             metadata.Id = res.Id;
             TextIO.WriteAllInUTF8(res.Profile, Newtonsoft.Json.JsonConvert.SerializeObject(metadata, Newtonsoft.Json.Formatting.Indented));

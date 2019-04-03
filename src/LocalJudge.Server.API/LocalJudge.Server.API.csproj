@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LocalJudge.Core\LocalJudge.Core.csproj" />
+    <ProjectReference Include="..\LocalJudge.Data.Provider.FileSystem\LocalJudge.Data.Provider.FileSystem.csproj" />
   </ItemGroup>
 
 </Project>

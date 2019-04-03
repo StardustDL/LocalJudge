@@ -15,8 +15,6 @@ namespace LocalJudge.Server.API
 {
     public class Program
     {
-        public static Workspace Workspace { get; set; }
-
         public static uint HttpPort { get; set; }
 
         public static uint HttpsPort { get; set; }

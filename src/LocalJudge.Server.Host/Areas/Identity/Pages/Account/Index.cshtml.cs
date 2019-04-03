@@ -17,18 +17,18 @@ namespace LocalJudge.Server.Host.Areas.Identity.Pages.Account
     [Authorize]
     public partial class IndexModel : PageModel
     {
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<UserMetadata> _userManager;
         private readonly IHttpClientFactory _clientFactory;
 
         // private readonly IEmailSender _emailSender;
 
-        public IndexModel(IHttpClientFactory clientFactory,UserManager<User> userManager)
+        public IndexModel(IHttpClientFactory clientFactory,UserManager<UserMetadata> userManager)
         {
             _userManager = userManager;
             _clientFactory = clientFactory;
         }
 
-        public User CurrentUser { get; set; }
+        public UserMetadata CurrentUser { get; set; }
 
         public async Task<IActionResult> OnGetAsync(string id)
         {

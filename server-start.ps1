@@ -12,7 +12,7 @@ else {
             dotnet run -p ./src/LocalJudge.Server.Host -- -s "https://localhost:5001" --http-port 6000 --https-port 6001
         }
         "judger" {
-            dotnet run -p ./src/LocalJudge.Server.Judger -- -d $wdir
+            dotnet run -p ./src/LocalJudge.Server.Judger.FileSystem -- -d $wdir
         }
         default {
             Write-Output "The type is not found."

@@ -14,11 +14,11 @@ namespace LocalJudge.Server.API.Controllers
     public class AdminController : ControllerBase
     {
         static readonly object lock_admin = new object();
+        private readonly IWorkspace _workspace;
 
-        [HttpGet]
-        public ActionResult<string> GetRootDirectory()
+        public AdminController(IWorkspace workspace)
         {
-            return Program.Workspace.Root;
+            _workspace = workspace;
         }
 
         [HttpPut("init")]
@@ -26,7 +26,7 @@ namespace LocalJudge.Server.API.Controllers
         {
             lock (lock_admin)
             {
-                Workspace.Initialize(Program.Workspace.Root);
+                _workspace.Initialize();
             }
         }
     }

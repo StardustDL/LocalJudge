@@ -31,12 +31,12 @@ namespace LocalJudge.Server.Host.Pages.Problems
         }
 
         private readonly IHttpClientFactory clientFactory;
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<UserMetadata> _userManager;
         private readonly IAuthorizationService _authorizationService;
 
         public MarkdownPipelineBuilder MarkdownBuilder { get; private set; }
 
-        public ViewModel(IHttpClientFactory clientFactory, UserManager<User> userManager, IAuthorizationService authorizationService)
+        public ViewModel(IHttpClientFactory clientFactory, UserManager<UserMetadata> userManager, IAuthorizationService authorizationService)
         {
             this.clientFactory = clientFactory;
             MarkdownBuilder = new MarkdownPipelineBuilder().UseAdvancedExtensions();
@@ -49,7 +49,7 @@ namespace LocalJudge.Server.Host.Pages.Problems
 
         public ProblemModel Problem { get; set; }
 
-        public User CurrentUser { get; set; }
+        public UserMetadata CurrentUser { get; set; }
 
         public IList<TestCaseData> SampleData { get; set; }
 
@@ -77,8 +77,8 @@ namespace LocalJudge.Server.Host.Pages.Problems
             List<TestCaseData> samples = new List<TestCaseData>();
             foreach (var s in Problem.Samples)
             {
-                var input = await client.GetSampleInputAsync(id, s.Id, int.MaxValue);
-                var output = await client.GetSampleOutputAsync(id, s.Id, int.MaxValue);
+                var input = await client.GetSampleInputPreviewAsync(id, s.Id, int.MaxValue);
+                var output = await client.GetSampleOutputPreviewAsync(id, s.Id, int.MaxValue);
                 TestCaseData td = new TestCaseData
                 {
                     Metadata = s,

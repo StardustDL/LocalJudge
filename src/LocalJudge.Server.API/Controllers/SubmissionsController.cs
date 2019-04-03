@@ -4,6 +4,7 @@ using System.IO.Pipes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LocalJudge.Core;
 using LocalJudge.Core.Helpers;
 using LocalJudge.Core.Judgers;
 using LocalJudge.Core.Submissions;
@@ -17,6 +18,12 @@ namespace LocalJudge.Server.API.Controllers
     public class SubmissionsController : ControllerBase
     {
         const string PipeStreamName = "LocalJudger.Server.Judger";
+        private readonly IWorkspace _workspace;
+
+        public SubmissionsController(IWorkspace workspace)
+        {
+            _workspace = workspace;
+        }
 
         public class SubmitData
         {
@@ -58,33 +65,34 @@ namespace LocalJudge.Server.API.Controllers
         [ProducesDefaultResponseType]
         public ActionResult<SubmissionMetadata> Submit([FromBody] SubmitData data)
         {
-            if (Program.Workspace.Problems.Has(data.ProblemId) == false)
+            if (_workspace.Problems.Has(data.ProblemId) == false)
                 return NotFound();
 
-            if (Program.Workspace.Users.Has(data.UserId) == false)
+            if (_workspace.Users.Has(data.UserId) == false)
                 return NotFound();
 
             if (data.Code == null) data.Code = string.Empty;
             var meta = new SubmissionMetadata
             {
+                Id = Guid.NewGuid().ToString(),
                 ProblemId = data.ProblemId,
                 UserId = data.UserId,
                 Language = data.Language,
                 Time = DateTimeOffset.Now,
                 CodeLength = (uint)Encoding.UTF8.GetByteCount(data.Code),
-                CodePath = GetCodePath(data.Language),
+                CodeName = GetCodePath(data.Language),
             };
-            var sub = Program.Workspace.Submissions.Create(Guid.NewGuid().ToString(), meta);
+            var sub = _workspace.Submissions.Create(meta);
             if (sub == null) return Forbid();
             try
             {
-                sub.SaveCode(data.Code);
+                sub.SetCode(data.Code);
                 SendJudgeRequest(sub.Id);
                 return Created($"submissions/{meta.Id}", sub.GetMetadata());
             }
             catch
             {
-                Program.Workspace.Submissions.Delete(sub.Id);
+                _workspace.Submissions.Delete(sub.Id);
                 return Forbid();
             }
         }
@@ -92,7 +100,7 @@ namespace LocalJudge.Server.API.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<SubmissionMetadata>> GetAll()
         {
-            return Ok(Program.Workspace.Submissions.GetAll().Select(item => item.GetMetadata()));
+            return Ok(_workspace.Submissions.GetAll().Select(item => item.GetMetadata()));
         }
 
         [HttpGet("{id}")]
@@ -101,7 +109,7 @@ namespace LocalJudge.Server.API.Controllers
         [ProducesDefaultResponseType]
         public ActionResult<SubmissionMetadata> Get(string id)
         {
-            var res = Program.Workspace.Submissions.Get(id)?.GetMetadata();
+            var res = _workspace.Submissions.Get(id)?.GetMetadata();
             if (res != null)
                 return Ok(res);
             else
@@ -115,10 +123,10 @@ namespace LocalJudge.Server.API.Controllers
         [ProducesDefaultResponseType]
         public ActionResult Rejudge(string id)
         {
-            var res = Program.Workspace.Submissions.Get(id);
+            var res = _workspace.Submissions.Get(id);
             if (res != null)
             {
-                res.ClearResult();
+                res.SetResult(null);
                 try
                 {
                     SendJudgeRequest(res.Id);
@@ -139,7 +147,7 @@ namespace LocalJudge.Server.API.Controllers
         [ProducesDefaultResponseType]
         public ActionResult<SubmissionResult> GetResult(string id)
         {
-            var res = Program.Workspace.Submissions.Get(id)?.GetResult();
+            var res = _workspace.Submissions.Get(id)?.GetResult();
             if (res != null)
                 return Ok(res);
             else
@@ -152,22 +160,9 @@ namespace LocalJudge.Server.API.Controllers
         [ProducesDefaultResponseType]
         public ActionResult<string> GetCode(string id)
         {
-            var res = Program.Workspace.Submissions.Get(id)?.GetCode();
+            var res = _workspace.Submissions.Get(id)?.GetCode();
             if (res != null)
                 return Ok(res);
-            else
-                return NotFound();
-        }
-
-        [HttpGet("{id}/codefile")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesDefaultResponseType]
-        public ActionResult<byte[]> GetCodeFile(string id)
-        {
-            var res = Program.Workspace.Submissions.Get(id)?.GetCodePath();
-            if (res != null)
-                return Ok(System.IO.File.ReadAllBytes(res));
             else
                 return NotFound();
         }
@@ -175,7 +170,7 @@ namespace LocalJudge.Server.API.Controllers
         [HttpDelete("{id}")]
         public void Delete(string id)
         {
-            Program.Workspace.Submissions.Delete(id);
+            _workspace.Submissions.Delete(id);
         }
     }
 }

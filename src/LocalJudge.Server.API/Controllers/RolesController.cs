@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LocalJudge.Core;
 using LocalJudge.Core.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,19 +13,26 @@ namespace LocalJudge.Server.API.Controllers
     [ApiController]
     public class RolesController : ControllerBase
     {
-        [HttpGet]
-        public ActionResult<IEnumerable<Role>> GetAll()
+        private readonly IWorkspace _workspace;
+
+        public RolesController(IWorkspace workspace)
         {
-            return Ok(Program.Workspace.Roles.GetAll().Select(item => item.GetMetadata()));
+            _workspace = workspace;
+        }
+
+        [HttpGet]
+        public ActionResult<IEnumerable<RoleMetadata>> GetAll()
+        {
+            return Ok(_workspace.Roles.GetAll().Select(item => item.GetMetadata()));
         }
 
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<Role> Get(string id)
+        public ActionResult<RoleMetadata> Get(string id)
         {
-            var res = Program.Workspace.Roles.Get(id)?.GetMetadata();
+            var res = _workspace.Roles.Get(id)?.GetMetadata();
             if (res != null)
                 return Ok(res);
             else
@@ -35,9 +43,9 @@ namespace LocalJudge.Server.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<Role> GetByName(string name)
+        public ActionResult<RoleMetadata> GetByName(string name)
         {
-            var res = Program.Workspace.Roles.GetByName(name)?.GetMetadata();
+            var res = _workspace.Roles.GetByName(name)?.GetMetadata();
             if (res != null)
                 return Ok(res);
             else
@@ -47,7 +55,7 @@ namespace LocalJudge.Server.API.Controllers
         [HttpDelete("{id}")]
         public void Delete(string id)
         {
-            Program.Workspace.Roles.Delete(id);
+            _workspace.Roles.Delete(id);
         }
 
         [HttpPost]
@@ -55,13 +63,13 @@ namespace LocalJudge.Server.API.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<Role> Create([FromBody] Role data)
+        public ActionResult<RoleMetadata> Create([FromBody] RoleMetadata data)
         {
             if (string.IsNullOrEmpty(data.Id)) data.Id = Guid.NewGuid().ToString();
 
             try
             {
-                var res = Program.Workspace.Roles.Create(data.Id, data);
+                var res = _workspace.Roles.Create(data);
                 return Created($"users/{res.Id}", res.GetMetadata());
             }
             catch
@@ -75,12 +83,14 @@ namespace LocalJudge.Server.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesDefaultResponseType]
-        public ActionResult Update([FromBody] Role data)
+        public ActionResult Update([FromBody] RoleMetadata data)
         {
             try
             {
-                if (Program.Workspace.Roles.Update(data))
+                var prov = _workspace.Roles.Get(data.Id);
+                if (prov != null)
                 {
+                    prov.SetMetadata(data);
                     return Ok();
                 }
                 else

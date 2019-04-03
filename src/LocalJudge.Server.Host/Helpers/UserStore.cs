@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace LocalJudge.Server.Host.Helpers
 {
-    public class UserStore : IUserStore<User>, IUserPasswordStore<User>, IUserRoleStore<User>, IUserEmailStore<User>
+    public class UserStore : IUserStore<UserMetadata>, IUserPasswordStore<UserMetadata>, IUserRoleStore<UserMetadata>, IUserEmailStore<UserMetadata>
     {
         private readonly IHttpClientFactory clientFactory;
 
@@ -18,7 +18,7 @@ namespace LocalJudge.Server.Host.Helpers
             this.clientFactory = clientFactory;
         }
 
-        public async Task AddToRoleAsync(User user, string roleName, CancellationToken cancellationToken)
+        public async Task AddToRoleAsync(UserMetadata user, string roleName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -31,7 +31,7 @@ namespace LocalJudge.Server.Host.Helpers
             user.Roles.Add(role);
         }
 
-        public async Task<IdentityResult> CreateAsync(User user, CancellationToken cancellationToken = default)
+        public async Task<IdentityResult> CreateAsync(UserMetadata user, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -48,7 +48,7 @@ namespace LocalJudge.Server.Host.Helpers
             }
         }
 
-        public async Task<IdentityResult> DeleteAsync(User user, CancellationToken cancellationToken)
+        public async Task<IdentityResult> DeleteAsync(UserMetadata user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -70,12 +70,12 @@ namespace LocalJudge.Server.Host.Helpers
 
         }
 
-        public Task<User> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
+        public Task<UserMetadata> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<User> FindByIdAsync(string userId, CancellationToken cancellationToken)
+        public async Task<UserMetadata> FindByIdAsync(string userId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -84,7 +84,7 @@ namespace LocalJudge.Server.Host.Helpers
             return await client.GetAsync(userId);
         }
 
-        public async Task<User> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
+        public async Task<UserMetadata> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -100,42 +100,42 @@ namespace LocalJudge.Server.Host.Helpers
             }
         }
 
-        public Task<string> GetEmailAsync(User user, CancellationToken cancellationToken)
+        public Task<string> GetEmailAsync(UserMetadata user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             return Task.FromResult(user.Email);
         }
 
-        public Task<bool> GetEmailConfirmedAsync(User user, CancellationToken cancellationToken)
+        public Task<bool> GetEmailConfirmedAsync(UserMetadata user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             return Task.FromResult(user.EmailConfirmed);
         }
 
-        public Task<string> GetNormalizedEmailAsync(User user, CancellationToken cancellationToken)
+        public Task<string> GetNormalizedEmailAsync(UserMetadata user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             return Task.FromResult(user.NormalizedEmail);
         }
 
-        public Task<string> GetNormalizedUserNameAsync(User user, CancellationToken cancellationToken)
+        public Task<string> GetNormalizedUserNameAsync(UserMetadata user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             return Task.FromResult(user.NormalizedName);
         }
 
-        public Task<string> GetPasswordHashAsync(User user, CancellationToken cancellationToken)
+        public Task<string> GetPasswordHashAsync(UserMetadata user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             return Task.FromResult(user.PasswordHash);
         }
 
-        public Task<IList<string>> GetRolesAsync(User user, CancellationToken cancellationToken)
+        public Task<IList<string>> GetRolesAsync(UserMetadata user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -144,33 +144,33 @@ namespace LocalJudge.Server.Host.Helpers
             return Task.FromResult<IList<string>>(user.Roles.Select(x => x.Name).ToList());
         }
 
-        public Task<string> GetUserIdAsync(User user, CancellationToken cancellationToken)
+        public Task<string> GetUserIdAsync(UserMetadata user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             return Task.FromResult(user.Id);
         }
 
-        public Task<string> GetUserNameAsync(User user, CancellationToken cancellationToken)
+        public Task<string> GetUserNameAsync(UserMetadata user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             return Task.FromResult(user.Name);
         }
 
-        public Task<IList<User>> GetUsersInRoleAsync(string roleName, CancellationToken cancellationToken)
+        public Task<IList<UserMetadata>> GetUsersInRoleAsync(string roleName, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> HasPasswordAsync(User user, CancellationToken cancellationToken)
+        public Task<bool> HasPasswordAsync(UserMetadata user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             return Task.FromResult(!string.IsNullOrEmpty(user.PasswordHash));
         }
 
-        public Task<bool> IsInRoleAsync(User user, string roleName, CancellationToken cancellationToken)
+        public Task<bool> IsInRoleAsync(UserMetadata user, string roleName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -181,7 +181,7 @@ namespace LocalJudge.Server.Host.Helpers
             return Task.FromResult(user.Roles.Any(x => x.NormalizedName == roleName));
         }
 
-        public Task RemoveFromRoleAsync(User user, string roleName, CancellationToken cancellationToken)
+        public Task RemoveFromRoleAsync(UserMetadata user, string roleName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -193,7 +193,7 @@ namespace LocalJudge.Server.Host.Helpers
             return Task.CompletedTask;
         }
 
-        public Task SetEmailAsync(User user, string email, CancellationToken cancellationToken)
+        public Task SetEmailAsync(UserMetadata user, string email, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -202,7 +202,7 @@ namespace LocalJudge.Server.Host.Helpers
             return Task.CompletedTask;
         }
 
-        public Task SetEmailConfirmedAsync(User user, bool confirmed, CancellationToken cancellationToken)
+        public Task SetEmailConfirmedAsync(UserMetadata user, bool confirmed, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -211,7 +211,7 @@ namespace LocalJudge.Server.Host.Helpers
             return Task.CompletedTask;
         }
 
-        public Task SetNormalizedEmailAsync(User user, string normalizedEmail, CancellationToken cancellationToken)
+        public Task SetNormalizedEmailAsync(UserMetadata user, string normalizedEmail, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -220,7 +220,7 @@ namespace LocalJudge.Server.Host.Helpers
             return Task.CompletedTask;
         }
 
-        public Task SetNormalizedUserNameAsync(User user, string normalizedName, CancellationToken cancellationToken)
+        public Task SetNormalizedUserNameAsync(UserMetadata user, string normalizedName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -228,7 +228,7 @@ namespace LocalJudge.Server.Host.Helpers
             return Task.CompletedTask;
         }
 
-        public Task SetPasswordHashAsync(User user, string passwordHash, CancellationToken cancellationToken)
+        public Task SetPasswordHashAsync(UserMetadata user, string passwordHash, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -236,7 +236,7 @@ namespace LocalJudge.Server.Host.Helpers
             return Task.CompletedTask;
         }
 
-        public Task SetUserNameAsync(User user, string userName, CancellationToken cancellationToken)
+        public Task SetUserNameAsync(UserMetadata user, string userName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -244,7 +244,7 @@ namespace LocalJudge.Server.Host.Helpers
             return Task.CompletedTask;
         }
 
-        public async Task<IdentityResult> UpdateAsync(User user, CancellationToken cancellationToken)
+        public async Task<IdentityResult> UpdateAsync(UserMetadata user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 

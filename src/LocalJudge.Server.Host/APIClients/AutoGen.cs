@@ -33,80 +33,6 @@ namespace LocalJudge.Server.Host.APIClients
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<string> GetRootDirectoryAsync()
-        {
-            return GetRootDirectoryAsync(System.Threading.CancellationToken.None);
-        }
-    
-        /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async System.Threading.Tasks.Task<string> GetRootDirectoryAsync(System.Threading.CancellationToken cancellationToken)
-        {
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Admin");
-    
-            var client_ = _httpClient;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = ((int)response_.StatusCode).ToString();
-                        if (status_ == "200") 
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            var result_ = default(string); 
-                            try
-                            {
-                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(responseData_, _settings.Value);
-                                return result_; 
-                            } 
-                            catch (System.Exception exception_) 
-                            {
-                                throw new SwaggerException("Could not deserialize the response body.", (int)response_.StatusCode, responseData_, headers_, exception_);
-                            }
-                        }
-                        else
-                        if (status_ != "200" && status_ != "204")
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new SwaggerException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
-                        }
-            
-                        return default(string);
-                    }
-                    finally
-                    {
-                        if (response_ != null)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-            }
-        }
-    
-        /// <exception cref="SwaggerException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task InitializeAsync()
         {
             return InitializeAsync(System.Threading.CancellationToken.None);
@@ -847,20 +773,20 @@ namespace LocalJudge.Server.Host.APIClients
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<DataPreview> GetSampleInputAsync(string id, string tid, int num)
+        public System.Threading.Tasks.Task<DataPreview> GetSampleInputPreviewAsync(string id, string tid, int num)
         {
-            return GetSampleInputAsync(id, tid, num, System.Threading.CancellationToken.None);
+            return GetSampleInputPreviewAsync(id, tid, num, System.Threading.CancellationToken.None);
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async System.Threading.Tasks.Task<DataPreview> GetSampleInputAsync(string id, string tid, int num, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<DataPreview> GetSampleInputPreviewAsync(string id, string tid, int num, System.Threading.CancellationToken cancellationToken)
         {
             if (num == null)
                 throw new System.ArgumentNullException("num");
     
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Problems/{id}/samples/{tid}/input/{num}");
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Problems/{id}/samples/{tid}/input/{num}/preview");
             urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{tid}", System.Uri.EscapeDataString(ConvertToString(tid, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{num}", System.Uri.EscapeDataString(ConvertToString(num, System.Globalization.CultureInfo.InvariantCulture)));
@@ -948,17 +874,17 @@ namespace LocalJudge.Server.Host.APIClients
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<byte[]> GetSampleInputFileAsync(string id, string tid)
+        public System.Threading.Tasks.Task<string> GetSampleInputAsync(string id, string tid)
         {
-            return GetSampleInputFileAsync(id, tid, System.Threading.CancellationToken.None);
+            return GetSampleInputAsync(id, tid, System.Threading.CancellationToken.None);
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async System.Threading.Tasks.Task<byte[]> GetSampleInputFileAsync(string id, string tid, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<string> GetSampleInputAsync(string id, string tid, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Problems/{id}/samples/{tid}/inputfile");
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Problems/{id}/samples/{tid}/input");
             urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{tid}", System.Uri.EscapeDataString(ConvertToString(tid, System.Globalization.CultureInfo.InvariantCulture)));
     
@@ -991,10 +917,10 @@ namespace LocalJudge.Server.Host.APIClients
                         if (status_ == "200") 
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            var result_ = default(byte[]); 
+                            var result_ = default(string); 
                             try
                             {
-                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<byte[]>(responseData_, _settings.Value);
+                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(responseData_, _settings.Value);
                                 return result_; 
                             } 
                             catch (System.Exception exception_) 
@@ -1045,20 +971,20 @@ namespace LocalJudge.Server.Host.APIClients
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<DataPreview> GetSampleOutputAsync(string id, string tid, int num)
+        public System.Threading.Tasks.Task<DataPreview> GetSampleOutputPreviewAsync(string id, string tid, int num)
         {
-            return GetSampleOutputAsync(id, tid, num, System.Threading.CancellationToken.None);
+            return GetSampleOutputPreviewAsync(id, tid, num, System.Threading.CancellationToken.None);
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async System.Threading.Tasks.Task<DataPreview> GetSampleOutputAsync(string id, string tid, int num, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<DataPreview> GetSampleOutputPreviewAsync(string id, string tid, int num, System.Threading.CancellationToken cancellationToken)
         {
             if (num == null)
                 throw new System.ArgumentNullException("num");
     
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Problems/{id}/samples/{tid}/output/{num}");
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Problems/{id}/samples/{tid}/output/{num}/preview");
             urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{tid}", System.Uri.EscapeDataString(ConvertToString(tid, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{num}", System.Uri.EscapeDataString(ConvertToString(num, System.Globalization.CultureInfo.InvariantCulture)));
@@ -1146,17 +1072,17 @@ namespace LocalJudge.Server.Host.APIClients
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<byte[]> GetSampleOutputFileAsync(string id, string tid)
+        public System.Threading.Tasks.Task<string> GetSampleOutputAsync(string id, string tid)
         {
-            return GetSampleOutputFileAsync(id, tid, System.Threading.CancellationToken.None);
+            return GetSampleOutputAsync(id, tid, System.Threading.CancellationToken.None);
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async System.Threading.Tasks.Task<byte[]> GetSampleOutputFileAsync(string id, string tid, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<string> GetSampleOutputAsync(string id, string tid, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Problems/{id}/samples/{tid}/outputfile");
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Problems/{id}/samples/{tid}/output");
             urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{tid}", System.Uri.EscapeDataString(ConvertToString(tid, System.Globalization.CultureInfo.InvariantCulture)));
     
@@ -1189,10 +1115,10 @@ namespace LocalJudge.Server.Host.APIClients
                         if (status_ == "200") 
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            var result_ = default(byte[]); 
+                            var result_ = default(string); 
                             try
                             {
-                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<byte[]>(responseData_, _settings.Value);
+                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(responseData_, _settings.Value);
                                 return result_; 
                             } 
                             catch (System.Exception exception_) 
@@ -1436,20 +1362,20 @@ namespace LocalJudge.Server.Host.APIClients
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<DataPreview> GetTestInputAsync(string id, string tid, int num)
+        public System.Threading.Tasks.Task<DataPreview> GetTestInputPreviewAsync(string id, string tid, int num)
         {
-            return GetTestInputAsync(id, tid, num, System.Threading.CancellationToken.None);
+            return GetTestInputPreviewAsync(id, tid, num, System.Threading.CancellationToken.None);
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async System.Threading.Tasks.Task<DataPreview> GetTestInputAsync(string id, string tid, int num, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<DataPreview> GetTestInputPreviewAsync(string id, string tid, int num, System.Threading.CancellationToken cancellationToken)
         {
             if (num == null)
                 throw new System.ArgumentNullException("num");
     
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Problems/{id}/tests/{tid}/input/{num}");
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Problems/{id}/tests/{tid}/input/{num}/preview");
             urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{tid}", System.Uri.EscapeDataString(ConvertToString(tid, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{num}", System.Uri.EscapeDataString(ConvertToString(num, System.Globalization.CultureInfo.InvariantCulture)));
@@ -1537,17 +1463,17 @@ namespace LocalJudge.Server.Host.APIClients
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<byte[]> GetTestInputFileAsync(string id, string tid)
+        public System.Threading.Tasks.Task<string> GetTestInputAsync(string id, string tid)
         {
-            return GetTestInputFileAsync(id, tid, System.Threading.CancellationToken.None);
+            return GetTestInputAsync(id, tid, System.Threading.CancellationToken.None);
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async System.Threading.Tasks.Task<byte[]> GetTestInputFileAsync(string id, string tid, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<string> GetTestInputAsync(string id, string tid, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Problems/{id}/tests/{tid}/inputfile");
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Problems/{id}/tests/{tid}/input");
             urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{tid}", System.Uri.EscapeDataString(ConvertToString(tid, System.Globalization.CultureInfo.InvariantCulture)));
     
@@ -1580,10 +1506,10 @@ namespace LocalJudge.Server.Host.APIClients
                         if (status_ == "200") 
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            var result_ = default(byte[]); 
+                            var result_ = default(string); 
                             try
                             {
-                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<byte[]>(responseData_, _settings.Value);
+                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(responseData_, _settings.Value);
                                 return result_; 
                             } 
                             catch (System.Exception exception_) 
@@ -1634,20 +1560,20 @@ namespace LocalJudge.Server.Host.APIClients
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<DataPreview> GetTestOutputAsync(string id, string tid, int num)
+        public System.Threading.Tasks.Task<DataPreview> GetTestOutputPreviewAsync(string id, string tid, int num)
         {
-            return GetTestOutputAsync(id, tid, num, System.Threading.CancellationToken.None);
+            return GetTestOutputPreviewAsync(id, tid, num, System.Threading.CancellationToken.None);
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async System.Threading.Tasks.Task<DataPreview> GetTestOutputAsync(string id, string tid, int num, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<DataPreview> GetTestOutputPreviewAsync(string id, string tid, int num, System.Threading.CancellationToken cancellationToken)
         {
             if (num == null)
                 throw new System.ArgumentNullException("num");
     
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Problems/{id}/tests/{tid}/output/{num}");
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Problems/{id}/tests/{tid}/output/{num}/preview");
             urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{tid}", System.Uri.EscapeDataString(ConvertToString(tid, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{num}", System.Uri.EscapeDataString(ConvertToString(num, System.Globalization.CultureInfo.InvariantCulture)));
@@ -1735,17 +1661,17 @@ namespace LocalJudge.Server.Host.APIClients
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<byte[]> GetTestOutputFileAsync(string id, string tid)
+        public System.Threading.Tasks.Task<string> GetTestOutputAsync(string id, string tid)
         {
-            return GetTestOutputFileAsync(id, tid, System.Threading.CancellationToken.None);
+            return GetTestOutputAsync(id, tid, System.Threading.CancellationToken.None);
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async System.Threading.Tasks.Task<byte[]> GetTestOutputFileAsync(string id, string tid, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<string> GetTestOutputAsync(string id, string tid, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Problems/{id}/tests/{tid}/outputfile");
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Problems/{id}/tests/{tid}/output");
             urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{tid}", System.Uri.EscapeDataString(ConvertToString(tid, System.Globalization.CultureInfo.InvariantCulture)));
     
@@ -1778,10 +1704,10 @@ namespace LocalJudge.Server.Host.APIClients
                         if (status_ == "200") 
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            var result_ = default(byte[]); 
+                            var result_ = default(string); 
                             try
                             {
-                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<byte[]>(responseData_, _settings.Value);
+                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(responseData_, _settings.Value);
                                 return result_; 
                             } 
                             catch (System.Exception exception_) 
@@ -1892,14 +1818,14 @@ namespace LocalJudge.Server.Host.APIClients
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<System.Collections.Generic.IList<Role>> GetAllAsync()
+        public System.Threading.Tasks.Task<System.Collections.Generic.IList<RoleMetadata>> GetAllAsync()
         {
             return GetAllAsync(System.Threading.CancellationToken.None);
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async System.Threading.Tasks.Task<System.Collections.Generic.IList<Role>> GetAllAsync(System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<System.Collections.Generic.IList<RoleMetadata>> GetAllAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Roles");
@@ -1933,10 +1859,10 @@ namespace LocalJudge.Server.Host.APIClients
                         if (status_ == "200") 
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            var result_ = default(System.Collections.Generic.IList<Role>); 
+                            var result_ = default(System.Collections.Generic.IList<RoleMetadata>); 
                             try
                             {
-                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<System.Collections.Generic.IList<Role>>(responseData_, _settings.Value);
+                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<System.Collections.Generic.IList<RoleMetadata>>(responseData_, _settings.Value);
                                 return result_; 
                             } 
                             catch (System.Exception exception_) 
@@ -1951,7 +1877,7 @@ namespace LocalJudge.Server.Host.APIClients
                             throw new SwaggerException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
             
-                        return default(System.Collections.Generic.IList<Role>);
+                        return default(System.Collections.Generic.IList<RoleMetadata>);
                     }
                     finally
                     {
@@ -1966,14 +1892,14 @@ namespace LocalJudge.Server.Host.APIClients
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<Role> CreateAsync(Role data)
+        public System.Threading.Tasks.Task<RoleMetadata> CreateAsync(RoleMetadata data)
         {
             return CreateAsync(data, System.Threading.CancellationToken.None);
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async System.Threading.Tasks.Task<Role> CreateAsync(Role data, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<RoleMetadata> CreateAsync(RoleMetadata data, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Roles");
@@ -2010,10 +1936,10 @@ namespace LocalJudge.Server.Host.APIClients
                         if (status_ == "201") 
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            var result_ = default(Role); 
+                            var result_ = default(RoleMetadata); 
                             try
                             {
-                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<Role>(responseData_, _settings.Value);
+                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<RoleMetadata>(responseData_, _settings.Value);
                                 return result_; 
                             } 
                             catch (System.Exception exception_) 
@@ -2079,14 +2005,14 @@ namespace LocalJudge.Server.Host.APIClients
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task UpdateAsync(Role data)
+        public System.Threading.Tasks.Task UpdateAsync(RoleMetadata data)
         {
             return UpdateAsync(data, System.Threading.CancellationToken.None);
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async System.Threading.Tasks.Task UpdateAsync(Role data, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task UpdateAsync(RoleMetadata data, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Roles");
@@ -2181,14 +2107,14 @@ namespace LocalJudge.Server.Host.APIClients
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<Role> GetAsync(string id)
+        public System.Threading.Tasks.Task<RoleMetadata> GetAsync(string id)
         {
             return GetAsync(id, System.Threading.CancellationToken.None);
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async System.Threading.Tasks.Task<Role> GetAsync(string id, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<RoleMetadata> GetAsync(string id, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Roles/{id}");
@@ -2223,10 +2149,10 @@ namespace LocalJudge.Server.Host.APIClients
                         if (status_ == "200") 
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            var result_ = default(Role); 
+                            var result_ = default(RoleMetadata); 
                             try
                             {
-                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<Role>(responseData_, _settings.Value);
+                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<RoleMetadata>(responseData_, _settings.Value);
                                 return result_; 
                             } 
                             catch (System.Exception exception_) 
@@ -2339,14 +2265,14 @@ namespace LocalJudge.Server.Host.APIClients
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<Role> GetByNameAsync(string name)
+        public System.Threading.Tasks.Task<RoleMetadata> GetByNameAsync(string name)
         {
             return GetByNameAsync(name, System.Threading.CancellationToken.None);
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async System.Threading.Tasks.Task<Role> GetByNameAsync(string name, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<RoleMetadata> GetByNameAsync(string name, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Roles/name/{name}");
@@ -2381,10 +2307,10 @@ namespace LocalJudge.Server.Host.APIClients
                         if (status_ == "200") 
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            var result_ = default(Role); 
+                            var result_ = default(RoleMetadata); 
                             try
                             {
-                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<Role>(responseData_, _settings.Value);
+                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<RoleMetadata>(responseData_, _settings.Value);
                                 return result_; 
                             } 
                             catch (System.Exception exception_) 
@@ -3132,102 +3058,6 @@ namespace LocalJudge.Server.Host.APIClients
             }
         }
     
-        /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<byte[]> GetCodeFileAsync(string id)
-        {
-            return GetCodeFileAsync(id, System.Threading.CancellationToken.None);
-        }
-    
-        /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async System.Threading.Tasks.Task<byte[]> GetCodeFileAsync(string id, System.Threading.CancellationToken cancellationToken)
-        {
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Submissions/{id}/codefile");
-            urlBuilder_.Replace("{id}", System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
-    
-            var client_ = _httpClient;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = ((int)response_.StatusCode).ToString();
-                        if (status_ == "200") 
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            var result_ = default(byte[]); 
-                            try
-                            {
-                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<byte[]>(responseData_, _settings.Value);
-                                return result_; 
-                            } 
-                            catch (System.Exception exception_) 
-                            {
-                                throw new SwaggerException("Could not deserialize the response body.", (int)response_.StatusCode, responseData_, headers_, exception_);
-                            }
-                        }
-                        else
-                        if (status_ == "404") 
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            var result_ = default(ProblemDetails); 
-                            try
-                            {
-                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<ProblemDetails>(responseData_, _settings.Value);
-                            } 
-                            catch (System.Exception exception_) 
-                            {
-                                throw new SwaggerException("Could not deserialize the response body.", (int)response_.StatusCode, responseData_, headers_, exception_);
-                            }
-                            throw new SwaggerException<ProblemDetails>("A server side error occurred.", (int)response_.StatusCode, responseData_, headers_, result_, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            var result_ = default(ProblemDetails); 
-                            try
-                            {
-                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<ProblemDetails>(responseData_, _settings.Value);
-                            } 
-                            catch (System.Exception exception_) 
-                            {
-                                throw new SwaggerException("Could not deserialize the response body.", (int)response_.StatusCode, responseData_, headers_, exception_);
-                            }
-                            throw new SwaggerException<ProblemDetails>("A server side error occurred.", (int)response_.StatusCode, responseData_, headers_, result_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (response_ != null)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-            }
-        }
-    
         private string ConvertToString(object value, System.Globalization.CultureInfo cultureInfo)
         {
             if (value is System.Enum)
@@ -3289,14 +3119,14 @@ namespace LocalJudge.Server.Host.APIClients
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<System.Collections.Generic.IList<User>> GetAllAsync()
+        public System.Threading.Tasks.Task<System.Collections.Generic.IList<UserMetadata>> GetAllAsync()
         {
             return GetAllAsync(System.Threading.CancellationToken.None);
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async System.Threading.Tasks.Task<System.Collections.Generic.IList<User>> GetAllAsync(System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<System.Collections.Generic.IList<UserMetadata>> GetAllAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Users");
@@ -3330,10 +3160,10 @@ namespace LocalJudge.Server.Host.APIClients
                         if (status_ == "200") 
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            var result_ = default(System.Collections.Generic.IList<User>); 
+                            var result_ = default(System.Collections.Generic.IList<UserMetadata>); 
                             try
                             {
-                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<System.Collections.Generic.IList<User>>(responseData_, _settings.Value);
+                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<System.Collections.Generic.IList<UserMetadata>>(responseData_, _settings.Value);
                                 return result_; 
                             } 
                             catch (System.Exception exception_) 
@@ -3348,7 +3178,7 @@ namespace LocalJudge.Server.Host.APIClients
                             throw new SwaggerException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
             
-                        return default(System.Collections.Generic.IList<User>);
+                        return default(System.Collections.Generic.IList<UserMetadata>);
                     }
                     finally
                     {
@@ -3363,14 +3193,14 @@ namespace LocalJudge.Server.Host.APIClients
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<User> CreateAsync(User data)
+        public System.Threading.Tasks.Task<UserMetadata> CreateAsync(UserMetadata data)
         {
             return CreateAsync(data, System.Threading.CancellationToken.None);
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async System.Threading.Tasks.Task<User> CreateAsync(User data, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<UserMetadata> CreateAsync(UserMetadata data, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Users");
@@ -3407,10 +3237,10 @@ namespace LocalJudge.Server.Host.APIClients
                         if (status_ == "201") 
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            var result_ = default(User); 
+                            var result_ = default(UserMetadata); 
                             try
                             {
-                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<User>(responseData_, _settings.Value);
+                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<UserMetadata>(responseData_, _settings.Value);
                                 return result_; 
                             } 
                             catch (System.Exception exception_) 
@@ -3476,14 +3306,14 @@ namespace LocalJudge.Server.Host.APIClients
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task UpdateAsync(User data)
+        public System.Threading.Tasks.Task UpdateAsync(UserMetadata data)
         {
             return UpdateAsync(data, System.Threading.CancellationToken.None);
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async System.Threading.Tasks.Task UpdateAsync(User data, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task UpdateAsync(UserMetadata data, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Users");
@@ -3578,14 +3408,14 @@ namespace LocalJudge.Server.Host.APIClients
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<User> GetAsync(string id)
+        public System.Threading.Tasks.Task<UserMetadata> GetAsync(string id)
         {
             return GetAsync(id, System.Threading.CancellationToken.None);
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async System.Threading.Tasks.Task<User> GetAsync(string id, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<UserMetadata> GetAsync(string id, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Users/{id}");
@@ -3620,10 +3450,10 @@ namespace LocalJudge.Server.Host.APIClients
                         if (status_ == "200") 
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            var result_ = default(User); 
+                            var result_ = default(UserMetadata); 
                             try
                             {
-                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<User>(responseData_, _settings.Value);
+                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<UserMetadata>(responseData_, _settings.Value);
                                 return result_; 
                             } 
                             catch (System.Exception exception_) 
@@ -3736,14 +3566,14 @@ namespace LocalJudge.Server.Host.APIClients
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<User> GetByNameAsync(string name)
+        public System.Threading.Tasks.Task<UserMetadata> GetByNameAsync(string name)
         {
             return GetByNameAsync(name, System.Threading.CancellationToken.None);
         }
     
         /// <exception cref="SwaggerException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async System.Threading.Tasks.Task<User> GetByNameAsync(string name, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<UserMetadata> GetByNameAsync(string name, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Users/name/{name}");
@@ -3778,10 +3608,10 @@ namespace LocalJudge.Server.Host.APIClients
                         if (status_ == "200") 
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            var result_ = default(User); 
+                            var result_ = default(UserMetadata); 
                             try
                             {
-                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<User>(responseData_, _settings.Value);
+                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<UserMetadata>(responseData_, _settings.Value);
                                 return result_; 
                             } 
                             catch (System.Exception exception_) 
@@ -4217,7 +4047,7 @@ namespace LocalJudge.Server.Host.APIClients
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.13.27.0 (Newtonsoft.Json v11.0.0.0)")]
-    public partial class Role 
+    public partial class RoleMetadata 
     {
         [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Id { get; set; }
@@ -4233,9 +4063,9 @@ namespace LocalJudge.Server.Host.APIClients
             return Newtonsoft.Json.JsonConvert.SerializeObject(this);
         }
     
-        public static Role FromJson(string data)
+        public static RoleMetadata FromJson(string data)
         {
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<Role>(data);
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<RoleMetadata>(data);
         }
     
     }
@@ -4262,8 +4092,8 @@ namespace LocalJudge.Server.Host.APIClients
         [Newtonsoft.Json.JsonProperty("codeLength", Required = Newtonsoft.Json.Required.Always)]
         public int CodeLength { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("codePath", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string CodePath { get; set; }
+        [Newtonsoft.Json.JsonProperty("codeName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string CodeName { get; set; }
     
         public string ToJson() 
         {
@@ -4471,7 +4301,7 @@ namespace LocalJudge.Server.Host.APIClients
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.13.27.0 (Newtonsoft.Json v11.0.0.0)")]
-    public partial class User 
+    public partial class UserMetadata 
     {
         [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Id { get; set; }
@@ -4495,16 +4325,16 @@ namespace LocalJudge.Server.Host.APIClients
         public string NormalizedEmail { get; set; }
     
         [Newtonsoft.Json.JsonProperty("roles", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.IList<Role> Roles { get; set; }
+        public System.Collections.Generic.IList<RoleMetadata> Roles { get; set; }
     
         public string ToJson() 
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this);
         }
     
-        public static User FromJson(string data)
+        public static UserMetadata FromJson(string data)
         {
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<User>(data);
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<UserMetadata>(data);
         }
     
     }

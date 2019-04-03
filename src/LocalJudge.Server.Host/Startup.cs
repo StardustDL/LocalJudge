@@ -38,7 +38,7 @@ namespace LocalJudge.Server.Host
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddIdentity<User, Role>().AddDefaultTokenProviders().AddUserStore<UserStore>().AddRoleStore<RoleStore>();
+            services.AddIdentity<UserMetadata, RoleMetadata>().AddDefaultTokenProviders().AddUserStore<UserStore>().AddRoleStore<RoleStore>();
 
             services.Configure<IdentityOptions>(options =>
             {

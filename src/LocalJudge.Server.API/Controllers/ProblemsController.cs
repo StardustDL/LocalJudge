@@ -15,10 +15,17 @@ namespace LocalJudge.Server.API.Controllers
     [ApiController]
     public class ProblemsController : ControllerBase
     {
+        private readonly IWorkspace _workspace;
+
+        public ProblemsController(IWorkspace workspace)
+        {
+            _workspace = workspace;
+        }
+
         [HttpGet]
         public ActionResult<IEnumerable<ProblemMetadata>> GetAll()
         {
-            return Ok(Program.Workspace.Problems.GetAll().Select(item => item.GetMetadata()));
+            return Ok(_workspace.Problems.GetAll().Select(item => item.GetMetadata()));
         }
 
         [HttpGet("{id}")]
@@ -27,7 +34,7 @@ namespace LocalJudge.Server.API.Controllers
         [ProducesDefaultResponseType]
         public ActionResult<ProblemMetadata> Get(string id)
         {
-            var res = Program.Workspace.Problems.Get(id)?.GetMetadata();
+            var res = _workspace.Problems.Get(id)?.GetMetadata();
             if (res != null)
                 return Ok(res);
             else
@@ -40,7 +47,7 @@ namespace LocalJudge.Server.API.Controllers
         [ProducesDefaultResponseType]
         public ActionResult<ProblemDescription> GetDescription(string id)
         {
-            var res = Program.Workspace.Problems.Get(id);
+            var res = _workspace.Problems.Get(id);
             if (res != null)
                 return Ok(res.GetDescription());
             else
@@ -53,7 +60,7 @@ namespace LocalJudge.Server.API.Controllers
         [ProducesDefaultResponseType]
         public ActionResult<IEnumerable<TestCaseMetadata>> GetSamples(string id)
         {
-            var res = Program.Workspace.Problems.Get(id);
+            var res = _workspace.Problems.Get(id);
             if (res != null)
                 return Ok(res.GetSamples().Select(item => item.GetMetadata()));
             else
@@ -66,64 +73,64 @@ namespace LocalJudge.Server.API.Controllers
         [ProducesDefaultResponseType]
         public ActionResult<TestCaseMetadata> GetSample(string id, string tid)
         {
-            var res = Program.Workspace.Problems.Get(id)?.GetSample(tid);
+            var res = _workspace.Problems.Get(id)?.GetSample(tid);
             if (res != null)
                 return Ok(res.GetMetadata());
             else
                 return NotFound();
         }
 
-        [HttpGet("{id}/samples/{tid}/input/{num}")]
+        [HttpGet("{id}/samples/{tid}/input/{num}/preview")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<DataPreview> GetSampleInput(string id, string tid, int num)
+        public ActionResult<DataPreview> GetSampleInputPreview(string id, string tid, int num)
         {
-            var res = Program.Workspace.Problems.Get(id)?.GetSample(tid);
+            var res = _workspace.Problems.Get(id)?.GetSample(tid);
             if (res != null)
-                return Ok(res.GetInput(num));
+                return Ok(res.GetInputPreview(num));
             else
                 return NotFound();
         }
 
-        [HttpGet("{id}/samples/{tid}/inputfile")]
+        [HttpGet("{id}/samples/{tid}/input")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<byte[]> GetSampleInputFile(string id, string tid)
+        public ActionResult<string> GetSampleInput(string id, string tid)
         {
-            var res = Program.Workspace.Problems.Get(id)?.GetSample(tid);
+            var res = _workspace.Problems.Get(id)?.GetSample(tid);
             if (res != null)
             {
-                return Ok(System.IO.File.ReadAllBytes(res.Input));
+                return Ok(res.GetInput());
             }
             else
                 return NotFound();
         }
 
-        [HttpGet("{id}/samples/{tid}/output/{num}")]
+        [HttpGet("{id}/samples/{tid}/output/{num}/preview")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<DataPreview> GetSampleOutput(string id, string tid, int num)
+        public ActionResult<DataPreview> GetSampleOutputPreview(string id, string tid, int num)
         {
-            var res = Program.Workspace.Problems.Get(id)?.GetSample(tid);
+            var res = _workspace.Problems.Get(id)?.GetSample(tid);
             if (res != null)
-                return Ok(res.GetOutput(num));
+                return Ok(res.GetOutputPreview(num));
             else
                 return NotFound();
         }
 
-        [HttpGet("{id}/samples/{tid}/outputfile")]
+        [HttpGet("{id}/samples/{tid}/output")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<byte[]> GetSampleOutputFile(string id, string tid)
+        public ActionResult<string> GetSampleOutput(string id, string tid)
         {
-            var res = Program.Workspace.Problems.Get(id)?.GetSample(tid);
+            var res = _workspace.Problems.Get(id)?.GetSample(tid);
             if (res != null)
             {
-                return Ok(System.IO.File.ReadAllBytes(res.Output));
+                return Ok(res.GetOutput());
             }
             else
                 return NotFound();
@@ -135,7 +142,7 @@ namespace LocalJudge.Server.API.Controllers
         [ProducesDefaultResponseType]
         public ActionResult<IEnumerable<TestCaseMetadata>> GetTests(string id)
         {
-            var res = Program.Workspace.Problems.Get(id);
+            var res = _workspace.Problems.Get(id);
             if (res != null)
                 return Ok(res.GetTests().Select(item => item.GetMetadata()));
             else
@@ -148,64 +155,64 @@ namespace LocalJudge.Server.API.Controllers
         [ProducesDefaultResponseType]
         public ActionResult<TestCaseMetadata> GetTest(string id, string tid)
         {
-            var res = Program.Workspace.Problems.Get(id)?.GetTest(tid);
+            var res = _workspace.Problems.Get(id)?.GetTest(tid);
             if (res != null)
                 return Ok(res.GetMetadata());
             else
                 return NotFound();
         }
 
-        [HttpGet("{id}/tests/{tid}/input/{num}")]
+        [HttpGet("{id}/tests/{tid}/input/{num}/preview")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<DataPreview> GetTestInput(string id, string tid, int num)
+        public ActionResult<DataPreview> GetTestInputPreview(string id, string tid, int num)
         {
-            var res = Program.Workspace.Problems.Get(id)?.GetTest(tid);
+            var res = _workspace.Problems.Get(id)?.GetTest(tid);
             if (res != null)
-                return Ok(res.GetInput(num));
+                return Ok(res.GetInputPreview(num));
             else
                 return NotFound();
         }
 
-        [HttpGet("{id}/tests/{tid}/inputfile")]
+        [HttpGet("{id}/tests/{tid}/input")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<byte[]> GetTestInputFile(string id, string tid)
+        public ActionResult<string> GetTestInput(string id, string tid)
         {
-            var res = Program.Workspace.Problems.Get(id)?.GetTest(tid);
+            var res = _workspace.Problems.Get(id)?.GetTest(tid);
             if (res != null)
             {
-                return Ok(System.IO.File.ReadAllBytes(res.Input));
+                return Ok(res.GetInput());
             }
             else
                 return NotFound();
         }
 
-        [HttpGet("{id}/tests/{tid}/output/{num}")]
+        [HttpGet("{id}/tests/{tid}/output/{num}/preview")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<DataPreview> GetTestOutput(string id, string tid, int num)
+        public ActionResult<DataPreview> GetTestOutputPreview(string id, string tid, int num)
         {
-            var res = Program.Workspace.Problems.Get(id)?.GetTest(tid);
+            var res = _workspace.Problems.Get(id)?.GetTest(tid);
             if (res != null)
-                return Ok(res.GetOutput(num));
+                return Ok(res.GetOutputPreview(num));
             else
                 return NotFound();
         }
 
-        [HttpGet("{id}/tests/{tid}/outputfile")]
+        [HttpGet("{id}/tests/{tid}/output")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<byte[]> GetTestOutputFile(string id, string tid)
+        public ActionResult<string> GetTestOutput(string id, string tid)
         {
-            var res = Program.Workspace.Problems.Get(id)?.GetTest(tid);
+            var res = _workspace.Problems.Get(id)?.GetTest(tid);
             if (res != null)
             {
-                return Ok(System.IO.File.ReadAllBytes(res.Output));
+                return Ok(res.GetOutput());
             }
             else
                 return NotFound();
@@ -214,7 +221,7 @@ namespace LocalJudge.Server.API.Controllers
         [HttpDelete("{id}")]
         public void Delete(string id)
         {
-            Program.Workspace.Problems.Delete(id);
+            _workspace.Problems.Delete(id);
         }
 
         [HttpPut("{id}")]
@@ -223,7 +230,7 @@ namespace LocalJudge.Server.API.Controllers
         [ProducesDefaultResponseType]
         public ActionResult<ProblemMetadata> Create(string id)
         {
-            var res = Program.Workspace.Problems.Create(id);
+            var res = _workspace.Problems.Create(id);
             if (res != null)
                 return Created($"problems/{id}", res.GetMetadata());
             else

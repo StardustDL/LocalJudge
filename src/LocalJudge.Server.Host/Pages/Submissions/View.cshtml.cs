@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using LocalJudge.Server.Host.APIClients;
 using LocalJudge.Server.Host.Helpers;
@@ -60,7 +61,7 @@ namespace LocalJudge.Server.Host.Pages.Submissions
             var client = new SubmissionsClient(httpclient);
             try
             {
-                var bytes = await client.GetCodeFileAsync(PostData.Id);
+                var bytes = Encoding.UTF8.GetBytes(await client.GetCodeAsync(PostData.Id));
                 return File(bytes, "text/plain", $"{PostData.Id}.{ProgrammingLanguageHelper.Extends[PostData.Language]}");
             }
             catch

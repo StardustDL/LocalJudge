@@ -17,6 +17,6 @@ namespace LocalJudge.Core.Submissions
 
         public uint CodeLength { get; set; }
 
-        public string CodePath { get; set; }
+        public string CodeName { get; set; }
     }
 }

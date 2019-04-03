@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LocalJudge.Core.Identity
 {
-    public class User : IHasId<string>
+    public class UserMetadata : IHasId<string>
     {
         public string Id { get; set; }
 
@@ -21,6 +21,6 @@ namespace LocalJudge.Core.Identity
 
         public string NormalizedEmail { get; set; }
 
-        public List<Role> Roles { get; set; } = new List<Role>();
+        public List<RoleMetadata> Roles { get; set; } = new List<RoleMetadata>();
     }
 }

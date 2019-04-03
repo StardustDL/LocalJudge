@@ -17,23 +17,18 @@ namespace LocalJudge.Server.Host.Pages.Admin
     public class IndexModel : PageModel
     {
         private readonly IHttpClientFactory clientFactory;
-        private readonly SignInManager<User> _signInManager;
+        private readonly SignInManager<UserMetadata> _signInManager;
         private readonly IAuthorizationService _authorizationService;
-        private readonly UserManager<User> _userManager;
-        private readonly RoleManager<Role> _roleManager;
+        private readonly UserManager<UserMetadata> _userManager;
+        private readonly RoleManager<RoleMetadata> _roleManager;
 
-        public IndexModel(IHttpClientFactory clientFactory, UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<Role> roleManager, IAuthorizationService authorizationService)
+        public IndexModel(IHttpClientFactory clientFactory, UserManager<UserMetadata> userManager, SignInManager<UserMetadata> signInManager, RoleManager<RoleMetadata> roleManager, IAuthorizationService authorizationService)
         {
             this.clientFactory = clientFactory;
             _signInManager = signInManager;
             _authorizationService = authorizationService;
             _userManager = userManager;
             _roleManager = roleManager;
-        }
-
-        public string APIWorkspace
-        {
-            get; set;
         }
 
         public bool IsConnected
@@ -85,17 +80,13 @@ namespace LocalJudge.Server.Host.Pages.Admin
                 Language = HttpContext.Features.Get<IRequestCultureFeature>().RequestCulture.UICulture.Name
             };
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new AdminClient(httpclient);
             try
             {
-                APIWorkspace = await client.GetRootDirectoryAsync();
                 EnableAdmin = await CanAdmin();
                 IsConnected = true;
             }
             catch
             {
-                APIWorkspace = "";
                 IsConnected = false;
                 EnableAdmin = false;
             }
@@ -116,7 +107,7 @@ namespace LocalJudge.Server.Host.Pages.Admin
             var client = new AdminClient(httpclient);
             await client.InitializeAsync();
             string adminId = Guid.NewGuid().ToString();
-            await _userManager.CreateAsync(new User { Id = adminId, Email = "admin@localhost", Name = "Admin" }, "admin");
+            await _userManager.CreateAsync(new UserMetadata { Id = adminId, Email = "admin@localhost", Name = "Admin" }, "admin");
             return RedirectToPage();
         }
 

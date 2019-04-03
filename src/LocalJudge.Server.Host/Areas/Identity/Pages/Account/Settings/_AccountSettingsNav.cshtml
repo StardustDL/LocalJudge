@@ -1,5 +1,5 @@
 @using LocalJudge.Server.Host.APIClients
-@inject SignInManager<User> SignInManager
+@inject SignInManager<UserMetadata> SignInManager
 @inject IViewLocalizer Localizer
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();

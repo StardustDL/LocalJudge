@@ -26,6 +26,7 @@ namespace LocalJudge.Server.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<LocalJudge.Core.IWorkspace>(new Data.Provider.FileSystem.Workspace(Path.GetFullPath(Directory.GetCurrentDirectory())));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddSwaggerDocument();
         }
@@ -35,12 +36,10 @@ namespace LocalJudge.Server.API
         {
             if (env.IsDevelopment())
             {
-                Program.Workspace = new Core.Workspace(Path.GetFullPath(Directory.GetCurrentDirectory()));
                 app.UseDeveloperExceptionPage();
             }
             else
             {
-                Program.Workspace = new Core.Workspace(Path.GetFullPath(Directory.GetCurrentDirectory()));
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }

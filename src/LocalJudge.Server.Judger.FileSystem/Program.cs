@@ -1,6 +1,7 @@
 ﻿using LocalJudge.Core;
 using LocalJudge.Core.Judgers;
 using LocalJudge.Core.Submissions;
+using LocalJudge.Data.Provider.FileSystem;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ using System.IO.Pipes;
 using System.Text;
 using System.Threading;
 
-namespace LocalJudger.Server.Judger
+namespace LocalJudger.Server.Judger.FileSystem
 {
     class Program
     {
@@ -75,9 +76,10 @@ namespace LocalJudger.Server.Judger
                 State = JudgeState.Pending
             };
 
-            var submission = Workspace.Submissions.Get(id);
+            var submission = Workspace.Submissions.Get(id) as SubmissionProvider;
             var submdata = submission.GetMetadata();
             var problem = Workspace.Problems.Get(submdata.ProblemId);
+            string codePath = Path.Join(submission.Root, submdata.CodeName);
 
             if (problem != null)
             {
@@ -91,8 +93,6 @@ namespace LocalJudger.Server.Judger
                     {
                         result.State = JudgeState.Compiling;
                         submission.SetResult(result);
-
-                        string codePath = submission.GetCodePath();
                         string outputPath = Path.Join(submission.Root, Path.GetFileNameWithoutExtension(codePath));
 
                         // java Main.java -> Main.class
@@ -117,14 +117,14 @@ namespace LocalJudger.Server.Judger
 
                         Dictionary<string, string> vars = new Dictionary<string, string>()
                         {
-                            [LocalJudge.Core.Judgers.Judger.V_CodeFile] = submission.GetCodePath(),
+                            [LocalJudge.Core.Judgers.Judger.V_CodeFile] = codePath,
                         };
                         if (compileResult != null)
                             vars.Add(LocalJudge.Core.Judgers.Judger.V_CompileOutput, compileResult.OutputPath);
 
                         var comparer = new LocalJudge.Core.Judgers.Comparers.LineByLine();
 
-                        foreach (var item in problem.GetSamples())
+                        foreach (TestCaseProvider item in problem.GetSamples())
                         {
                             var casemdata = item.GetMetadata();
                             JudgeResult res = null;
@@ -133,7 +133,7 @@ namespace LocalJudger.Server.Judger
                                 res = LocalJudge.Core.Judgers.Judger.Judge(casemdata.Id, lang.RunCommand.Resolve(vars), submission.Root, casemdata.TimeLimit, casemdata.MemoryLimit, input, output, comparer);
                             result.Samples.Add(res);
                         }
-                        foreach (var item in problem.GetTests())
+                        foreach (TestCaseProvider item in problem.GetTests())
                         {
                             var casemdata = item.GetMetadata();
                             JudgeResult res = null;

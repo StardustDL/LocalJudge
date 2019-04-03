@@ -1,6 +1,6 @@
 ﻿namespace LocalJudge.Core.Identity
 {
-    public class Role : IHasId<string>
+    public class RoleMetadata : IHasId<string>
     {
         public string Id { get; set; }
 

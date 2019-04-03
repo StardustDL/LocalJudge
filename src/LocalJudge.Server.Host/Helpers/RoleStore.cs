@@ -12,7 +12,7 @@ namespace LocalJudge.Server.Host.Helpers
         public const string Administrator = "Administrator";
     }
 
-    public class RoleStore : IRoleStore<Role>
+    public class RoleStore : IRoleStore<RoleMetadata>
     {
         private readonly IHttpClientFactory clientFactory;
 
@@ -21,7 +21,7 @@ namespace LocalJudge.Server.Host.Helpers
             this.clientFactory = clientFactory;
         }
 
-        public async Task<IdentityResult> CreateAsync(Role role, CancellationToken cancellationToken)
+        public async Task<IdentityResult> CreateAsync(RoleMetadata role, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -38,7 +38,7 @@ namespace LocalJudge.Server.Host.Helpers
             }
         }
 
-        public async Task<IdentityResult> DeleteAsync(Role role, CancellationToken cancellationToken)
+        public async Task<IdentityResult> DeleteAsync(RoleMetadata role, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -60,7 +60,7 @@ namespace LocalJudge.Server.Host.Helpers
             
         }
 
-        public async Task<Role> FindByIdAsync(string roleId, CancellationToken cancellationToken)
+        public async Task<RoleMetadata> FindByIdAsync(string roleId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -69,7 +69,7 @@ namespace LocalJudge.Server.Host.Helpers
             return await client.GetAsync(roleId);
         }
 
-        public async Task<Role> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken)
+        public async Task<RoleMetadata> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -85,28 +85,28 @@ namespace LocalJudge.Server.Host.Helpers
             }
         }
 
-        public Task<string> GetNormalizedRoleNameAsync(Role role, CancellationToken cancellationToken)
+        public Task<string> GetNormalizedRoleNameAsync(RoleMetadata role, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             return Task.FromResult(role.NormalizedName);
         }
 
-        public Task<string> GetRoleIdAsync(Role role, CancellationToken cancellationToken)
+        public Task<string> GetRoleIdAsync(RoleMetadata role, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             return Task.FromResult(role.Id);
         }
 
-        public Task<string> GetRoleNameAsync(Role role, CancellationToken cancellationToken)
+        public Task<string> GetRoleNameAsync(RoleMetadata role, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             return Task.FromResult(role.Name);
         }
 
-        public Task SetNormalizedRoleNameAsync(Role role, string normalizedName, CancellationToken cancellationToken)
+        public Task SetNormalizedRoleNameAsync(RoleMetadata role, string normalizedName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -114,7 +114,7 @@ namespace LocalJudge.Server.Host.Helpers
             return Task.CompletedTask;
         }
 
-        public Task SetRoleNameAsync(Role role, string roleName, CancellationToken cancellationToken)
+        public Task SetRoleNameAsync(RoleMetadata role, string roleName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -122,7 +122,7 @@ namespace LocalJudge.Server.Host.Helpers
             return Task.CompletedTask;
         }
 
-        public async Task<IdentityResult> UpdateAsync(Role role, CancellationToken cancellationToken)
+        public async Task<IdentityResult> UpdateAsync(RoleMetadata role, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 

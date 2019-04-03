@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using LocalJudge.Server.Host.APIClients;
 using Microsoft.AspNetCore.Mvc;
@@ -64,13 +65,13 @@ namespace LocalJudge.Server.Host.Pages.Problems
 
             {
                 var ls = new List<TestCasePreviewModel>();
-                foreach(var item in Problem.Samples)
+                foreach (var item in Problem.Samples)
                 {
                     ls.Add(new TestCasePreviewModel
                     {
                         Metadata = item,
-                        Input = await client.GetSampleInputAsync(Problem.Metadata.Id, item.Id, MaxPreviewBytes),
-                        Output = await client.GetSampleOutputAsync(Problem.Metadata.Id, item.Id, MaxPreviewBytes),
+                        Input = await client.GetSampleInputPreviewAsync(Problem.Metadata.Id, item.Id, MaxPreviewBytes),
+                        Output = await client.GetSampleOutputPreviewAsync(Problem.Metadata.Id, item.Id, MaxPreviewBytes),
                     });
                 }
                 SamplePreview = ls;
@@ -83,8 +84,8 @@ namespace LocalJudge.Server.Host.Pages.Problems
                     ls.Add(new TestCasePreviewModel
                     {
                         Metadata = item,
-                        Input = await client.GetTestInputAsync(Problem.Metadata.Id, item.Id, MaxPreviewBytes),
-                        Output = await client.GetTestOutputAsync(Problem.Metadata.Id, item.Id, MaxPreviewBytes),
+                        Input = await client.GetTestInputPreviewAsync(Problem.Metadata.Id, item.Id, MaxPreviewBytes),
+                        Output = await client.GetTestOutputPreviewAsync(Problem.Metadata.Id, item.Id, MaxPreviewBytes),
                     });
                 }
                 TestPreview = ls;
@@ -104,7 +105,7 @@ namespace LocalJudge.Server.Host.Pages.Problems
             var client = new ProblemsClient(httpclient);
             try
             {
-                var bytes = await client.GetSampleInputFileAsync(PostData.ProblemId, PostData.TestCaseId);
+                var bytes = Encoding.UTF8.GetBytes(await client.GetSampleInputAsync(PostData.ProblemId, PostData.TestCaseId));
                 return File(bytes, "text/plain", $"sample{PostData.TestCaseId}.in");
             }
             catch
@@ -124,7 +125,7 @@ namespace LocalJudge.Server.Host.Pages.Problems
             var client = new ProblemsClient(httpclient);
             try
             {
-                var bytes = await client.GetSampleOutputFileAsync(PostData.ProblemId, PostData.TestCaseId);
+                var bytes = Encoding.UTF8.GetBytes(await client.GetSampleOutputAsync(PostData.ProblemId, PostData.TestCaseId));
                 return File(bytes, "text/plain", $"sample{PostData.TestCaseId}.out");
             }
             catch
@@ -144,7 +145,7 @@ namespace LocalJudge.Server.Host.Pages.Problems
             var client = new ProblemsClient(httpclient);
             try
             {
-                var bytes = await client.GetTestInputFileAsync(PostData.ProblemId, PostData.TestCaseId);
+                var bytes = Encoding.UTF8.GetBytes(await client.GetTestInputAsync(PostData.ProblemId, PostData.TestCaseId));
                 return File(bytes, "text/plain", $"test{PostData.TestCaseId}.in");
             }
             catch
@@ -164,7 +165,7 @@ namespace LocalJudge.Server.Host.Pages.Problems
             var client = new ProblemsClient(httpclient);
             try
             {
-                var bytes = await client.GetTestOutputFileAsync(PostData.ProblemId, PostData.TestCaseId);
+                var bytes = Encoding.UTF8.GetBytes(await client.GetTestOutputAsync(PostData.ProblemId, PostData.TestCaseId));
                 return File(bytes, "text/plain", $"test{PostData.TestCaseId}.out");
             }
             catch
