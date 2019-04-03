@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace StarOJ.Server.Host.Helpers
 {
-    public class UserStore : IUserStore<UserMetadata>, IUserPasswordStore<UserMetadata>, IUserRoleStore<UserMetadata>, IUserEmailStore<UserMetadata>
+    public class UserStore : IUserStore<UserMetadata>, IUserPasswordStore<UserMetadata>, IUserEmailStore<UserMetadata>
     {
         private readonly IHttpClientFactory clientFactory;
 
@@ -18,7 +18,7 @@ namespace StarOJ.Server.Host.Helpers
             this.clientFactory = clientFactory;
         }
 
-        public async Task AddToRoleAsync(UserMetadata user, string roleName, CancellationToken cancellationToken)
+        /*public async Task AddToRoleAsync(UserMetadata user, string roleName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -30,6 +30,42 @@ namespace StarOJ.Server.Host.Helpers
             if (index != -1) return;
             user.Roles.Add(role);
         }
+
+            public Task<IList<string>> GetRolesAsync(UserMetadata user, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (user.Roles == null)
+                return Task.FromResult<IList<string>>(Array.Empty<string>());
+            return Task.FromResult<IList<string>>(user.Roles.Select(x => x.Name).ToList());
+        }
+        public Task<bool> IsInRoleAsync(UserMetadata user, string roleName, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var httpclient = clientFactory.CreateClient();
+            var client = new UsersClient(httpclient);
+            if (user.Roles == null)
+                return Task.FromResult(false);
+            return Task.FromResult(user.Roles.Any(x => x.NormalizedName == roleName));
+        }
+
+        public Task RemoveFromRoleAsync(UserMetadata user, string roleName, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var rs = user.Roles.ToList();
+            var index = rs.FindIndex(x => x.NormalizedName == roleName);
+            if (index == -1) return Task.CompletedTask;
+
+            user.Roles.RemoveAt(index);
+            return Task.CompletedTask;
+        }
+        
+        public Task<IList<UserMetadata>> GetUsersInRoleAsync(string roleName, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }*/
 
         public async Task<IdentityResult> CreateAsync(UserMetadata user, CancellationToken cancellationToken = default)
         {
@@ -135,15 +171,6 @@ namespace StarOJ.Server.Host.Helpers
             return Task.FromResult(user.PasswordHash);
         }
 
-        public Task<IList<string>> GetRolesAsync(UserMetadata user, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            if (user.Roles == null)
-                return Task.FromResult<IList<string>>(Array.Empty<string>());
-            return Task.FromResult<IList<string>>(user.Roles.Select(x => x.Name).ToList());
-        }
-
         public Task<string> GetUserIdAsync(UserMetadata user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -158,39 +185,11 @@ namespace StarOJ.Server.Host.Helpers
             return Task.FromResult(user.Name);
         }
 
-        public Task<IList<UserMetadata>> GetUsersInRoleAsync(string roleName, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<bool> HasPasswordAsync(UserMetadata user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             return Task.FromResult(!string.IsNullOrEmpty(user.PasswordHash));
-        }
-
-        public Task<bool> IsInRoleAsync(UserMetadata user, string roleName, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var httpclient = clientFactory.CreateClient();
-            var client = new UsersClient(httpclient);
-            if (user.Roles == null)
-                return Task.FromResult(false);
-            return Task.FromResult(user.Roles.Any(x => x.NormalizedName == roleName));
-        }
-
-        public Task RemoveFromRoleAsync(UserMetadata user, string roleName, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var rs = user.Roles.ToList();
-            var index = rs.FindIndex(x => x.NormalizedName == roleName);
-            if (index == -1) return Task.CompletedTask;
-
-            user.Roles.RemoveAt(index);
-            return Task.CompletedTask;
         }
 
         public Task SetEmailAsync(UserMetadata user, string email, CancellationToken cancellationToken)

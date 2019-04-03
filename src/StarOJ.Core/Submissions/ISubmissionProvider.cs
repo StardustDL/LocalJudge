@@ -4,17 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace StarOJ.Core.Submissions
 {
     public interface ISubmissionProvider : IHasId<string>,IHasMetadata<SubmissionMetadata>
     {
-        SubmissionResult GetResult();
+        Task<SubmissionResult> GetResult();
 
-        void SetResult(SubmissionResult value);
-
-        string GetCode();
-
-        void SetCode(string value);
+        Task SetResult(SubmissionResult value);
     }
 }

@@ -1,6 +1,6 @@
 # StarOJ
 
-StarOJ is a Online-Judge written in C#.
+StarOJ is an Online-Judge written in C#.
 
 Now, StarOJ only supports file-system provider.
 

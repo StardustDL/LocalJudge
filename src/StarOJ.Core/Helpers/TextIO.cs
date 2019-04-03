@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace StarOJ.Core.Helpers
 {
@@ -31,6 +32,18 @@ namespace StarOJ.Core.Helpers
         public static void WriteAllInUTF8(string path, string content)
         {
             File.WriteAllText(path, content, UTF8WithoutBOM);
+        }
+
+        public static async Task<string> ReadAllInUTF8Async(string path)
+        {
+            using (var sr = new StreamReader(path, UTF8WithoutBOM))
+                return await sr.ReadToEndAsync();
+        }
+
+        public static async Task WriteAllInUTF8Async(string path, string content)
+        {
+            using (var sw = new StreamWriter(path, false, UTF8WithoutBOM))
+                await sw.WriteAsync(content);
         }
 
         public static void ConvertToLF(TextReader reader, TextWriter writer)

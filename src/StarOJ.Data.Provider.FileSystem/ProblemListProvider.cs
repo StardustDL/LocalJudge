@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace StarOJ.Data.Provider.FileSystem
 {
@@ -11,33 +12,39 @@ namespace StarOJ.Data.Provider.FileSystem
     {
         public string Root { get; private set; }
 
-        public IProblemProvider Create(ProblemMetadata metadata)
+        public async Task<IProblemProvider> Create(ProblemMetadata metadata)
         {
+            metadata.Id = Guid.NewGuid().ToString();
             string path = Path.Combine(Root, metadata.Id);
             if (Directory.Exists(path)) return null;
             Directory.CreateDirectory(path);
-            return ProblemProvider.Initialize(path, metadata, null);
+            return await ProblemProvider.Initialize(path, metadata, null);
         }
 
-        public IProblemProvider Create(string id)
+        public async Task<IProblemProvider> Create()
         {
+            string id = Guid.NewGuid().ToString();
             string path = Path.Combine(Root, id);
             if (Directory.Exists(path)) return null;
             Directory.CreateDirectory(path);
-            return ProblemProvider.Initialize(path, null, null);
+            return await ProblemProvider.Initialize(path);
         }
 
-        public void Delete(string id) => Directory.Delete(Path.Combine(Root, id), true);
+        public Task Delete(string id)
+        {
+            Directory.Delete(Path.Combine(Root, id), true);
+            return Task.CompletedTask;
+        }
 
-        public IProblemProvider Get(string id)
+        public Task<IProblemProvider> Get(string id)
         {
             string path = Path.Combine(Root, id);
-            return Directory.Exists(path) ? new ProblemProvider(path) : null;
+            return Task.FromResult(Directory.Exists(path) ? (IProblemProvider)new ProblemProvider(path) : null);
         }
 
-        public IEnumerable<IProblemProvider> GetAll() => Directory.GetDirectories(Root).Select(path => new ProblemProvider(path));
+        public Task<IEnumerable<IProblemProvider>> GetAll() => Task.FromResult(Directory.GetDirectories(Root).Select(path => (IProblemProvider)new ProblemProvider(path)));
 
-        public bool Has(string id) => Directory.Exists(Path.Combine(Root, id));
+        public Task<bool> Has(string id) => Task.FromResult(Directory.Exists(Path.Combine(Root, id)));
 
         public ProblemListProvider(string root)
         {

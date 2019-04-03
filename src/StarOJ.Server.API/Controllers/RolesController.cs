@@ -21,18 +21,24 @@ namespace StarOJ.Server.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<RoleMetadata>> GetAll()
+        public async Task<ActionResult<IEnumerable<RoleMetadata>>> GetAll()
         {
-            return Ok(_workspace.Roles.GetAll().Select(item => item.GetMetadata()));
+            var all = await _workspace.Roles.GetAll();
+            List<RoleMetadata> ans = new List<RoleMetadata>();
+            foreach (var v in all)
+            {
+                ans.Add(await v.GetMetadata());
+            }
+            return Ok(ans);
         }
 
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<RoleMetadata> Get(string id)
+        public async Task<ActionResult<RoleMetadata>> Get(string id)
         {
-            var res = _workspace.Roles.Get(id)?.GetMetadata();
+            var res = await (await _workspace.Roles.Get(id))?.GetMetadata();
             if (res != null)
                 return Ok(res);
             else
@@ -43,9 +49,9 @@ namespace StarOJ.Server.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<RoleMetadata> GetByName(string name)
+        public async Task<ActionResult<RoleMetadata>> GetByName(string name)
         {
-            var res = _workspace.Roles.GetByName(name)?.GetMetadata();
+            var res = await (await _workspace.Roles.GetByName(name))?.GetMetadata();
             if (res != null)
                 return Ok(res);
             else
@@ -53,9 +59,9 @@ namespace StarOJ.Server.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public void Delete(string id)
+        public Task Delete(string id)
         {
-            _workspace.Roles.Delete(id);
+            return _workspace.Roles.Delete(id);
         }
 
         [HttpPost]
@@ -63,14 +69,12 @@ namespace StarOJ.Server.API.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<RoleMetadata> Create([FromBody] RoleMetadata data)
+        public async Task<ActionResult<RoleMetadata>> Create([FromBody] RoleMetadata data)
         {
-            if (string.IsNullOrEmpty(data.Id)) data.Id = Guid.NewGuid().ToString();
-
             try
             {
-                var res = _workspace.Roles.Create(data);
-                return Created($"users/{res.Id}", res.GetMetadata());
+                var res = await _workspace.Roles.Create(data);
+                return Created($"users/{res.Id}", await res.GetMetadata());
             }
             catch
             {
@@ -83,14 +87,14 @@ namespace StarOJ.Server.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesDefaultResponseType]
-        public ActionResult Update([FromBody] RoleMetadata data)
+        public async Task<ActionResult> Update([FromBody] RoleMetadata data)
         {
             try
             {
-                var prov = _workspace.Roles.Get(data.Id);
+                var prov = await _workspace.Roles.Get(data.Id);
                 if (prov != null)
                 {
-                    prov.SetMetadata(data);
+                    await prov.SetMetadata(data);
                     return Ok();
                 }
                 else

@@ -8,11 +8,11 @@ namespace StarOJ.Core.Submissions
     {
         public JudgeState State { get; set; }
 
-        public List<JudgeResult> Samples { get; private set; } = new List<JudgeResult>();
+        public List<JudgeResult> Samples { get; set; }
 
-        public List<JudgeResult> Tests { get; private set; } = new List<JudgeResult>();
+        public List<JudgeResult> Tests { get; set; }
 
-        public List<Issue> Issues { get; private set; } = new List<Issue>();
+        public List<Issue> Issues { get; set; }
 
         public bool HasIssue { get; set; }
 

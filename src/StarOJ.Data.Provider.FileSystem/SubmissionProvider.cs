@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace StarOJ.Data.Provider.FileSystem
 {
@@ -19,34 +20,24 @@ namespace StarOJ.Data.Provider.FileSystem
 
         public string Result { get; private set; }
 
-        string GetCodePath()
+        public async Task<SubmissionMetadata> GetMetadata()
         {
-            var meta = GetMetadata();
-            return Path.Combine(Root, meta.CodeName);
-        }
-
-        public string GetCode() => TextIO.ReadAllInUTF8(GetCodePath());
-
-        public SubmissionMetadata GetMetadata()
-        {
-            var res = Newtonsoft.Json.JsonConvert.DeserializeObject<SubmissionMetadata>(TextIO.ReadAllInUTF8(Profile));
+            var res = Newtonsoft.Json.JsonConvert.DeserializeObject<SubmissionMetadata>(await TextIO.ReadAllInUTF8Async(Profile));
             res.Id = Path.GetFileName(Root);
             return res;
         }
 
-        public SubmissionResult GetResult()
+        public async Task<SubmissionResult> GetResult()
         {
             if (File.Exists(Result))
-                return Newtonsoft.Json.JsonConvert.DeserializeObject<SubmissionResult>(TextIO.ReadAllInUTF8(Result));
+                return Newtonsoft.Json.JsonConvert.DeserializeObject<SubmissionResult>(await TextIO.ReadAllInUTF8Async(Result));
             else
                 return null;
         }
 
-        public void SetCode(string value) => TextIO.WriteAllInUTF8(GetCodePath(), value);
+        public Task SetMetadata(SubmissionMetadata value) => TextIO.WriteAllInUTF8Async(Profile, Newtonsoft.Json.JsonConvert.SerializeObject(value, Newtonsoft.Json.Formatting.Indented));
 
-        public void SetMetadata(SubmissionMetadata value) => TextIO.WriteAllInUTF8(Profile, Newtonsoft.Json.JsonConvert.SerializeObject(value, Newtonsoft.Json.Formatting.Indented));
-
-        public void SetResult(SubmissionResult value)
+        public async Task SetResult(SubmissionResult value)
         {
             if(value == null)
             {
@@ -54,7 +45,7 @@ namespace StarOJ.Data.Provider.FileSystem
             }
             else
             {
-                TextIO.WriteAllInUTF8(Result, Newtonsoft.Json.JsonConvert.SerializeObject(value, Newtonsoft.Json.Formatting.Indented));
+                await TextIO.WriteAllInUTF8Async(Result, Newtonsoft.Json.JsonConvert.SerializeObject(value, Newtonsoft.Json.Formatting.Indented));
             }
         }
 
@@ -66,13 +57,12 @@ namespace StarOJ.Data.Provider.FileSystem
             Result = Path.Combine(Root, PF_Result);
         }
 
-        public static SubmissionProvider Initialize(string root, SubmissionMetadata metadata = null, string code = "")
+        public static async Task<SubmissionProvider> Initialize(string root, SubmissionMetadata metadata = null)
         {
             var res = new SubmissionProvider(root);
-            if (metadata == null) metadata = new SubmissionMetadata() { CodeLength = 0, CodeName = "code.txt" };
+            if (metadata == null) metadata = new SubmissionMetadata() { CodeLength = 0, Code = "" };
             metadata.Id = res.Id;
-            res.SetMetadata(metadata);
-            res.SetCode(code);
+            await res.SetMetadata(metadata);
             return res;
         }
     }

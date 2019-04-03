@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace StarOJ.Data.Provider.FileSystem
 {
@@ -22,21 +23,21 @@ namespace StarOJ.Data.Provider.FileSystem
 
         public string Output { get; private set; }
 
-        public DataPreview GetInputPreview(int maxbytes) => TextIO.GetPreviewInUTF8(Input, maxbytes);
+        public Task<DataPreview> GetInputPreview(int maxbytes) => Task.FromResult(TextIO.GetPreviewInUTF8(Input, maxbytes));
 
-        public TestCaseMetadata GetMetadata()
+        public async Task<TestCaseMetadata> GetMetadata()
         {
-            var res = Newtonsoft.Json.JsonConvert.DeserializeObject<TestCaseMetadata>(TextIO.ReadAllInUTF8(Profile));
+            var res = Newtonsoft.Json.JsonConvert.DeserializeObject<TestCaseMetadata>(await TextIO.ReadAllInUTF8Async(Profile));
             res.Id = Path.GetFileName(Root);
             return res;
         }
 
 
-        public DataPreview GetOutputPreview(int maxbytes) => TextIO.GetPreviewInUTF8(Output, maxbytes);
+        public Task<DataPreview> GetOutputPreview(int maxbytes) => Task.FromResult(TextIO.GetPreviewInUTF8(Output, maxbytes));
 
-        public string GetInput() => TextIO.ReadAllInUTF8(Input);
+        public Task<string> GetInput() => TextIO.ReadAllInUTF8Async(Input);
 
-        public string GetOutput() => TextIO.ReadAllInUTF8(Output);
+        public Task<string> GetOutput() => TextIO.ReadAllInUTF8Async(Output);
 
         public TestCaseProvider(string root)
         {
@@ -47,14 +48,14 @@ namespace StarOJ.Data.Provider.FileSystem
             Output = Path.Combine(Root, PF_Output);
         }
 
-        public static TestCaseProvider Initialize(string root, TestCaseMetadata metadata = null, string input = "", string output = "")
+        public static async Task<TestCaseProvider> Initialize(string root, TestCaseMetadata metadata = null, string input = "", string output = "")
         {
             var res = new TestCaseProvider(root);
             if (metadata == null) metadata = new TestCaseMetadata { TimeLimit = TimeSpan.FromSeconds(1), MemoryLimit = 128 * 1024 * 1024 };
             metadata.Id = res.Id;
-            TextIO.WriteAllInUTF8(res.Profile, Newtonsoft.Json.JsonConvert.SerializeObject(metadata, Newtonsoft.Json.Formatting.Indented));
-            TextIO.WriteAllInUTF8(res.Input, input);
-            TextIO.WriteAllInUTF8(res.Output, output);
+            await TextIO.WriteAllInUTF8Async(res.Profile, Newtonsoft.Json.JsonConvert.SerializeObject(metadata, Newtonsoft.Json.Formatting.Indented));
+            await TextIO.WriteAllInUTF8Async(res.Input, input);
+            await TextIO.WriteAllInUTF8Async(res.Output, output);
             return res;
         }
     }

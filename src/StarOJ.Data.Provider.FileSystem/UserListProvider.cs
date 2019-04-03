@@ -1,7 +1,9 @@
 ﻿using StarOJ.Core.Identity;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace StarOJ.Data.Provider.FileSystem
 {
@@ -9,43 +11,51 @@ namespace StarOJ.Data.Provider.FileSystem
     {
         public string Root { get; private set; }
 
-        public IUserProvider Create(UserMetadata metadata)
+        public async Task<IUserProvider> Create(UserMetadata metadata)
         {
+            metadata.Id = Guid.NewGuid().ToString();
             string path = Path.Combine(Root, metadata.Id);
             if (Directory.Exists(path)) return null;
             Directory.CreateDirectory(path);
-            var res = UserProvider.Initialize(path, metadata);
-            return res;
+            return await UserProvider.Initialize(path, metadata);
         }
 
-        public IUserProvider Create(string id)
+        public async Task<IUserProvider> Create()
         {
+            string id = Guid.NewGuid().ToString();
             string path = Path.Combine(Root, id);
             if (Directory.Exists(path)) return null;
             Directory.CreateDirectory(path);
-            return UserProvider.Initialize(path);
+            return await UserProvider.Initialize(path);
         }
 
-        public void Delete(string id)
+        public Task Delete(string id)
         {
             string path = Path.Combine(Root, id);
             Directory.Delete(path, true);
+            return Task.CompletedTask;
         }
 
-        public IUserProvider Get(string id)
+        public Task<IUserProvider> Get(string id)
         {
             string path = Path.Combine(Root, id);
-            return Directory.Exists(path) ? new UserProvider(path) : null;
+            return Task.FromResult(Directory.Exists(path) ? (IUserProvider)new UserProvider(path) : null);
         }
 
-        public IEnumerable<IUserProvider> GetAll() => Directory.GetDirectories(Root).Select(path => new UserProvider(path));
+        public Task<IEnumerable<IUserProvider>> GetAll() => Task.FromResult(Directory.GetDirectories(Root).Select(path => (IUserProvider)new UserProvider(path)));
 
-        public IUserProvider GetByName(string name)
+        public async Task<IUserProvider> GetByName(string name)
         {
-            return GetAll().FirstOrDefault(x => x.GetMetadata().NormalizedName == name);
+            var all = await GetAll();
+            foreach (var v in all)
+            {
+                if (string.Equals((await v.GetMetadata()).Name, name, StringComparison.OrdinalIgnoreCase))
+                    return v;
+            }
+            return null;
         }
 
-        public bool Has(string id) => Directory.Exists(Path.Combine(Root, id));
+        public Task<bool> Has(string id) => Task.FromResult(Directory.Exists(Path.Combine(Root, id)));
 
         public UserListProvider(string root)
         {

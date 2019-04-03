@@ -7,11 +7,6 @@ using System.Threading.Tasks;
 
 namespace StarOJ.Server.Host.Helpers
 {
-    public static class Authorizations
-    {
-        public const string Administrator = "Administrator";
-    }
-
     public class RoleStore : IRoleStore<RoleMetadata>
     {
         private readonly IHttpClientFactory clientFactory;

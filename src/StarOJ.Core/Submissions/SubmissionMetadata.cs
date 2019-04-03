@@ -17,6 +17,6 @@ namespace StarOJ.Core.Submissions
 
         public uint CodeLength { get; set; }
 
-        public string CodeName { get; set; }
+        public string Code { get; set; }
     }
 }

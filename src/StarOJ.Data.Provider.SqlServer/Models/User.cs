@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Principal;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace StarOJ.Core.Identity
+namespace StarOJ.Data.Provider.SqlServer.Models
 {
-    public class UserMetadata : IHasId<string>
+    public class User
     {
         public string Id { get; set; }
 

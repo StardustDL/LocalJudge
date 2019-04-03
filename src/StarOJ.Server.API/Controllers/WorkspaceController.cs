@@ -2,6 +2,7 @@
 using StarOJ.Core;
 using StarOJ.Core.Judgers;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace StarOJ.Server.API.Controllers
 {
@@ -17,9 +18,9 @@ namespace StarOJ.Server.API.Controllers
         }
 
         [HttpGet("lang")]
-        public ActionResult<IEnumerable<ProgrammingLanguage>> GetSupportLanguages()
+        public async Task<ActionResult<IEnumerable<ProgrammingLanguage>>> GetSupportLanguages()
         {
-            return Ok(_workspace.GetConfig().GetSupportLanguages());
+            return Ok((await _workspace.GetConfig()).GetSupportLanguages());
         }
 
         [HttpGet("hasinit")]

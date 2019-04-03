@@ -17,7 +17,7 @@ namespace StarOJ.Server.API.Controllers
     [ApiController]
     public class SubmissionsController : ControllerBase
     {
-        const string PipeStreamName = "StarOJr.Server.Judger";
+        const string PipeStreamName = "StarOJ.Server.Judger";
         private readonly IWorkspace _workspace;
 
         public SubmissionsController(IWorkspace workspace)
@@ -36,6 +36,7 @@ namespace StarOJ.Server.API.Controllers
             public ProgrammingLanguage Language { get; set; }
         }
 
+        // TODO
         static string GetCodePath(ProgrammingLanguage lang)
         {
             switch (lang)
@@ -63,12 +64,12 @@ namespace StarOJ.Server.API.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<SubmissionMetadata> Submit([FromBody] SubmitData data)
+        public async Task<ActionResult<SubmissionMetadata>> Submit([FromBody] SubmitData data)
         {
-            if (_workspace.Problems.Has(data.ProblemId) == false)
+            if (await _workspace.Problems.Has(data.ProblemId) == false)
                 return NotFound();
 
-            if (_workspace.Users.Has(data.UserId) == false)
+            if (await _workspace.Users.Has(data.UserId) == false)
                 return NotFound();
 
             if (data.Code == null) data.Code = string.Empty;
@@ -80,36 +81,41 @@ namespace StarOJ.Server.API.Controllers
                 Language = data.Language,
                 Time = DateTimeOffset.Now,
                 CodeLength = (uint)Encoding.UTF8.GetByteCount(data.Code),
-                CodeName = GetCodePath(data.Language),
+                Code = data.Code,
             };
-            var sub = _workspace.Submissions.Create(meta);
+            var sub = await _workspace.Submissions.Create(meta);
             if (sub == null) return Forbid();
             try
             {
-                sub.SetCode(data.Code);
                 SendJudgeRequest(sub.Id);
-                return Created($"submissions/{meta.Id}", sub.GetMetadata());
+                return Created($"submissions/{meta.Id}", await sub.GetMetadata());
             }
             catch
             {
-                _workspace.Submissions.Delete(sub.Id);
+                await _workspace.Submissions.Delete(sub.Id);
                 return Forbid();
             }
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<SubmissionMetadata>> GetAll()
+        public async Task<ActionResult<IEnumerable<SubmissionMetadata>>> GetAll()
         {
-            return Ok(_workspace.Submissions.GetAll().Select(item => item.GetMetadata()));
+            var all = await _workspace.Submissions.GetAll();
+            List<SubmissionMetadata> ans = new List<SubmissionMetadata>();
+            foreach (var v in all)
+            {
+                ans.Add(await v.GetMetadata());
+            }
+            return Ok(ans);
         }
 
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<SubmissionMetadata> Get(string id)
+        public async Task<ActionResult<SubmissionMetadata>> Get(string id)
         {
-            var res = _workspace.Submissions.Get(id)?.GetMetadata();
+            var res = await (await _workspace.Submissions.Get(id))?.GetMetadata();
             if (res != null)
                 return Ok(res);
             else
@@ -121,12 +127,12 @@ namespace StarOJ.Server.API.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult Rejudge(string id)
+        public async Task<ActionResult> Rejudge(string id)
         {
-            var res = _workspace.Submissions.Get(id);
+            var res = await _workspace.Submissions.Get(id);
             if (res != null)
             {
-                res.SetResult(null);
+                await res.SetResult(null);
                 try
                 {
                     SendJudgeRequest(res.Id);
@@ -145,22 +151,9 @@ namespace StarOJ.Server.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public ActionResult<SubmissionResult> GetResult(string id)
+        public async Task<ActionResult<SubmissionResult>> GetResult(string id)
         {
-            var res = _workspace.Submissions.Get(id)?.GetResult();
-            if (res != null)
-                return Ok(res);
-            else
-                return NotFound();
-        }
-
-        [HttpGet("{id}/code")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesDefaultResponseType]
-        public ActionResult<string> GetCode(string id)
-        {
-            var res = _workspace.Submissions.Get(id)?.GetCode();
+            var res = await(await _workspace.Submissions.Get(id))?.GetResult();
             if (res != null)
                 return Ok(res);
             else
@@ -168,9 +161,9 @@ namespace StarOJ.Server.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public void Delete(string id)
+        public Task Delete(string id)
         {
-            _workspace.Submissions.Delete(id);
+            return _workspace.Submissions.Delete(id);
         }
     }
 }

@@ -5,11 +5,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace StarOJ.Core.Identity
 {
     public interface IUserListProvider : IItemListProvider<IUserProvider,UserMetadata>
     {
-        IUserProvider GetByName(string name);
+        Task<IUserProvider> GetByName(string name);
     }
 }

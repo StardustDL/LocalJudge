@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using System.Net.Http;
 
 namespace StarOJ.Server.Host.Areas.Identity.Pages
 {
@@ -17,14 +18,16 @@ namespace StarOJ.Server.Host.Areas.Identity.Pages
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<UserMetadata> _signInManager;
+        private readonly IHttpClientFactory _clientFactory;
         private readonly UserManager<UserMetadata> _userManager;
         // private readonly ILogger<RegisterModel> _logger;
         // private readonly IEmailSender _emailSender;
 
-        public RegisterModel(
+        public RegisterModel(IHttpClientFactory clientFactory,
             UserManager<UserMetadata> userManager,
             SignInManager<UserMetadata> signInManager)
         {
+            _clientFactory = clientFactory;
             _userManager = userManager;
             _signInManager = signInManager;
             // _logger = logger;
@@ -66,7 +69,7 @@ namespace StarOJ.Server.Host.Areas.Identity.Pages
             returnUrl = returnUrl ?? Url.Content("~/");
             if (ModelState.IsValid)
             {
-                var user = new UserMetadata { Id = Guid.NewGuid().ToString(), Name = Input.UserName, Email = Input.Email };
+                UserMetadata user = new UserMetadata { Name = Input.UserName, Email = Input.Email };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
@@ -82,8 +85,19 @@ namespace StarOJ.Server.Host.Areas.Identity.Pages
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>."); */
 
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-                    return LocalRedirect(returnUrl);
+                    try
+                    {
+                        var httpclient = _clientFactory.CreateClient();
+                        var client = new UsersClient(httpclient);
+                        user = await client.GetByNameAsync(user.Name);
+                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        return LocalRedirect(returnUrl);
+                    }
+                    catch(Exception ex)
+                    {
+                        ModelState.AddModelError(string.Empty, ex.Message);
+                    }
+                    
                 }
                 foreach (var error in result.Errors)
                 {

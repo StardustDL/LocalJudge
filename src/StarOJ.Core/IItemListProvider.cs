@@ -1,19 +1,20 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace StarOJ.Core
 {
     public interface IItemListProvider<TItem, TMetadata> where TItem : IHasId<string>, IHasMetadata<TMetadata>
     {
-        TItem Create(TMetadata metadata);
+        Task<TItem> Create(TMetadata metadata);
 
-        TItem Create(string id);
+        Task<TItem> Create();
 
-        void Delete(string id);
+        Task Delete(string id);
 
-        TItem Get(string id);
+        Task<TItem> Get(string id);
 
-        IEnumerable<TItem> GetAll();
+        Task<IEnumerable<TItem>> GetAll();
 
-        bool Has(string id);
+        Task<bool> Has(string id);
     }
 }

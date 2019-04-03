@@ -4,19 +4,20 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace StarOJ.Core.Problems
 {
     public interface IProblemProvider : IHasId<string>, IHasMetadata<ProblemMetadata>
     {
-        ProblemDescription GetDescription();
+        Task<ProblemDescription> GetDescription();
 
-        IEnumerable<ITestCaseProvider> GetSamples();
+        Task<IEnumerable<ITestCaseProvider>> GetSamples();
 
-        ITestCaseProvider GetSample(string id);
+        Task<ITestCaseProvider> GetSample(string id);
 
-        IEnumerable<ITestCaseProvider> GetTests();
+        Task<IEnumerable<ITestCaseProvider>> GetTests();
 
-        ITestCaseProvider GetTest(string id);
+        Task<ITestCaseProvider> GetTest(string id);
     }
 }

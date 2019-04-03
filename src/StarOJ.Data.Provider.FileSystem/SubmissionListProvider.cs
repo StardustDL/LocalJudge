@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace StarOJ.Data.Provider.FileSystem
 {
@@ -11,37 +12,40 @@ namespace StarOJ.Data.Provider.FileSystem
     {
         public string Root { get; private set; }
 
-        public ISubmissionProvider Create(SubmissionMetadata metadata)
+        public async Task<ISubmissionProvider> Create(SubmissionMetadata metadata)
         {
+            metadata.Id = Guid.NewGuid().ToString();
             string path = Path.Combine(Root, metadata.Id);
             if (Directory.Exists(path)) return null;
             Directory.CreateDirectory(path);
-            return SubmissionProvider.Initialize(path, metadata);
+            return await SubmissionProvider.Initialize(path, metadata);
         }
 
-        public ISubmissionProvider Create(string id)
+        public async Task<ISubmissionProvider> Create()
         {
+            string id = Guid.NewGuid().ToString();
             string path = Path.Combine(Root, id);
             if (Directory.Exists(path)) return null;
             Directory.CreateDirectory(path);
-            return SubmissionProvider.Initialize(path);
+            return await SubmissionProvider.Initialize(path);
         }
 
-        public void Delete(string id)
+        public Task Delete(string id)
         {
             string path = Path.Combine(Root, id);
             Directory.Delete(path, true);
+            return Task.CompletedTask;
         }
 
-        public ISubmissionProvider Get(string id)
+        public Task<ISubmissionProvider> Get(string id)
         {
             string path = Path.Combine(Root, id);
-            return Directory.Exists(path) ? new SubmissionProvider(path) : null;
+            return Task.FromResult(Directory.Exists(path) ? (ISubmissionProvider)new SubmissionProvider(path) : null);
         }
 
-        public IEnumerable<ISubmissionProvider> GetAll() => Directory.GetDirectories(Root).Select(path => new SubmissionProvider(path));
+        public Task<IEnumerable<ISubmissionProvider>> GetAll() => Task.FromResult(Directory.GetDirectories(Root).Select(path => (ISubmissionProvider)new SubmissionProvider(path)));
 
-        public bool Has(string id) => Directory.Exists(Path.Combine(Root, id));
+        public Task<bool> Has(string id) => Task.FromResult(Directory.Exists(Path.Combine(Root, id)));
 
         public SubmissionListProvider(string root)
         {

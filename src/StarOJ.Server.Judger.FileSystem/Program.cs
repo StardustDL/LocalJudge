@@ -42,7 +42,7 @@ namespace StarOJr.Server.Judger.FileSystem
             if (cmdExitCode != 0) return;
 
             Workspace = new Workspace(Directory.GetCurrentDirectory());
-            WSConfig = Workspace.GetConfig();
+            WSConfig = Workspace.GetConfig().Result;
 
             Console.WriteLine("Judger started.");
             Console.WriteLine($"Working directory: {Workspace.Root}");
@@ -76,9 +76,9 @@ namespace StarOJr.Server.Judger.FileSystem
                 State = JudgeState.Pending
             };
 
-            var submission = Workspace.Submissions.Get(id) as SubmissionProvider;
-            var submdata = submission.GetMetadata();
-            var problem = Workspace.Problems.Get(submdata.ProblemId);
+            var submission = Workspace.Submissions.Get(id).Result as SubmissionProvider;
+            var submdata = submission.GetMetadata().Result;
+            var problem = Workspace.Problems.Get(submdata.ProblemId).Result;
             string codePath = Path.Join(submission.Root, submdata.CodeName);
 
             if (problem != null)
@@ -92,7 +92,7 @@ namespace StarOJr.Server.Judger.FileSystem
                     if (lang.CompileCommand != null)
                     {
                         result.State = JudgeState.Compiling;
-                        submission.SetResult(result);
+                        submission.SetResult(result).Wait();
                         string outputPath = Path.Join(submission.Root, Path.GetFileNameWithoutExtension(codePath));
 
                         // java Main.java -> Main.class
@@ -113,7 +113,7 @@ namespace StarOJr.Server.Judger.FileSystem
                     if (result.State == JudgeState.Pending)
                     {
                         result.State = JudgeState.Judging;
-                        submission.SetResult(result);
+                        submission.SetResult(result).Wait();
 
                         Dictionary<string, string> vars = new Dictionary<string, string>()
                         {
@@ -124,18 +124,18 @@ namespace StarOJr.Server.Judger.FileSystem
 
                         var comparer = new StarOJ.Core.Judgers.Comparers.LineByLine();
 
-                        foreach (TestCaseProvider item in problem.GetSamples())
+                        foreach (TestCaseProvider item in problem.GetSamples().Result)
                         {
-                            var casemdata = item.GetMetadata();
+                            var casemdata = item.GetMetadata().Result;
                             JudgeResult res = null;
                             using (var input = File.OpenText(item.Input))
                             using (var output = File.OpenText(item.Output))
                                 res = StarOJ.Core.Judgers.Judger.Judge(casemdata.Id, lang.RunCommand.Resolve(vars), submission.Root, casemdata.TimeLimit, casemdata.MemoryLimit, input, output, comparer);
                             result.Samples.Add(res);
                         }
-                        foreach (TestCaseProvider item in problem.GetTests())
+                        foreach (TestCaseProvider item in problem.GetTests().Result)
                         {
-                            var casemdata = item.GetMetadata();
+                            var casemdata = item.GetMetadata().Result;
                             JudgeResult res = null;
                             using (var input = File.OpenText(item.Input))
                             using (var output = File.OpenText(item.Output))

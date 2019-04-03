@@ -5,13 +5,14 @@ using StarOJ.Core.Problems;
 using StarOJ.Core.Submissions;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace StarOJ.Core
 {
     public interface IWorkspace
     {
 
-        WorkspaceConfig GetConfig();
+        Task<WorkspaceConfig> GetConfig();
 
         IProblemListProvider Problems { get; }
 
@@ -23,6 +24,6 @@ namespace StarOJ.Core
 
         bool HasInitialized{get;}
 
-        void Initialize();
+        Task Initialize();
     }
 }

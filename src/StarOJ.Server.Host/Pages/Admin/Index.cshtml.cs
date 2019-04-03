@@ -94,7 +94,7 @@ namespace StarOJ.Server.Host.Pages.Admin
 
         public async Task<IActionResult> OnPostInitializeAsync()
         {
-            if((await CanAdmin()) == false)
+            if ((await CanAdmin()) == false)
             {
                 return Forbid();
             }
@@ -106,8 +106,7 @@ namespace StarOJ.Server.Host.Pages.Admin
             var httpclient = clientFactory.CreateClient();
             var client = new AdminClient(httpclient);
             await client.InitializeAsync();
-            string adminId = Guid.NewGuid().ToString();
-            await _userManager.CreateAsync(new UserMetadata { Id = adminId, Email = "admin@localhost", Name = "Admin" }, "admin");
+            await _userManager.CreateAsync(new UserMetadata { Email = "admin@localhost", Name = "Admin" }, "admin");
             return RedirectToPage();
         }
 

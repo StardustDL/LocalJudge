@@ -2,6 +2,7 @@
 using StarOJ.Core.Identity;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace StarOJ.Data.Provider.FileSystem
 {
@@ -15,16 +16,16 @@ namespace StarOJ.Data.Provider.FileSystem
 
         public string Profile { get; private set; }
 
-        public UserMetadata GetMetadata()
+        public async Task<UserMetadata> GetMetadata()
         {
-            var res = Newtonsoft.Json.JsonConvert.DeserializeObject<UserMetadata>(TextIO.ReadAllInUTF8(Profile));
+            var res = Newtonsoft.Json.JsonConvert.DeserializeObject<UserMetadata>(await TextIO.ReadAllInUTF8Async(Profile));
             res.Id = Path.GetFileName(Root);
             return res;
         }
 
-        public void SetMetadata(UserMetadata value)
+        public Task SetMetadata(UserMetadata value)
         {
-            TextIO.WriteAllInUTF8(Profile, Newtonsoft.Json.JsonConvert.SerializeObject(value, Newtonsoft.Json.Formatting.Indented));
+            return TextIO.WriteAllInUTF8Async(Profile, Newtonsoft.Json.JsonConvert.SerializeObject(value, Newtonsoft.Json.Formatting.Indented));
         }
 
         public UserProvider(string root)
@@ -34,13 +35,12 @@ namespace StarOJ.Data.Provider.FileSystem
             Profile = Path.Combine(Root, PF_Profile);
         }
 
-        public static UserProvider Initialize(string root, UserMetadata metadata = null)
+        public static async Task<UserProvider> Initialize(string root, UserMetadata metadata = null)
         {
             var res = new UserProvider(root);
             if (metadata == null) metadata = new UserMetadata() { Name = res.Id, NormalizedName = res.Id };
-            if (metadata.Roles == null) metadata.Roles = new List<RoleMetadata>();
             metadata.Id = res.Id;
-            res.SetMetadata(metadata);
+            await res.SetMetadata(metadata);
             return res;
         }
     }
