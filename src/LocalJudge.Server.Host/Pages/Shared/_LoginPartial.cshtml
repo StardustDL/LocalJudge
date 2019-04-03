@@ -7,14 +7,17 @@
     @if (SignInManager.IsSignedIn(User))
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Manage/Index">
-                <img gravatar="@(await UserManager.GetEmailAsync(await UserManager.GetUserAsync(User)))" height="32" width="32" style="display:inline" class="rounded" />
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Index">
+                <img gravatar="@(await UserManager.GetEmailAsync(await UserManager.GetUserAsync(User)))" size="32" default="mp" style="display:inline" class="rounded" />
                 <span style="margin-left:5px;">@User.Identity.Name</span>
             </a>
         </li>
         <li class="nav-item">
-            <form class="form-inline" asp-area="Identity" asp-page="/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "" })" method="post">
-                <button type="submit" class="nav-link btn btn-link text-dark">@SharedLocalizer["Logout"]</button>
+            <form method="post" class="form-inline" asp-area="Identity" asp-page="/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "" })">
+                <button type="submit" class="nav-link btn btn-link text-dark">
+                    <i class="fa fa-sign-out-alt" style="margin-right:3px"></i>
+                    @SharedLocalizer["Logout"]
+                </button>
             </form>
         </li>
     }
@@ -24,7 +27,10 @@
             <a class="nav-link text-dark" asp-area="Identity" asp-page="/Register">@SharedLocalizer["Register"]</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Login">@SharedLocalizer["Login"]</a>
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Login">
+                <i class="fa fa-sign-in-alt" style="margin-right:3px"></i>
+                @SharedLocalizer["Login"]
+            </a>
         </li>
     }
 </ul>

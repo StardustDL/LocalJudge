@@ -21,10 +21,15 @@ namespace LocalJudge.Server.Host.TagHelpers
 
         public string Gravatar { get; set; }
 
+        public uint Size { get; set; } = 80;
+
+        public string Default { get; set; } = "mp";
+
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             string email = Gravatar.Trim().ToLower();
-            output.Attributes.SetAttribute("src", "https://www.gravatar.com/avatar/" + ComputeHash(email).ToLower());
+            var src = $"https://www.gravatar.com/avatar/{ComputeHash(email).ToLower()}?size={Size}&d={Default}";
+            output.Attributes.SetAttribute("src", src);
             base.Process(context, output);
         }
     }

@@ -195,15 +195,6 @@ namespace LocalJudge.Server.Host.Pages.Problems
             }
         }
 
-        public IActionResult OnPostDataAsync()
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-            return RedirectToPage("/Problems/Data", new { id = PostData.Id });
-        }
-
         public async Task<IActionResult> OnPostSubmitAsync()
         {
             if ((await _authorizationService.AuthorizeAsync(User, Authorizations.Administrator)).Succeeded == false)

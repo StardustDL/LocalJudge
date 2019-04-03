@@ -114,14 +114,5 @@ namespace LocalJudge.Server.Host.Pages.Submissions
                 return NotFound();
             }
         }
-
-        public IActionResult OnPostDataAsync()
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-            return RedirectToPage("/Problems/Data", new { id = PostData.ProblemId });
-        }
     }
 }

@@ -93,6 +93,9 @@
             <dt style="float:left; min-width:30px"><i class="fa fa-question"></i></dt>
             <dd><a asp-page="/Problems/View" asp-route-id="@Model.Submission.Problem.Id">@Html.DisplayFor(model => model.Submission.Problem.Name)</a></dd>
 
+            <dt style="float:left; min-width:30px"><i class="fa fa-user"></i></dt>
+            <dd><a asp-page="/Account/Index" asp-area="Identity" asp-route-id="@Model.Submission.User.Id">@Model.Submission.User.Name</a></dd>
+
             <dt style="float:left; min-width:30px"><i class="fa fa-check-square"></i></dt>
             <dd>
                 @if (Model.Submission.Result.TotalCase.HasValue)
@@ -104,9 +107,6 @@
                     <text> N/A </text>
                 }
             </dd>
-
-            <dt style="float:left; min-width:30px"><i class="fa fa-user"></i></dt>
-            <dd>@Model.Submission.User.Name</dd>
 
             <dt style="float:left; min-width:30px"><i class="fa fa-clock"></i></dt>
             <dd><timespan-display value="@Model.Submission.Result.TotalTime"></timespan-display></dd>
@@ -125,12 +125,9 @@
 
             <dd>
                 <div class="row" style="margin-left:0px">
-                    <form method="post">
-                        <input type="text" asp-for="PostData.ProblemId" style="display:none" value="@Model.Submission.Metadata.ProblemId" />
-                        <button type="submit" asp-page-handler="Data" class="btn btn-outline-primary">
-                            <i class="fa fa-database"></i>
-                        </button>
-                    </form>
+                    <a asp-page="/Problems/Data" asp-route-id="@Model.Submission.Metadata.ProblemId" class="btn btn-outline-primary">
+                        <i class="fa fa-database"></i>
+                    </a>
                     @if ((await AuthorizationService.AuthorizeAsync(User, Helpers.Authorizations.Administrator)).Succeeded)
                     {
                         <form method="post" style="margin-left:10px">

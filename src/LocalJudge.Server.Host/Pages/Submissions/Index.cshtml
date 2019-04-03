@@ -80,7 +80,7 @@
                     (<memory-display value="@item.Metadata.CodeLength"></memory-display>)
                 </td>
                 <td>
-                    @item.User.Name
+                    <a asp-page="/Account/Index" asp-area="Identity" asp-route-id="@item.User.Id">@item.User.Name</a>
                 </td>
                 <td>
                     <timeoffset-display value="@item.Metadata.Time"></timeoffset-display>

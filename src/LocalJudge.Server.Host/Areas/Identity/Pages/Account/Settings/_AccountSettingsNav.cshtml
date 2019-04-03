@@ -1,0 +1,10 @@
+@using LocalJudge.Server.Host.APIClients
+@inject SignInManager<User> SignInManager
+@inject IViewLocalizer Localizer
+@{
+    var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
+}
+<ul class="nav nav-pills flex-column">
+    <li class="nav-item"><a class="nav-link @AccountSettingsNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index">@Localizer["Profile"]</a></li>
+    <li class="nav-item"><a class="nav-link @AccountSettingsNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="./ChangePassword">@Localizer["Password"]</a></li>
+</ul>

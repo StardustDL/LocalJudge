@@ -1,0 +1,24 @@
+﻿@{
+    Layout = "/Pages/Shared/_Layout.cshtml";
+}
+
+<ul class="breadcrumb">
+    <li class="breadcrumb-item"><a asp-page="/Index">LocalJudge</a></li>
+    <li class="breadcrumb-item"><a asp-page="/Account/Index" asp-area="Identity">@User.Identity.Name</a></li>
+    <li class="breadcrumb-item active">Settings</li>
+</ul>
+
+<div>
+    <div class="row">
+        <div class="col-md-3">
+            <partial name="_AccountSettingsNav" />
+        </div>
+        <div class="col-md-9">
+            @RenderBody()
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}

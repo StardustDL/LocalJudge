@@ -122,12 +122,9 @@
 
             <dd>
                 <div class="row" style="margin-left:0px">
-                    <form method="post">
-                        <input type="text" asp-for="PostData.Id" style="display:none" value="@Model.Problem.Metadata.Id" />
-                        <button type="submit" asp-page-handler="Data" class="btn btn-outline-primary">
-                            <i class="fa fa-database"></i>
-                        </button>
-                    </form>
+                    <a asp-page="./Data" asp-route-id="@Model.Problem.Metadata.Id" class="btn btn-outline-primary">
+                        <i class="fa fa-database"></i>
+                    </a>
                     @if ((await AuthorizationService.AuthorizeAsync(User, Helpers.Authorizations.Administrator)).Succeeded)
                     {
                         <form method="post" style="margin-left:10px">
