@@ -34,7 +34,7 @@ namespace StarOJ.Data.Provider.SqlServer
             {
                 return Task.FromResult(new WorkspaceConfig
                 {
-                    Languages = new Dictionary<Core.Judgers.ProgrammingLanguage, Core.Judgers.LanguageConfig>()
+                    SupportLanguages = new List<ProgrammingLanguage>()
                 });
             }
             else
@@ -45,12 +45,12 @@ namespace StarOJ.Data.Provider.SqlServer
 
         public async Task Initialize()
         {
-            var langs = new Dictionary<ProgrammingLanguage, LanguageConfig>();
-            foreach (var v in WorkspaceConfig.DefaultLanguages)
-                langs.Add(v.Key, v.Value);
+            var langs = new List<ProgrammingLanguage>();
+            foreach (var v in Judger.DefaultLangConfigs)
+                langs.Add(v.Key);
             WorkspaceConfig config = new WorkspaceConfig
             {
-                Languages = langs
+                SupportLanguages = langs
             };
             _context.WorkspaceInfos.RemoveRange(_context.WorkspaceInfos.ToArray());
             await _context.SaveChangesAsync();

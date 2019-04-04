@@ -3,7 +3,7 @@ using System;
 
 namespace StarOJ.Core.Judgers
 {
-    public class LanguageConfig
+    public class JudgerLangConfig
     {
         public TimeSpan CompileTimeLimit { get; set; }
 

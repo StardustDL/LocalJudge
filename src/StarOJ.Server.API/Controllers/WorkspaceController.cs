@@ -32,7 +32,7 @@ namespace StarOJ.Server.API.Controllers
         [HttpGet("lang")]
         public async Task<ActionResult<IEnumerable<ProgrammingLanguage>>> GetSupportLanguages()
         {
-            return Ok((await _workspace.GetConfig()).GetSupportLanguages());
+            return Ok((await _workspace.GetConfig()).SupportLanguages);
         }
 
         [HttpGet("hasinit")]

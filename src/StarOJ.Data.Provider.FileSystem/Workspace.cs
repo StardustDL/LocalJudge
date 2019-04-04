@@ -43,12 +43,12 @@ namespace StarOJ.Data.Provider.FileSystem
             Directory.CreateDirectory(_submissions.Root);
             Directory.CreateDirectory(_users.Root);
             Directory.CreateDirectory(_roles.Root);
-            var langs = new Dictionary<ProgrammingLanguage, LanguageConfig>();
-            foreach (var v in WorkspaceConfig.DefaultLanguages)
-                langs.Add(v.Key, v.Value);
+            var langs = new List<ProgrammingLanguage>();
+            foreach (var v in Judger.DefaultLangConfigs)
+                langs.Add(v.Key);
             WorkspaceConfig config = new WorkspaceConfig
             {
-                Languages = langs
+                SupportLanguages = langs
             };
             await TextIO.WriteAllInUTF8Async(Profile, Newtonsoft.Json.JsonConvert.SerializeObject(config, Newtonsoft.Json.Formatting.Indented));
         }

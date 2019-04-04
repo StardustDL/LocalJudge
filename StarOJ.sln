@@ -11,9 +11,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StarOJ.Server.Host", "src\S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StarOJ.Data.Provider.FileSystem", "src\StarOJ.Data.Provider.FileSystem\StarOJ.Data.Provider.FileSystem.csproj", "{90F45267-5C55-436C-89C8-D8A222B2ECF3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StarOJ.Server.Judger.FileSystem", "src\StarOJ.Server.Judger.FileSystem\StarOJ.Server.Judger.FileSystem.csproj", "{1B095628-4372-4B5E-88F8-04DB054A9194}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StarOJ.Data.Provider.SqlServer", "src\StarOJ.Data.Provider.SqlServer\StarOJ.Data.Provider.SqlServer.csproj", "{4D5408D7-D133-4F00-8EA3-A92D9FE6CFF8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StarOJ.Server.Judger", "src\StarOJ.Server.Judger\StarOJ.Server.Judger.csproj", "{AE215516-C2AD-48B1-BE01-5028D25D0C3C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StarOJ.Server.API.Models", "src\StarOJ.Server.API.Models\StarOJ.Server.API.Models.csproj", "{72D27CDF-E5F8-480D-ABCA-5BB4C1066FF3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{75344A7D-4A29-4DDC-BE8B-9430446A55BB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,17 +41,25 @@ Global
 		{90F45267-5C55-436C-89C8-D8A222B2ECF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90F45267-5C55-436C-89C8-D8A222B2ECF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90F45267-5C55-436C-89C8-D8A222B2ECF3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1B095628-4372-4B5E-88F8-04DB054A9194}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1B095628-4372-4B5E-88F8-04DB054A9194}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1B095628-4372-4B5E-88F8-04DB054A9194}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1B095628-4372-4B5E-88F8-04DB054A9194}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4D5408D7-D133-4F00-8EA3-A92D9FE6CFF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4D5408D7-D133-4F00-8EA3-A92D9FE6CFF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D5408D7-D133-4F00-8EA3-A92D9FE6CFF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D5408D7-D133-4F00-8EA3-A92D9FE6CFF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE215516-C2AD-48B1-BE01-5028D25D0C3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE215516-C2AD-48B1-BE01-5028D25D0C3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE215516-C2AD-48B1-BE01-5028D25D0C3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE215516-C2AD-48B1-BE01-5028D25D0C3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72D27CDF-E5F8-480D-ABCA-5BB4C1066FF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72D27CDF-E5F8-480D-ABCA-5BB4C1066FF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72D27CDF-E5F8-480D-ABCA-5BB4C1066FF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72D27CDF-E5F8-480D-ABCA-5BB4C1066FF3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{90F45267-5C55-436C-89C8-D8A222B2ECF3} = {75344A7D-4A29-4DDC-BE8B-9430446A55BB}
+		{4D5408D7-D133-4F00-8EA3-A92D9FE6CFF8} = {75344A7D-4A29-4DDC-BE8B-9430446A55BB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {70D26B5D-9662-4D5A-8DAD-98A9235D59F0}

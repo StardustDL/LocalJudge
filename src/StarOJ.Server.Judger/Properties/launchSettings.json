@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "StarOJ.Server.Judger": {
+      "commandName": "Project"
+    }
+  }
+}

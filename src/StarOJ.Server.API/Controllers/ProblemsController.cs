@@ -8,6 +8,7 @@ using StarOJ.Core.Problems;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
+using StarOJ.Server.API.Models;
 
 namespace StarOJ.Server.API.Controllers
 {
@@ -240,26 +241,6 @@ namespace StarOJ.Server.API.Controllers
         public Task Delete(string id)
         {
             return _workspace.Problems.Delete(id);
-        }
-
-        public class TestCaseData
-        {
-            public TestCaseMetadata Metadata { get; set; }
-
-            public string Input { get; set; }
-
-            public string Output { get; set; }
-        }
-
-        public class ProblemData
-        {
-            public ProblemMetadata Metadata { get; set; }
-
-            public ProblemDescription Description { get; set; }
-
-            public List<TestCaseData> Tests { get; set; }
-
-            public List<TestCaseData> Samples { get; set; }
         }
 
         [HttpPut]

@@ -2,8 +2,6 @@ if ($args.Count -eq 0) {
     Write-Output "Please input type."
 }
 else {
-    $wdir = Join-Path $(Get-Location) "temp/test"
-    Write-Output ("Workspace: " + $wdir)
     switch ($args[0]) {
         "redb" {
             Remove-Item ./src/StarOJ.Data.Provider.SqlServer/Migrations/*
@@ -17,6 +15,11 @@ else {
             dotnet run -p ./src/StarOJ.Server.Host -- -s "https://localhost:5001" --http-port 6000 --https-port 6001
         }
         "judger" {
+            $wdir = Join-Path $(Get-Location) "temp/judger"
+            dotnet run -p ./src/StarOJ.Server.Judger -- -s "https://localhost:5001" -d $wdir -c "config.json"
+        }
+        "judger-fs" {
+            $wdir = Join-Path $(Get-Location) "temp/test"
             dotnet run -p ./src/StarOJ.Server.Judger.FileSystem -- -d $wdir
         }
         default {

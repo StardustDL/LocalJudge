@@ -6,13 +6,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="2.2.0" />
     <PackageReference Include="System.CommandLine.Experimental" Version="0.2.0-alpha.19174.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\StarOJ.Core\StarOJ.Core.csproj" />
-    <ProjectReference Include="..\StarOJ.Data.Provider.FileSystem\StarOJ.Data.Provider.FileSystem.csproj" />
+    <ProjectReference Include="..\StarOJ.Server.API.Models\StarOJ.Server.API.Models.csproj" />
   </ItemGroup>
 
 </Project>

@@ -10,6 +10,7 @@ using StarOJ.Core.Judgers;
 using StarOJ.Core.Submissions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using StarOJ.Server.API.Models;
 
 namespace StarOJ.Server.API.Controllers
 {
@@ -23,29 +24,6 @@ namespace StarOJ.Server.API.Controllers
         public SubmissionsController(IWorkspace workspace)
         {
             _workspace = workspace;
-        }
-
-        public class SubmitData
-        {
-            public string ProblemId { get; set; }
-
-            public string UserId { get; set; }
-
-            public string Code { get; set; }
-
-            public ProgrammingLanguage Language { get; set; }
-        }
-
-        // TODO
-        static string GetCodePath(ProgrammingLanguage lang)
-        {
-            switch (lang)
-            {
-                case ProgrammingLanguage.Java:
-                    return $"Main.java";
-                default:
-                    return $"code.{ProgrammingLanguageHelper.Extends[lang]}";
-            }
         }
 
         void SendJudgeRequest(string id)
@@ -156,6 +134,22 @@ namespace StarOJ.Server.API.Controllers
             var res = await(await _workspace.Submissions.Get(id))?.GetResult();
             if (res != null)
                 return Ok(res);
+            else
+                return NotFound();
+        }
+
+        [HttpPut("{id}/result")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult> SetResult(string id,[FromBody] SubmissionResult value)
+        {
+            var res = await _workspace.Submissions.Get(id);
+            if (res != null)
+            {
+                await res.SetResult(value);
+                return Accepted();
+            }
             else
                 return NotFound();
         }

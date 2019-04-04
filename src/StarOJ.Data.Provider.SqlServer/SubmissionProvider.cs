@@ -67,15 +67,30 @@ namespace StarOJ.Data.Provider.SqlServer
 
         public async Task SetResult(SubmissionResult value)
         {
-            _submission.AcceptedCase = value.AcceptedCase;
-            _submission.HasIssue = value.HasIssue;
-            _submission.Issues = JsonConvert.SerializeObject(value.Issues);
-            _submission.TotalCase = value.TotalCase;
-            _submission.TotalTime = value.TotalTime;
-            _submission.SampleResults = JsonConvert.SerializeObject(value.Samples);
-            _submission.TestResults = JsonConvert.SerializeObject(value.Tests);
-            _submission.State = value.State;
-            _submission.MaximumMemory = value.MaximumMemory;
+            if (value == null)
+            {
+                _submission.AcceptedCase = null;
+                _submission.HasIssue = false;
+                _submission.Issues = "";
+                _submission.TotalCase = null;
+                _submission.TotalTime = null;
+                _submission.SampleResults = "";
+                _submission.TestResults = "";
+                _submission.State = JudgeState.Pending;
+                _submission.MaximumMemory = null;
+            }
+            else
+            {
+                _submission.AcceptedCase = value.AcceptedCase;
+                _submission.HasIssue = value.HasIssue;
+                _submission.Issues = JsonConvert.SerializeObject(value.Issues);
+                _submission.TotalCase = value.TotalCase;
+                _submission.TotalTime = value.TotalTime;
+                _submission.SampleResults = JsonConvert.SerializeObject(value.Samples);
+                _submission.TestResults = JsonConvert.SerializeObject(value.Tests);
+                _submission.State = value.State;
+                _submission.MaximumMemory = value.MaximumMemory;
+            }
             await _context.SaveChangesAsync();
         }
     }
