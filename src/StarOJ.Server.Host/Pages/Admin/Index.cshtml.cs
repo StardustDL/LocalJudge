@@ -104,9 +104,38 @@ namespace StarOJ.Server.Host.Pages.Admin
             }
 
             var httpclient = clientFactory.CreateClient();
-            var client = new AdminClient(httpclient);
+            var client = new WorkspaceClient(httpclient);
             await client.InitializeAsync();
-            await _userManager.CreateAsync(new UserMetadata { Email = "admin@localhost", Name = "Admin" }, "admin");
+            var rawUser = new UserMetadata { Email = "admin@localhost", Name = "Admin" };
+            await _userManager.CreateAsync(rawUser, "admin");
+
+            {
+                var ucli = new UsersClient(httpclient);
+                UserMetadata user = await ucli.GetByNameAsync(rawUser.NormalizedName);
+                var pcli = new ProblemsClient(httpclient);
+                await pcli.CreateAsync(Helpers.Problems.GetAPlusB(user.Id));
+            }
+
+            return RedirectToPage();
+        }
+
+        public async Task<IActionResult> OnPostClearAsync()
+        {
+            if ((await CanAdmin()) == false)
+            {
+                return Forbid();
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var httpclient = clientFactory.CreateClient();
+            var client = new WorkspaceClient(httpclient);
+            await client.ClearAsync();
+
+            await _signInManager.SignOutAsync();
+
             return RedirectToPage();
         }
 

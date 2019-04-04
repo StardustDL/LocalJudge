@@ -30,7 +30,7 @@ namespace StarOJ.Data.Provider.SqlServer
         public Task<WorkspaceConfig> GetConfig()
         {
             var config = _context.WorkspaceInfos.FirstOrDefault();
-            if(config == null)
+            if (config == null)
             {
                 return Task.FromResult(new WorkspaceConfig
                 {
@@ -54,16 +54,33 @@ namespace StarOJ.Data.Provider.SqlServer
             };
             _context.WorkspaceInfos.RemoveRange(_context.WorkspaceInfos.ToArray());
             await _context.SaveChangesAsync();
-            _context.WorkspaceInfos.Add(new WorkspaceInfo
+            WorkspaceInfo empty = new WorkspaceInfo
             {
                 Config = JsonConvert.SerializeObject(config)
-            });
+            };
+            _context.WorkspaceInfos.Add(empty);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task Clear()
+        {
+            _context.WorkspaceInfos.RemoveRange(_context.WorkspaceInfos.ToArray());
+            _context.Submissions.RemoveRange(_context.Submissions.ToArray());
+            _context.Problems.RemoveRange(_context.Problems.ToArray());
+            _context.Users.RemoveRange(_context.Users.ToArray());
+            _context.Roles.RemoveRange(_context.Roles.ToArray());
+            _context.Samples.RemoveRange(_context.Samples.ToArray());
+            _context.Tests.RemoveRange(_context.Tests.ToArray());
             await _context.SaveChangesAsync();
         }
 
         public Workspace(OJContext context)
         {
             _context = context;
+            Problems = new ProblemListProvider(this, _context);
+            Submissions = new SubmissionListProvider(this, _context);
+            Users = new UserListProvider(this, _context);
+            Roles = new RoleListProvider(this, _context);
         }
     }
 }

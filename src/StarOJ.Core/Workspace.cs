@@ -25,5 +25,7 @@ namespace StarOJ.Core
         bool HasInitialized{get;}
 
         Task Initialize();
+
+        Task Clear();
     }
 }

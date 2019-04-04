@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using StarOJ.Core.Submissions;
 using StarOJ.Data.Provider.SqlServer.Models;
@@ -7,10 +8,12 @@ namespace StarOJ.Data.Provider.SqlServer
 {
     public class SubmissionListProvider : ISubmissionListProvider
     {
+        private readonly Workspace _workspace;
         private readonly OJContext _context;
 
-        public SubmissionListProvider(OJContext context)
+        public SubmissionListProvider(Workspace workspace, OJContext context)
         {
+            _workspace = workspace;
             _context = context;
         }
 
@@ -19,7 +22,7 @@ namespace StarOJ.Data.Provider.SqlServer
             Submission empty = new Submission();
             _context.Submissions.Add(empty);
             await _context.SaveChangesAsync();
-            var res = new SubmissionProvider(_context, empty);
+            var res = new SubmissionProvider(_workspace, _context, empty);
             await res.SetMetadata(metadata);
             return res;
         }
@@ -31,7 +34,8 @@ namespace StarOJ.Data.Provider.SqlServer
 
         public async Task Delete(string id)
         {
-            var item = await _context.Submissions.FindAsync(id);
+            int _id = int.Parse(id);
+            var item = await _context.Submissions.FindAsync(_id);
             if (item != null)
             {
                 _context.Submissions.Remove(item);
@@ -41,14 +45,15 @@ namespace StarOJ.Data.Provider.SqlServer
 
         public async Task<ISubmissionProvider> Get(string id)
         {
-            var item = await _context.Submissions.FindAsync(id);
+            int _id = int.Parse(id);
+            var item = await _context.Submissions.FindAsync(_id);
             if (item == null)
             {
                 return null;
             }
             else
             {
-                return new SubmissionProvider(_context, item);
+                return new SubmissionProvider(_workspace, _context, item);
             }
         }
 
@@ -57,14 +62,21 @@ namespace StarOJ.Data.Provider.SqlServer
             List<ISubmissionProvider> res = new List<ISubmissionProvider>();
             foreach (var v in _context.Submissions)
             {
-                res.Add(new SubmissionProvider(_context, v));
+                res.Add(new SubmissionProvider(_workspace, _context, v));
             }
             return Task.FromResult((IEnumerable<ISubmissionProvider>)res);
         }
 
         public async Task<bool> Has(string id)
         {
-            return await _context.Submissions.FindAsync(id) != null;
+            int _id = int.Parse(id);
+            return await _context.Submissions.FindAsync(_id) != null;
+        }
+
+        public async Task Clear()
+        {
+            _context.Submissions.RemoveRange(_context.Submissions.ToArray());
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -53,6 +53,12 @@ namespace StarOJ.Data.Provider.FileSystem
             await TextIO.WriteAllInUTF8Async(Profile, Newtonsoft.Json.JsonConvert.SerializeObject(config, Newtonsoft.Json.Formatting.Indented));
         }
 
+        public Task Clear()
+        {
+            File.Delete(Profile);
+            return Task.CompletedTask;
+        }
+
         public Workspace(string root)
         {
             Root = root;

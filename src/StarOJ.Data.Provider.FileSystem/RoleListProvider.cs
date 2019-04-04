@@ -59,6 +59,13 @@ namespace StarOJ.Data.Provider.FileSystem
 
         public Task<bool> Has(string id) => Task.FromResult(Directory.Exists(Path.Combine(Root, id)));
 
+        public Task Clear()
+        {
+            foreach (var v in Directory.GetDirectories(Root))
+                Directory.Delete(v, true);
+            return Task.CompletedTask;
+        }
+
         public RoleListProvider(string root)
         {
             Root = root;

@@ -17,6 +17,18 @@ namespace StarOJ.Server.API.Controllers
             _workspace = workspace;
         }
 
+        [HttpPut("init")]
+        public async Task Initialize()
+        {
+            await _workspace.Initialize();
+        }
+
+        [HttpPut("clear")]
+        public async Task Clear()
+        {
+            await _workspace.Clear();
+        }
+
         [HttpGet("lang")]
         public async Task<ActionResult<IEnumerable<ProgrammingLanguage>>> GetSupportLanguages()
         {

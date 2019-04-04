@@ -5,8 +5,13 @@ else {
     $wdir = Join-Path $(Get-Location) "temp/test"
     Write-Output ("Workspace: " + $wdir)
     switch ($args[0]) {
-        "api" { 
-            dotnet run -p ./src/StarOJ.Server.API -- -d $wdir --http-port 5000 --https-port 5001
+        "redb" {
+            Remove-Item ./src/StarOJ.Data.Provider.SqlServer/Migrations/*
+            dotnet ef migrations add Initial -p ./src/StarOJ.Data.Provider.SqlServer
+            dotnet ef database update -p ./src/StarOJ.Data.Provider.SqlServer
+        }
+        "api" {
+            dotnet run -p ./src/StarOJ.Server.API
         }
         "host" {
             dotnet run -p ./src/StarOJ.Server.Host -- -s "https://localhost:5001" --http-port 6000 --https-port 6001

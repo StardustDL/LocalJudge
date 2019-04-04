@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\StarOJ.Core\StarOJ.Core.csproj" />
     <ProjectReference Include="..\StarOJ.Data.Provider.FileSystem\StarOJ.Data.Provider.FileSystem.csproj" />
+    <ProjectReference Include="..\StarOJ.Data.Provider.SqlServer\StarOJ.Data.Provider.SqlServer.csproj" />
   </ItemGroup>
 
 </Project>

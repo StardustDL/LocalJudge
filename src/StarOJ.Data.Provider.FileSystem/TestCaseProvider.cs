@@ -58,5 +58,20 @@ namespace StarOJ.Data.Provider.FileSystem
             await TextIO.WriteAllInUTF8Async(res.Output, output);
             return res;
         }
+
+        public Task SetMetadata(TestCaseMetadata value)
+        {
+            return TextIO.WriteAllInUTF8Async(Profile, Newtonsoft.Json.JsonConvert.SerializeObject(value, Newtonsoft.Json.Formatting.Indented));
+        }
+
+        public Task SetInput(string value)
+        {
+            return TextIO.WriteAllInUTF8Async(Input, value);
+        }
+
+        public Task SetOutput(string value)
+        {
+            return TextIO.WriteAllInUTF8Async(Output, value);
+        }
     }
 }

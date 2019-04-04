@@ -10,16 +10,51 @@ namespace StarOJ.Data.Provider.SqlServer
 {
     public class ProblemProvider : IProblemProvider
     {
+        private readonly Workspace _workspace;
         private readonly OJContext _context;
         private readonly Problem _problem;
 
-        public ProblemProvider(OJContext context, Problem problem)
+        public ProblemProvider(Workspace workspace, OJContext context, Problem problem)
         {
+            _workspace = workspace;
             _context = context;
             _problem = problem;
+            Samples = new SampleCaseListProvider(_workspace, _context, _problem.Id);
+            Tests = new TestCaseListProvider(_workspace, _context, _problem.Id);
         }
 
-        public string Id => _problem.Id;
+        public string Id => _problem.Id.ToString();
+
+        public ITestCaseListProvider Samples { get; private set; }
+
+        public ITestCaseListProvider Tests { get; private set; }
+
+        public async Task DeleteSample(string id)
+        {
+            int _id = int.Parse(id);
+            var test = await _context.Samples.FindAsync(_id);
+            if (test == null || test.ProblemId != _problem.Id)
+                return;
+            _context.Samples.Remove(test);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteTest(string id)
+        {
+            int _id = int.Parse(id);
+            var test = await _context.Tests.FindAsync(_id);
+            if (test == null || test.ProblemId != _problem.Id)
+                return;
+            _context.Tests.Remove(test);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteTests()
+        {
+            var tests = (from x in _context.Tests where x.ProblemId == _problem.Id select x).ToArray();
+            _context.Tests.RemoveRange(tests);
+            await _context.SaveChangesAsync();
+        }
 
         public Task<ProblemDescription> GetDescription()
         {
@@ -36,57 +71,26 @@ namespace StarOJ.Data.Provider.SqlServer
         {
             return Task.FromResult(new ProblemMetadata
             {
-                Author = _problem.Author,
-                Id = _problem.Id,
+                UserId = _problem.UserId.ToString(),
+                Id = _problem.Id.ToString(),
                 Name = _problem.Name,
                 Source = _problem.Source
             });
         }
 
-        public async Task<ITestCaseProvider> GetSample(string id)
+        public async Task SetDescription(ProblemDescription value)
         {
-            var test = await _context.Samples.FindAsync(id);
-            if (test == null || test.ProblemId != Id)
-                return null;
-            else
-                return new TestCaseProvider(_context, test);
-        }
-
-        public Task<IEnumerable<ITestCaseProvider>> GetSamples()
-        {
-            var test = (from x in _context.Samples where x.ProblemId == Id select x).ToList();
-            List<ITestCaseProvider> res = new List<ITestCaseProvider>();
-            foreach (var v in test)
-            {
-                res.Add(new TestCaseProvider(_context, v));
-            }
-            return Task.FromResult((IEnumerable<ITestCaseProvider>)res);
-        }
-
-        public async Task<ITestCaseProvider> GetTest(string id)
-        {
-            var test = await _context.Tests.FindAsync(id);
-            if (test == null || test.ProblemId != Id)
-                return null;
-            else
-                return new TestCaseProvider(_context, test);
-        }
-
-        public Task<IEnumerable<ITestCaseProvider>> GetTests()
-        {
-            var test = (from x in _context.Tests where x.ProblemId == Id select x).ToList();
-            List<ITestCaseProvider> res = new List<ITestCaseProvider>();
-            foreach (var v in test)
-            {
-                res.Add(new TestCaseProvider(_context, v));
-            }
-            return Task.FromResult((IEnumerable<ITestCaseProvider>)res);
+            _problem.Description = value.Description;
+            _problem.Input = value.Input;
+            _problem.Output = value.Output;
+            _problem.Hint = value.Hint;
+            await _context.SaveChangesAsync();
         }
 
         public async Task SetMetadata(ProblemMetadata value)
         {
             _problem.Source = value.Source;
-            _problem.Author = value.Author;
+            _problem.UserId = int.Parse(value.UserId);
             _problem.Name = value.Name;
             await _context.SaveChangesAsync();
         }

@@ -47,7 +47,7 @@
             </form>
         </div>
 
-        <pre id="rawCode" style="display:none">@Html.DisplayFor(model=>model.Code)</pre>
+        <pre id="rawCode" style="display:none">@Html.DisplayFor(model=>model.Submission.Metadata.Code)</pre>
         <div id="code" style="min-height:600px"></div>
 
         <br />
@@ -147,7 +147,7 @@
             </dd>
         </dl>
         <br />
-        @if (Model.Submission.Result.State != APIClients.JudgeState.Pending)
+        @if (Model.Submission.Result.State == APIClients.JudgeState.Compiling || Model.Submission.Result.State == APIClients.JudgeState.Judging || Model.Submission.Result.State == APIClients.JudgeState.Pending)
         {
             @if (Model.Submission.Result.Samples?.Count > 0)
             {

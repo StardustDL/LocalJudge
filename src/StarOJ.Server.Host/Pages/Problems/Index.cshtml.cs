@@ -22,7 +22,7 @@ namespace StarOJ.Server.Host.Pages.Problems
             _authorizationService = authorizationService;
         }
 
-        public IList<ProblemMetadata> Problems { get; set; }
+        public IList<ProblemModel> Problems { get; set; }
 
         [BindProperty]
         public ProblemPostModel PostData { get; set; }
@@ -31,7 +31,13 @@ namespace StarOJ.Server.Host.Pages.Problems
         {
             var httpclient = clientFactory.CreateClient();
             var client = new ProblemsClient(httpclient);
-            Problems = await client.GetAllAsync();
+            var ms = await client.GetAllAsync();
+            var ss = new List<ProblemModel>();
+            foreach (var v in ms)
+            {
+                ss.Add(await ProblemModel.GetAsync(v, httpclient, false, false));
+            }
+            Problems = ss;
         }
 
         public async Task<IActionResult> OnPostDeleteAsync()

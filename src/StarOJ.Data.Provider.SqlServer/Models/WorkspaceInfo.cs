@@ -2,7 +2,7 @@
 {
     public class WorkspaceInfo
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
 
         public string Config { get; set; }
     }

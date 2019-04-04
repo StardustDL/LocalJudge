@@ -25,8 +25,6 @@ namespace StarOJ.Server.Host.Pages.Submissions
 
         public SubmissionModel Submission { get; set; }
 
-        public string Code { get; set; }
-
         [BindProperty]
         public SubmissionPostModel PostData { get; set; }
 
@@ -41,7 +39,6 @@ namespace StarOJ.Server.Host.Pages.Submissions
             {
                 var metadata = await client.GetAsync(id);
                 Submission = await SubmissionModel.GetAsync(metadata, httpclient);
-                Code = await client.GetCodeAsync(id);
             }
             catch
             {
@@ -61,7 +58,7 @@ namespace StarOJ.Server.Host.Pages.Submissions
             var client = new SubmissionsClient(httpclient);
             try
             {
-                var bytes = Encoding.UTF8.GetBytes(await client.GetCodeAsync(PostData.Id));
+                var bytes = Encoding.UTF8.GetBytes((await client.GetAsync(PostData.Id)).Code);
                 return File(bytes, "text/plain", $"{PostData.Id}.{ProgrammingLanguageHelper.Extends[PostData.Language]}");
             }
             catch

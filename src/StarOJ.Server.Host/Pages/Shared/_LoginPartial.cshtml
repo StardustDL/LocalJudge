@@ -8,7 +8,7 @@
     {
         <li class="nav-item">
             <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Index">
-                <img gravatar="@(await UserManager.GetEmailAsync(await UserManager.GetUserAsync(User)))" size="32" default="mp" style="display:inline" class="rounded" />
+                <img gravatar="@(await Helper.TryGetUserEmail(User,UserManager))" size="24" default="mp" style="display:inline" class="rounded" />
                 <span style="margin-left:5px;">@User.Identity.Name</span>
             </a>
         </li>

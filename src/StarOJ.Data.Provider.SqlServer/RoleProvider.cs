@@ -9,10 +9,11 @@ namespace StarOJ.Data.Provider.SqlServer
 {
     public class RoleProvider : IRoleProvider
     {
+        private readonly Workspace _workspace;
         private readonly OJContext _context;
         private readonly Role _role;
 
-        public string Id => _role.Id;
+        public string Id => _role.Id.ToString();
 
         public Task<RoleMetadata> GetMetadata()
         {
@@ -31,8 +32,9 @@ namespace StarOJ.Data.Provider.SqlServer
             await _context.SaveChangesAsync();
         }
 
-        public RoleProvider(OJContext context, Role role)
+        public RoleProvider(Workspace workspace, OJContext context, Role role)
         {
+            _workspace = workspace;
             _context = context;
             _role = role;
         }

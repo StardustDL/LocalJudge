@@ -68,9 +68,9 @@ namespace StarOJ.Data.Provider.FileSystem
 
         public string Description { get; private set; }
 
-        public string Sample { get; private set; }
+        public ITestCaseListProvider Samples { get; private set; }
 
-        public string Test { get; private set; }
+        public ITestCaseListProvider Tests { get; private set; }
 
         public Task<ProblemDescription> GetDescription() => ProblemDescriptionHelper.LoadFromPlainText(Description);
 
@@ -81,22 +81,6 @@ namespace StarOJ.Data.Provider.FileSystem
             return res;
         }
 
-        public Task<ITestCaseProvider> GetSample(string id)
-        {
-            string path = Path.Combine(Sample, id);
-            return Task.FromResult(Directory.Exists(path) ? (ITestCaseProvider)new TestCaseProvider(path) : null);
-        }
-
-        public Task<IEnumerable<ITestCaseProvider>> GetSamples() => Task.FromResult(Directory.GetDirectories(Sample).Select(path => (ITestCaseProvider)new TestCaseProvider(path)));
-
-        public Task<ITestCaseProvider> GetTest(string id)
-        {
-            string path = Path.Combine(Test, id);
-            return Task.FromResult(Directory.Exists(path) ? (ITestCaseProvider)new TestCaseProvider(path) : null);
-        }
-
-        public Task<IEnumerable<ITestCaseProvider>> GetTests() => Task.FromResult(Directory.GetDirectories(Test).Select(path => (ITestCaseProvider)new TestCaseProvider(path)));
-
         public Task SetMetadata(ProblemMetadata value) => TextIO.WriteAllInUTF8Async(Profile, Newtonsoft.Json.JsonConvert.SerializeObject(value, Newtonsoft.Json.Formatting.Indented));
 
         public ProblemProvider(string root)
@@ -105,14 +89,14 @@ namespace StarOJ.Data.Provider.FileSystem
             Id = Path.GetFileName(Root);
             Profile = Path.Combine(Root, PF_Profile);
             Description = Path.Combine(Root, PD_Description);
-            Sample = Path.Combine(Root, PD_Sample);
-            Test = Path.Combine(Root, PD_Test);
+            Samples = new TestCaseListProvider(Path.Combine(Root, PD_Sample));
+            Tests = new TestCaseListProvider(Path.Combine(Root, PD_Test));
         }
 
         public static async Task<ProblemProvider> Initialize(string root, ProblemMetadata metadata = null, ProblemDescription description = null)
         {
             var res = new ProblemProvider(root);
-            if (metadata == null) metadata = new ProblemMetadata { Author = "", Name = "Untitled", Source = "" };
+            if (metadata == null) metadata = new ProblemMetadata { UserId = "", Name = "Untitled", Source = "" };
             metadata.Id = res.Id;
 
             TextIO.WriteAllInUTF8(res.Profile, Newtonsoft.Json.JsonConvert.SerializeObject(metadata, Newtonsoft.Json.Formatting.Indented));
@@ -122,17 +106,18 @@ namespace StarOJ.Data.Provider.FileSystem
             else
                 await ProblemDescriptionHelper.Extract(res.Description, description);
 
-            Directory.CreateDirectory(res.Sample);
-            string spath = Path.Combine(res.Sample, "0");
-            Directory.CreateDirectory(spath);
-            await TestCaseProvider.Initialize(spath);
+            Directory.CreateDirectory((res.Samples as TestCaseListProvider).Root);
+            await res.Samples.Create();
 
-            Directory.CreateDirectory(res.Test);
-            string tpath = Path.Combine(res.Test, "0");
-            Directory.CreateDirectory(tpath);
-            await TestCaseProvider.Initialize(tpath);
+            Directory.CreateDirectory((res.Tests as TestCaseListProvider).Root);
+            await res.Tests.Create();
 
             return res;
+        }
+
+        public Task SetDescription(ProblemDescription value)
+        {
+            return ProblemDescriptionHelper.Extract(Description, value);
         }
     }
 }

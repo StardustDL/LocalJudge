@@ -116,7 +116,7 @@
     <div class="col-3">
         <dl>
             <dt style="float:left; min-width:30px"><i class="fa fa-user"></i></dt>
-            <dd>@Html.DisplayFor(model => model.Problem.Metadata.Author)</dd>
+            <dd>@(Model.Problem.User?.Name ?? Model.Problem.Metadata.UserId)</dd>
             <dt style="float:left; min-width:30px"><i class="fa fa-map-marker"></i></dt>
             <dd>@Html.DisplayFor(model => model.Problem.Metadata.Source)</dd>
 

@@ -12,12 +12,10 @@ namespace StarOJ.Core.Problems
     {
         Task<ProblemDescription> GetDescription();
 
-        Task<IEnumerable<ITestCaseProvider>> GetSamples();
+        Task SetDescription(ProblemDescription value);
 
-        Task<ITestCaseProvider> GetSample(string id);
+        ITestCaseListProvider Samples { get; }
 
-        Task<IEnumerable<ITestCaseProvider>> GetTests();
-
-        Task<ITestCaseProvider> GetTest(string id);
+        ITestCaseListProvider Tests { get; }
     }
 }

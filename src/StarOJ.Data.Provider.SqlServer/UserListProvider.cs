@@ -9,10 +9,12 @@ namespace StarOJ.Data.Provider.SqlServer
 {
     public class UserListProvider : IUserListProvider
     {
+        private readonly Workspace _workspace;
         private readonly OJContext _context;
 
-        public UserListProvider(OJContext context)
+        public UserListProvider(Workspace workspace, OJContext context)
         {
+            _workspace = workspace;
             _context = context;
         }
 
@@ -21,7 +23,7 @@ namespace StarOJ.Data.Provider.SqlServer
             User empty = new User();
             _context.Users.Add(empty);
             await _context.SaveChangesAsync();
-            var res = new UserProvider(_context, empty);
+            var res = new UserProvider(_workspace, _context, empty);
             await res.SetMetadata(metadata);
             return res;
         }
@@ -34,24 +36,34 @@ namespace StarOJ.Data.Provider.SqlServer
 
         public async Task Delete(string id)
         {
-            var item = await _context.Users.FindAsync(id);
+            int _id = int.Parse(id);
+            var item = await _context.Users.FindAsync(_id);
             if (item != null)
             {
                 _context.Users.Remove(item);
+                {
+                    var submis = (from x in _context.Submissions where x.UserId == item.Id select x).ToArray();
+                    _context.Submissions.RemoveRange(submis);
+                }
+                foreach (var p in (from x in _context.Problems where x.UserId == item.Id select x))
+                {
+                    await _workspace.Problems.Delete(p.Id.ToString());
+                }
                 await _context.SaveChangesAsync();
             }
         }
 
         public async Task<IUserProvider> Get(string id)
         {
-            var item = await _context.Users.FindAsync(id);
+            int _id = int.Parse(id);
+            var item = await _context.Users.FindAsync(_id);
             if (item == null)
             {
                 return null;
             }
             else
             {
-                return new UserProvider(_context, item);
+                return new UserProvider(_workspace, _context, item);
             }
         }
 
@@ -60,7 +72,7 @@ namespace StarOJ.Data.Provider.SqlServer
             List<IUserProvider> res = new List<IUserProvider>();
             foreach (var v in _context.Users)
             {
-                res.Add(new UserProvider(_context, v));
+                res.Add(new UserProvider(_workspace, _context, v));
             }
             return Task.FromResult((IEnumerable<IUserProvider>)res);
         }
@@ -71,12 +83,19 @@ namespace StarOJ.Data.Provider.SqlServer
             if (item == null)
                 return Task.FromResult<IUserProvider>(null);
             else
-                return Task.FromResult((IUserProvider)new UserProvider(_context, item));
+                return Task.FromResult((IUserProvider)new UserProvider(_workspace, _context, item));
         }
 
         public async Task<bool> Has(string id)
         {
-            return await _context.Users.FindAsync(id) != null;
+            int _id = int.Parse(id);
+            return await _context.Users.FindAsync(_id) != null;
+        }
+
+        public async Task Clear()
+        {
+            _context.Users.RemoveRange(_context.Users.ToArray());
+            await _context.SaveChangesAsync();
         }
     }
 

@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace StarOJ.Server.Host.Pages.Problems
 {
-
     public class ViewModel : PageModel
     {
         public class TestCaseData

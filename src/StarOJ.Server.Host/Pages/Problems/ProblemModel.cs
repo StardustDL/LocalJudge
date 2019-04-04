@@ -16,6 +16,8 @@ namespace StarOJ.Server.Host.Pages.Problems
 
         public IList<TestCaseMetadata> Tests { get; set; }
 
+        public UserMetadata User { get; set; }
+
         public static async Task<ProblemModel> GetAsync(ProblemMetadata metadata, HttpClient client, bool loadDescription, bool loadData)
         {
             var res = new ProblemModel
@@ -52,6 +54,18 @@ namespace StarOJ.Server.Host.Pages.Problems
                 catch
                 {
                     res.Tests = Array.Empty<TestCaseMetadata>();
+                }
+            }
+
+            {
+                var ucli = new UsersClient(client);
+                try
+                {
+                    res.User = await ucli.GetAsync(metadata.UserId);
+                }
+                catch
+                {
+                    res.User = null;
                 }
             }
 

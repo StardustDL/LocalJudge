@@ -2,10 +2,12 @@
     Layout = "/Pages/Shared/_Layout.cshtml";
 }
 
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+
 <ul class="breadcrumb">
     <li class="breadcrumb-item"><a asp-page="/Index">StarOJ</a></li>
     <li class="breadcrumb-item"><a asp-page="/Account/Index" asp-area="Identity">@User.Identity.Name</a></li>
-    <li class="breadcrumb-item active">Settings</li>
+    <li class="breadcrumb-item active">@SharedLocalizer["Settings"]</li>
 </ul>
 
 <div>

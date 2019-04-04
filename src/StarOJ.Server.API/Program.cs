@@ -21,7 +21,7 @@ namespace StarOJ.Server.API
 
         public static void Main(string[] args)
         {
-            var rootCommand = new RootCommand
+            /* var rootCommand = new RootCommand
             {
                 Description = "API for StarOJ"
             };
@@ -40,14 +40,13 @@ namespace StarOJ.Server.API
             // Parse the incoming args and invoke the handler
             int cmdExitCode = rootCommand.InvokeAsync(args).Result;
 
-            if (cmdExitCode != 0) return;
+            if (cmdExitCode != 0) return;*/
 
             CreateWebHostBuilder(args).Build().Run();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseUrls($"http://*:{HttpPort}", $"https://*:{HttpsPort}")
                 .UseStartup<Startup>();
     }
 }

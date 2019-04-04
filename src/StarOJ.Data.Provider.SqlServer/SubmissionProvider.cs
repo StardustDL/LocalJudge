@@ -12,16 +12,18 @@ namespace StarOJ.Data.Provider.SqlServer
 {
     public class SubmissionProvider : ISubmissionProvider
     {
+        private readonly Workspace _workspace;
         private readonly OJContext _context;
         private readonly Submission _submission;
 
-        public SubmissionProvider(OJContext context, Submission submission)
+        public SubmissionProvider(Workspace workspace, OJContext context, Submission submission)
         {
+            _workspace = workspace;
             _context = context;
             _submission = submission;
         }
 
-        public string Id => _submission.Id;
+        public string Id => _submission.Id.ToString();
 
         public Task<SubmissionMetadata> GetMetadata()
         {
@@ -31,9 +33,9 @@ namespace StarOJ.Data.Provider.SqlServer
                 Code = _submission.Code,
                 CodeLength = _submission.CodeLength,
                 Language = _submission.Language,
-                ProblemId = _submission.ProblemId,
+                ProblemId = _submission.ProblemId.ToString(),
                 Time = _submission.Time,
-                UserId = _submission.UserId
+                UserId = _submission.UserId.ToString(),
             });
         }
 
@@ -56,11 +58,10 @@ namespace StarOJ.Data.Provider.SqlServer
         public async Task SetMetadata(SubmissionMetadata value)
         {
             _submission.Code = value.Code;
-            _submission.CodeLength = value.CodeLength;
             _submission.Language = value.Language;
-            _submission.ProblemId = value.ProblemId;
+            _submission.ProblemId = int.Parse(value.ProblemId);
             _submission.Time = value.Time;
-            _submission.UserId = value.UserId;
+            _submission.UserId = int.Parse(value.UserId);
             await _context.SaveChangesAsync();
         }
 

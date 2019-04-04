@@ -6,10 +6,11 @@ namespace StarOJ.Data.Provider.SqlServer
 {
     public class UserProvider : IUserProvider
     {
+        private readonly Workspace _workspace;
         private readonly OJContext _context;
         private readonly User _user;
 
-        public string Id => _user.Id;
+        public string Id => _user.Id.ToString();
 
         public Task<UserMetadata> GetMetadata()
         {
@@ -30,14 +31,15 @@ namespace StarOJ.Data.Provider.SqlServer
             _user.Name = value.Name;
             _user.NormalizedName = value.NormalizedName;
             _user.Email = value.Email;
-            _user.EmailConfirmed = _user.EmailConfirmed;
-            _user.NormalizedEmail = _user.NormalizedEmail;
-            _user.PasswordHash = _user.PasswordHash;
+            _user.EmailConfirmed = value.EmailConfirmed;
+            _user.NormalizedEmail = value.NormalizedEmail;
+            _user.PasswordHash = value.PasswordHash;
             await _context.SaveChangesAsync();
         }
 
-        public UserProvider(OJContext context, User user)
+        public UserProvider(Workspace workspace, OJContext context, User user)
         {
+            _workspace = workspace;
             _context = context;
             _user = user;
         }

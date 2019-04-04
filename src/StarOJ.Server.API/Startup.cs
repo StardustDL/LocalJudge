@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -26,7 +27,12 @@ namespace StarOJ.Server.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<StarOJ.Core.IWorkspace>(new Data.Provider.FileSystem.Workspace(Path.GetFullPath(Directory.GetCurrentDirectory())));
+            // services.AddSingleton<StarOJ.Core.IWorkspace>(new Data.Provider.FileSystem.Workspace(Path.GetFullPath(Directory.GetCurrentDirectory())));
+            services.AddDbContext<Data.Provider.SqlServer.Models.OJContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddScoped<StarOJ.Core.IWorkspace, StarOJ.Data.Provider.SqlServer.Workspace>();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddSwaggerDocument();
         }

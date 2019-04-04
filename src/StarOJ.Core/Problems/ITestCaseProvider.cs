@@ -5,10 +5,8 @@ using System.Threading.Tasks;
 
 namespace StarOJ.Core.Problems
 {
-    public interface ITestCaseProvider : IHasId<string>
+    public interface ITestCaseProvider : IHasId<string>, IHasMetadata<TestCaseMetadata>
     {
-        Task<TestCaseMetadata> GetMetadata();
-
         Task<DataPreview> GetInputPreview(int maxbytes);
 
         Task<DataPreview> GetOutputPreview(int maxbytes);
@@ -16,5 +14,9 @@ namespace StarOJ.Core.Problems
         Task<string> GetInput();
 
         Task<string> GetOutput();
+
+        Task SetInput(string value);
+
+        Task SetOutput(string value);
     }
 }

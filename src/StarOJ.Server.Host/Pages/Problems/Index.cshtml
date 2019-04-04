@@ -16,14 +16,17 @@
 <table class="table table-hover">
     <thead>
         <tr>
+            <th style="width:10%">
+                @SharedLocalizer[Html.DisplayNameFor(model => model.Problems[0].Metadata.Id)]
+            </th>
             <th>
-                @SharedLocalizer[Html.DisplayNameFor(model => model.Problems[0].Name)]
+                @SharedLocalizer[Html.DisplayNameFor(model => model.Problems[0].Metadata.Name)]
             </th>
             <th style="width:10%">
-                @SharedLocalizer[Html.DisplayNameFor(model => model.Problems[0].Author)]
+                @SharedLocalizer["Author"]
             </th>
             <th style="width:10%">
-                @SharedLocalizer[Html.DisplayNameFor(model => model.Problems[0].Source)]
+                @SharedLocalizer[Html.DisplayNameFor(model => model.Problems[0].Metadata.Source)]
             </th>
             <th style="width:10%">@SharedLocalizer["Operations"]</th>
         </tr>
@@ -33,20 +36,30 @@
         {
             <tr>
                 <td>
-                    <a asp-page="./View" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Name)</a>
+                    @Html.DisplayFor(modelItem => item.Metadata.Id)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Author)
+                    <a asp-page="./View" asp-route-id="@item.Metadata.Id">@Html.DisplayFor(modelItem => item.Metadata.Name)</a>
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Source)
+                    @if (item.User == null)
+                    {
+                        <text>item.Metadata.UserId</text>
+                    }
+                    else
+                    {
+                        <a asp-page="/Account/Index" asp-area="Identity" asp-route-id="@item.User.Id">@item.User.Name</a>
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Metadata.Source)
                 </td>
                 <td>
                     <div class="row" style="margin-left:0px">
                         @if ((await AuthorizationService.AuthorizeAsync(User, Helpers.Authorizations.Administrator)).Succeeded)
                         {
                             <form method="post" style="margin-left:0px">
-                                <input type="text" asp-for="PostData.Id" style="display:none" value="@item.Id" />
+                                <input type="text" asp-for="PostData.Id" style="display:none" value="@item.Metadata.Id" />
                                 <button type="submit" asp-page-handler="Delete" class="btn btn-sm btn-outline-danger">
                                     <i class="fa fa-trash"></i>
                                 </button>

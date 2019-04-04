@@ -11,6 +11,8 @@ namespace StarOJ.Core
 
         Task Delete(string id);
 
+        Task Clear();
+
         Task<TItem> Get(string id);
 
         Task<IEnumerable<TItem>> GetAll();

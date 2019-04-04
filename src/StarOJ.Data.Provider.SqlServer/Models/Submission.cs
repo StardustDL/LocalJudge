@@ -1,5 +1,7 @@
 ﻿using StarOJ.Core.Judgers;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text;
 
 namespace StarOJ.Data.Provider.SqlServer.Models
 {
@@ -7,17 +9,21 @@ namespace StarOJ.Data.Provider.SqlServer.Models
     {
         #region Metadata
 
-        public string Id { get; set; }
+        public int Id { get; set; }
 
-        public string ProblemId { get; set; }
+        public int ProblemId { get; set; }
 
-        public string UserId { get; set; }
+        public int UserId { get; set; }
 
         public ProgrammingLanguage Language { get; set; }
 
         public DateTimeOffset Time { get; set; }
 
-        public uint CodeLength { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public uint CodeLength
+        {
+            get => Code == null ? 0 : (uint)Encoding.UTF8.GetByteCount(Code);
+        }
 
         public string Code { get; set; }
 

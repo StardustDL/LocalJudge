@@ -68,7 +68,7 @@ namespace StarOJ.Server.API.Controllers
         {
             var res = await _workspace.Problems.Get(id);
             if (res != null){
-                var all = await res.GetSamples();
+                var all = await res.Samples.GetAll();
                 List<TestCaseMetadata> ans = new List<TestCaseMetadata>();
                 foreach(var v in all){
                     ans.Add(await v.GetMetadata());
@@ -85,9 +85,9 @@ namespace StarOJ.Server.API.Controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<TestCaseMetadata>> GetSample(string id, string tid)
         {
-            var res = await (await _workspace.Problems.Get(id))?.GetSample(tid);
+            var res = await _workspace.Problems.Get(id);
             if (res != null)
-                return Ok(await res.GetMetadata());
+                return Ok(await (await res.Samples.Get(tid)).GetMetadata());
             else
                 return NotFound();
         }
@@ -98,9 +98,9 @@ namespace StarOJ.Server.API.Controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<DataPreview>> GetSampleInputPreview(string id, string tid, int num)
         {
-            var res = await (await _workspace.Problems.Get(id))?.GetSample(tid);
+            var res = await _workspace.Problems.Get(id);
             if (res != null)
-                return Ok(await res.GetInputPreview(num));
+                return Ok(await (await res.Samples.Get(tid)).GetInputPreview(num));
             else
                 return NotFound();
         }
@@ -111,10 +111,10 @@ namespace StarOJ.Server.API.Controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<string>> GetSampleInput(string id, string tid)
         {
-            var res = await (await _workspace.Problems.Get(id))?.GetSample(tid);
+            var res = await _workspace.Problems.Get(id);
             if (res != null)
             {
-                return Ok(await res.GetInput());
+                return Ok(await (await res.Samples.Get(tid)).GetInput());
             }
             else
                 return NotFound();
@@ -126,9 +126,9 @@ namespace StarOJ.Server.API.Controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<DataPreview>> GetSampleOutputPreview(string id, string tid, int num)
         {
-            var res = await (await _workspace.Problems.Get(id))?.GetSample(tid);
+            var res = await _workspace.Problems.Get(id);
             if (res != null)
-                return Ok(await res.GetOutputPreview(num));
+                return Ok(await (await res.Samples.Get(tid)).GetOutputPreview(num));
             else
                 return NotFound();
         }
@@ -139,10 +139,10 @@ namespace StarOJ.Server.API.Controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<string>> GetSampleOutput(string id, string tid)
         {
-            var res = await (await _workspace.Problems.Get(id))?.GetSample(tid);
+            var res = await _workspace.Problems.Get(id);
             if (res != null)
             {
-                return Ok(await res.GetOutput());
+                return Ok(await (await res.Samples.Get(tid)).GetOutput());
             }
             else
                 return NotFound();
@@ -156,7 +156,7 @@ namespace StarOJ.Server.API.Controllers
         {
             var res = await _workspace.Problems.Get(id);
             if (res != null){
-                var all = await res.GetTests();
+                var all = await res.Tests.GetAll();
                 List<TestCaseMetadata> ans = new List<TestCaseMetadata>();
                 foreach(var v in all){
                     ans.Add(await v.GetMetadata());
@@ -173,9 +173,9 @@ namespace StarOJ.Server.API.Controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<TestCaseMetadata>> GetTest(string id, string tid)
         {
-            var res = await (await _workspace.Problems.Get(id))?.GetTest(tid);
+            var res = await _workspace.Problems.Get(id);
             if (res != null)
-                return Ok(await res.GetMetadata());
+                return Ok(await (await res.Tests.Get(tid)).GetMetadata());
             else
                 return NotFound();
         }
@@ -186,9 +186,9 @@ namespace StarOJ.Server.API.Controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<DataPreview>> GetTestInputPreview(string id, string tid, int num)
         {
-            var res = await (await _workspace.Problems.Get(id))?.GetTest(tid);
+            var res = await _workspace.Problems.Get(id);
             if (res != null)
-                return Ok(await res.GetInputPreview(num));
+                return Ok(await (await res.Tests.Get(tid)).GetInputPreview(num));
             else
                 return NotFound();
         }
@@ -199,10 +199,10 @@ namespace StarOJ.Server.API.Controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<string>> GetTestInput(string id, string tid)
         {
-            var res = await (await _workspace.Problems.Get(id))?.GetTest(tid);
+            var res = await _workspace.Problems.Get(id);
             if (res != null)
             {
-                return Ok(await res.GetInput());
+                return Ok(await (await res.Tests.Get(tid)).GetInput());
             }
             else
                 return NotFound();
@@ -214,9 +214,9 @@ namespace StarOJ.Server.API.Controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<DataPreview>> GetTestOutputPreview(string id, string tid, int num)
         {
-            var res = await (await _workspace.Problems.Get(id))?.GetTest(tid);
+            var res = await _workspace.Problems.Get(id);
             if (res != null)
-                return Ok(await res.GetOutputPreview(num));
+                return Ok(await (await res.Tests.Get(tid)).GetOutputPreview(num));
             else
                 return NotFound();
         }
@@ -227,10 +227,10 @@ namespace StarOJ.Server.API.Controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<string>> GetTestOutput(string id, string tid)
         {
-            var res = await (await _workspace.Problems.Get(id))?.GetTest(tid);
+            var res = await _workspace.Problems.Get(id);
             if (res != null)
             {
-                return Ok(await res.GetOutput());
+                return Ok(await (await res.Tests.Get(tid)).GetOutput());
             }
             else
                 return NotFound();
@@ -242,17 +242,52 @@ namespace StarOJ.Server.API.Controllers
             return _workspace.Problems.Delete(id);
         }
 
+        public class TestCaseData
+        {
+            public TestCaseMetadata Metadata { get; set; }
+
+            public string Input { get; set; }
+
+            public string Output { get; set; }
+        }
+
+        public class ProblemData
+        {
+            public ProblemMetadata Metadata { get; set; }
+
+            public ProblemDescription Description { get; set; }
+
+            public List<TestCaseData> Tests { get; set; }
+
+            public List<TestCaseData> Samples { get; set; }
+        }
+
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<ProblemMetadata>> Create()
+        public async Task<ActionResult<ProblemMetadata>> Create([FromBody] ProblemData data)
         {
-            var res = await _workspace.Problems.Create();
-            if (res != null)
-                return Created($"problems/{res.Id}", await res.GetMetadata());
-            else
+            var res = await _workspace.Problems.Create(data.Metadata);
+            if (res == null)
                 return Conflict();
+
+            await res.SetDescription(data.Description);
+            foreach(var v in data.Samples)
+            {
+                var item = await res.Samples.Create(v.Metadata);
+                await item.SetInput(v.Input);
+                await item.SetOutput(v.Output);
+            }
+
+            foreach (var v in data.Tests)
+            {
+                var item = await res.Tests.Create(v.Metadata);
+                await item.SetInput(v.Input);
+                await item.SetOutput(v.Output);
+            }
+
+            return Created($"problems/{res.Id}", await res.GetMetadata());
         }
     }
 }

@@ -9,11 +9,19 @@ namespace StarOJ.Data.Provider.SqlServer
 {
     public class RoleListProvider : IRoleListProvider
     {
+        private readonly Workspace _workspace;
         private readonly OJContext _context;
 
-        public RoleListProvider(OJContext context)
+        public RoleListProvider(Workspace workspace, OJContext context)
         {
+            _workspace = workspace;
             _context = context;
+        }
+
+        public async Task Clear()
+        {
+            _context.Roles.RemoveRange(_context.Roles.ToArray());
+            await _context.SaveChangesAsync();
         }
 
         public async Task<IRoleProvider> Create(RoleMetadata metadata)
@@ -21,7 +29,7 @@ namespace StarOJ.Data.Provider.SqlServer
             Role empty = new Role();
             _context.Roles.Add(empty);
             await _context.SaveChangesAsync();
-            var res = new RoleProvider(_context, empty);
+            var res = new RoleProvider(_workspace, _context, empty);
             await res.SetMetadata(metadata);
             return res;
         }
@@ -34,7 +42,8 @@ namespace StarOJ.Data.Provider.SqlServer
 
         public async Task Delete(string id)
         {
-            var item = await _context.Roles.FindAsync(id);
+            int _id = int.Parse(id);
+            var item = await _context.Roles.FindAsync(_id);
             if (item != null)
             {
                 _context.Roles.Remove(item);
@@ -44,14 +53,15 @@ namespace StarOJ.Data.Provider.SqlServer
 
         public async Task<IRoleProvider> Get(string id)
         {
-            var item = await _context.Roles.FindAsync(id);
+            int _id = int.Parse(id);
+            var item = await _context.Roles.FindAsync(_id);
             if (item == null)
             {
                 return null;
             }
             else
             {
-                return new RoleProvider(_context, item);
+                return new RoleProvider(_workspace, _context, item);
             }
         }
 
@@ -60,7 +70,7 @@ namespace StarOJ.Data.Provider.SqlServer
             List<IRoleProvider> res = new List<IRoleProvider>();
             foreach (var v in _context.Roles)
             {
-                res.Add(new RoleProvider(_context, v));
+                res.Add(new RoleProvider(_workspace, _context, v));
             }
             return Task.FromResult((IEnumerable<IRoleProvider>)res);
         }
@@ -71,12 +81,13 @@ namespace StarOJ.Data.Provider.SqlServer
             if (item == null)
                 return Task.FromResult<IRoleProvider>(null);
             else
-                return Task.FromResult((IRoleProvider)new RoleProvider(_context, item));
+                return Task.FromResult((IRoleProvider)new RoleProvider(_workspace, _context, item));
         }
 
         public async Task<bool> Has(string id)
         {
-            return await _context.Roles.FindAsync(id) != null;
+            int _id = int.Parse(id);
+            return await _context.Roles.FindAsync(_id) != null;
         }
     }
 }

@@ -51,7 +51,7 @@
         {
             <tr>
                 <td>
-                    <a asp-page="./View" asp-route-id="@item.Metadata.Id">@item.Metadata.Id.Substring(30)</a>
+                    <a asp-page="./View" asp-route-id="@item.Metadata.Id">@item.Metadata.Id</a>
                 </td>
                 <td>
                     <a asp-page="/Problems/View" asp-route-id="@item.Problem.Id">@Html.DisplayFor(modelItem => item.Problem.Name)</a>

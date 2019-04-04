@@ -1,13 +1,27 @@
-﻿using StarOJ.Server.Host.APIClients;
+﻿using Microsoft.AspNetCore.Identity;
+using StarOJ.Server.Host.APIClients;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace StarOJ.Server.Host.Pages
 {
     public class Helper
     {
+        public async static Task<string> TryGetUserEmail(ClaimsPrincipal user, UserManager<UserMetadata> manager)
+        {
+            try
+            {
+                var ru = await manager.GetUserAsync(user);
+                return await manager.GetEmailAsync(ru);
+            }
+            catch
+            {
+                return "";
+            }
+        }
 
         public static string GetIssueClass(IssueLevel state)
         {
