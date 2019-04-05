@@ -28,7 +28,7 @@
             <a class="nav-link text-dark" asp-area="Identity" asp-page="/Register">@SharedLocalizer["Register"]</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Login">
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Login" asp-route-returnUrl="@(Context.Request.PathBase + Context.Request.Path + Context.Request.QueryString)">
                 <i class="fa fa-sign-in-alt" style="margin-right:3px"></i>
                 @SharedLocalizer["Login"]
             </a>

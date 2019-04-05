@@ -10,7 +10,7 @@ using StarOJ.Data.Provider.SqlServer.Models;
 namespace StarOJ.Data.Provider.SqlServer.Migrations
 {
     [DbContext(typeof(OJContext))]
-    [Migration("20190404100800_Initial")]
+    [Migration("20190405031443_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -112,7 +112,7 @@ namespace StarOJ.Data.Provider.SqlServer.Migrations
 
                     b.Property<int?>("TotalCase");
 
-                    b.Property<TimeSpan?>("TotalTime");
+                    b.Property<long?>("TotalTime");
 
                     b.Property<int>("UserId");
 

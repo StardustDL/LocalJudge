@@ -105,17 +105,17 @@ namespace StarOJ.Server.API.Controllers
         }
 
         [HttpPost("{id}/samples")]
-        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<TestCaseMetadata>> AddSample(string id, [FromBody] TestCaseData data)
+        public async Task<ActionResult<TestCaseMetadata>> CreateSample(string id, [FromBody] TestCaseData data)
         {
             var res = await _workspace.Problems.Get(id);
             if (res == null) return NotFound();
             var item = await res.Samples.Create(data.Metadata);
             await item.SetInput(data.Input);
             await item.SetOutput(data.Output);
-            return Accepted();
+            return Created($"problems/{res.Id}/samples/{item.Id}", await item.GetMetadata());
         }
 
         [HttpGet("{id}/samples/{tid}")]
@@ -241,17 +241,17 @@ namespace StarOJ.Server.API.Controllers
         }
 
         [HttpPost("{id}/tests")]
-        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<TestCaseMetadata>> AddTest(string id, [FromBody] TestCaseData data)
+        public async Task<ActionResult<TestCaseMetadata>> CreateTest(string id, [FromBody] TestCaseData data)
         {
             var res = await _workspace.Problems.Get(id);
             if (res == null) return NotFound();
             var item = await res.Tests.Create(data.Metadata);
             await item.SetInput(data.Input);
             await item.SetOutput(data.Output);
-            return Accepted();
+            return Created($"problems/{res.Id}/tests/{item.Id}", await item.GetMetadata());
         }
 
         [HttpGet("{id}/tests/{tid}")]
@@ -361,19 +361,22 @@ namespace StarOJ.Server.API.Controllers
             var res = await _workspace.Problems.Create(data.Metadata);
 
             await res.SetDescription(data.Description);
-            foreach (var v in data.Samples)
-            {
-                var item = await res.Samples.Create(v.Metadata);
-                await item.SetInput(v.Input);
-                await item.SetOutput(v.Output);
-            }
 
-            foreach (var v in data.Tests)
-            {
-                var item = await res.Tests.Create(v.Metadata);
-                await item.SetInput(v.Input);
-                await item.SetOutput(v.Output);
-            }
+            if (data.Samples != null)
+                foreach (var v in data.Samples)
+                {
+                    var item = await res.Samples.Create(v.Metadata);
+                    await item.SetInput(v.Input);
+                    await item.SetOutput(v.Output);
+                }
+
+            if (data.Tests != null)
+                foreach (var v in data.Tests)
+                {
+                    var item = await res.Tests.Create(v.Metadata);
+                    await item.SetInput(v.Input);
+                    await item.SetOutput(v.Output);
+                }
 
             return Created($"problems/{res.Id}", await res.GetMetadata());
         }

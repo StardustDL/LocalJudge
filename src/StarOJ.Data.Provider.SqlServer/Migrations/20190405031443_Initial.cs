@@ -74,7 +74,7 @@ namespace StarOJ.Data.Provider.SqlServer.Migrations
                     TestResults = table.Column<string>(nullable: true),
                     Issues = table.Column<string>(nullable: true),
                     HasIssue = table.Column<bool>(nullable: false),
-                    TotalTime = table.Column<TimeSpan>(nullable: true),
+                    TotalTime = table.Column<long>(nullable: true),
                     MaximumMemory = table.Column<long>(nullable: true),
                     TotalCase = table.Column<int>(nullable: true),
                     AcceptedCase = table.Column<int>(nullable: true)

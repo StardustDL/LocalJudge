@@ -8,7 +8,6 @@ namespace StarOJ.Core.Problems
     {
         public const long MaximumMemoryLimit = MemoryValueHelper.TB, MinimumMemoryLimit = MemoryValueHelper.MB;
 
-        [Required]
         public string Id { get; set; }
 
         [Required]

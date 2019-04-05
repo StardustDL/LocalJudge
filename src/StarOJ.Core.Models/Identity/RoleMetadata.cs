@@ -4,7 +4,6 @@ namespace StarOJ.Core.Identity
 {
     public class RoleMetadata : IHasId<string>
     {
-        [Required]
         public string Id { get; set; }
 
         [Required]

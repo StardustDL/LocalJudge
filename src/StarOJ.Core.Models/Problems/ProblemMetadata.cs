@@ -4,7 +4,6 @@ namespace StarOJ.Core.Problems
 {
     public class ProblemMetadata
     {
-        [Required]
         public string Id { get; set; }
 
         [Required]

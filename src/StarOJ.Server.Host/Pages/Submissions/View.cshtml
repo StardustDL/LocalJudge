@@ -6,6 +6,8 @@
 @{
     ViewData["Title"] = SharedLocalizer["View"];
     ViewData["Id"] = "Submissions";
+
+    bool canModify = await Model.GetModifyAuthorization();
 }
 
 @section header{
@@ -39,8 +41,8 @@
         <div class="row" style="margin-left:0px">
             <h2 style="display:inline">@SharedLocalizer["Code"]</h2>
             <form method="post" style="margin-left:10px">
-                <input type="hidden" asp-for="PostData.Language"  value="@Model.Submission.Metadata.Language" />
-                <input type="hidden" asp-for="PostData.Id"  value="@Model.Submission.Metadata.Id" />
+                <input type="hidden" asp-for="PostData.Language" value="@Model.Submission.Metadata.Language" />
+                <input type="hidden" asp-for="PostData.Id" value="@Model.Submission.Metadata.Id" />
                 <button type="submit" asp-page-handler="DownloadCode" class="btn btn-sm btn-outline-primary">
                     <i class="fa fa-download"></i>
                 </button>
@@ -124,30 +126,27 @@
             <dd><timeoffset-display value="@Model.Submission.Metadata.Time"></timeoffset-display></dd>
 
             <dd>
-                <div class="row" style="margin-left:0px">
-                    <a asp-page="/Problems/Data" asp-route-id="@Model.Submission.Metadata.ProblemId" class="btn btn-outline-primary">
-                        <i class="fa fa-database"></i>
-                    </a>
-                    @if ((await AuthorizationService.AuthorizeAsync(User, Helpers.Authorizations.Administrator)).Succeeded)
-                    {
-                        <form method="post" style="margin-left:10px">
-                            <input type="hidden" asp-for="PostData.Id"  value="@Model.Submission.Metadata.Id" />
-                            <button type="submit" asp-page-handler="Rejudge" class="btn btn-outline-secondary">
+                <form method="post" style="margin-left:0px">
+                    <input type="hidden" asp-for="PostData.Id" value="@Model.Submission.Metadata.Id" />
+                    <div class="btn-group-toggle">
+                        <a asp-page="/Problems/Data" asp-route-id="@Model.Submission.Metadata.ProblemId" class="btn btn-outline-primary">
+                            <i class="fa fa-database"></i>
+                        </a>
+                        @if (canModify)
+                        {
+                            <button type="submit" asp-page-handler="Rejudge" class="btn btn-outline-warning">
                                 <i class="fa fa-redo"></i>
                             </button>
-                        </form>
-                        <form method="post" style="margin-left:10px">
-                            <input type="hidden" asp-for="PostData.Id"  value="@Model.Submission.Metadata.Id" />
                             <button type="submit" asp-page-handler="Delete" class="btn btn-outline-danger">
                                 <i class="fa fa-trash"></i>
                             </button>
-                        </form>
-                    }
-                </div>
+                        }
+                    </div>
+                </form>
             </dd>
         </dl>
         <br />
-        @if (Model.Submission.Result.State == StarOJ.Core.Judgers.JudgeState.Compiling || Model.Submission.Result.State == StarOJ.Core.Judgers.JudgeState.Judging || Model.Submission.Result.State == StarOJ.Core.Judgers.JudgeState.Pending)
+        @if (!(Model.Submission.Result.State == StarOJ.Core.Judgers.JudgeState.Compiling || Model.Submission.Result.State == StarOJ.Core.Judgers.JudgeState.Judging || Model.Submission.Result.State == StarOJ.Core.Judgers.JudgeState.Pending))
         {
             @if (Model.Submission.Result.Samples?.Count > 0)
             {
@@ -158,7 +157,7 @@
                         {
                             <tr>
                                 <td>
-                                    @item.Id
+                                    <a asp-page="/Problems/Data" asp-route-id="@Model.Submission.Metadata.ProblemId" asp-route-showId="@item.Id">#@item.Id</a>
                                 </td>
                                 <td>
                                     <judge-state value="@item.State"></judge-state>
@@ -184,7 +183,7 @@
                         {
                             <tr>
                                 <td>
-                                    @item.Id
+                                    <a asp-page="/Problems/Data" asp-route-id="@Model.Submission.Metadata.ProblemId" asp-route-showId="@item.Id">#@item.Id</a>
                                 </td>
                                 <td>
                                     <judge-state value="@item.State"></judge-state>

@@ -110,7 +110,7 @@ namespace StarOJ.Data.Provider.SqlServer.Migrations
 
                     b.Property<int?>("TotalCase");
 
-                    b.Property<TimeSpan?>("TotalTime");
+                    b.Property<long?>("TotalTime");
 
                     b.Property<int>("UserId");
 

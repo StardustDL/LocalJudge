@@ -24,6 +24,11 @@ namespace StarOJ.Server.Host.Pages.Submissions
             _authorizationService = authorizationService;
         }
 
+        public async Task<bool> GetModifyAuthorization()
+        {
+            return (await _authorizationService.AuthorizeAsync(User, Authorizations.Administrator)).Succeeded;
+        }
+
         public SubmissionModel Submission { get; set; }
 
         [BindProperty]
@@ -70,7 +75,7 @@ namespace StarOJ.Server.Host.Pages.Submissions
 
         public async Task<IActionResult> OnPostDeleteAsync()
         {
-            if((await _authorizationService.AuthorizeAsync(User,Authorizations.Administrator)).Succeeded == false)
+            if (await GetModifyAuthorization() == false)
             {
                 return Forbid();
             }
@@ -93,7 +98,7 @@ namespace StarOJ.Server.Host.Pages.Submissions
 
         public async Task<IActionResult> OnPostRejudgeAsync()
         {
-            if ((await _authorizationService.AuthorizeAsync(User, Authorizations.Administrator)).Succeeded == false)
+            if (await GetModifyAuthorization() == false)
             {
                 return Forbid();
             }
@@ -113,7 +118,5 @@ namespace StarOJ.Server.Host.Pages.Submissions
                 return NotFound();
             }
         }
-
-
     }
 }

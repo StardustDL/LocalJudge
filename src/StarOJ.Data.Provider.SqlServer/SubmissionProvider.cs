@@ -41,13 +41,16 @@ namespace StarOJ.Data.Provider.SqlServer
 
         public Task<SubmissionResult> GetResult()
         {
+            TimeSpan? totalTime = null;
+            if (_submission.TotalTime.HasValue)
+                totalTime = TimeSpan.FromTicks(_submission.TotalTime.Value);
             return Task.FromResult(new SubmissionResult
             {
                 AcceptedCase = _submission.AcceptedCase,
                 HasIssue = _submission.HasIssue,
                 Issues = JsonConvert.DeserializeObject<List<Issue>>(_submission.Issues),
                 MaximumMemory = _submission.MaximumMemory,
-                TotalTime = _submission.TotalTime,
+                TotalTime = totalTime,
                 TotalCase = _submission.TotalCase,
                 Samples = JsonConvert.DeserializeObject<List<JudgeResult>>(_submission.SampleResults),
                 Tests = JsonConvert.DeserializeObject<List<JudgeResult>>(_submission.TestResults),
@@ -85,7 +88,7 @@ namespace StarOJ.Data.Provider.SqlServer
                 _submission.HasIssue = value.HasIssue;
                 _submission.Issues = JsonConvert.SerializeObject(value.Issues);
                 _submission.TotalCase = value.TotalCase;
-                _submission.TotalTime = value.TotalTime;
+                _submission.TotalTime = value.TotalTime?.Ticks;
                 _submission.SampleResults = JsonConvert.SerializeObject(value.Samples);
                 _submission.TestResults = JsonConvert.SerializeObject(value.Tests);
                 _submission.State = value.State;

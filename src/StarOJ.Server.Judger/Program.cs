@@ -219,7 +219,7 @@ namespace StarOJ.Server.Judger
                                 using (var input = new StringReader(await pcli.GetTestInputAsync(problem.Id, item.Id)))
                                 using (var output = new StringReader(await pcli.GetTestOutputAsync(problem.Id, item.Id)))
                                     res = Core.Judgers.Judger.Judge(casemdata.Id, lang.RunCommand.Resolve(vars), rootDir, casemdata.TimeLimit, casemdata.MemoryLimit, input, output, comparer);
-                                result.Samples.Add(res);
+                                result.Tests.Add(res);
                             }
 
                             result.State = JudgeState.Pending;

@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace StarOJ.Server.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class RolesController : ControllerBase
     {
@@ -38,9 +38,9 @@ namespace StarOJ.Server.API.Controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<RoleMetadata>> Get(string id)
         {
-            var res = await (await _workspace.Roles.Get(id))?.GetMetadata();
+            var res = await _workspace.Roles.Get(id);
             if (res != null)
-                return Ok(res);
+                return Ok(await res.GetMetadata());
             else
                 return NotFound();
         }
@@ -51,9 +51,9 @@ namespace StarOJ.Server.API.Controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<RoleMetadata>> GetByName(string name)
         {
-            var res = await (await _workspace.Roles.GetByName(name))?.GetMetadata();
+            var res = await _workspace.Roles.GetByName(name);
             if (res != null)
-                return Ok(res);
+                return Ok(await res.GetMetadata());
             else
                 return NotFound();
         }

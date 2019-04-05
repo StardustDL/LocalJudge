@@ -41,7 +41,8 @@ namespace StarOJ.Data.Provider.SqlServer.Models
 
         public bool HasIssue { get; set; }
 
-        public TimeSpan? TotalTime { get; set; }
+        // Ticks
+        public long? TotalTime { get; set; }
 
         public long? MaximumMemory { get; set; }
 

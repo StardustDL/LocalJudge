@@ -6,7 +6,6 @@ namespace StarOJ.Core.Submissions
 {
     public class SubmissionMetadata : IHasId<string>
     {
-        [Required]
         public string Id { get; set; }
 
         [Required]

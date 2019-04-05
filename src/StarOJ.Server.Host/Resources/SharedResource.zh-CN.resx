@@ -129,6 +129,9 @@
   <data name="Code" xml:space="preserve">
     <value>代码</value>
   </data>
+  <data name="Create" xml:space="preserve">
+    <value>创建</value>
+  </data>
   <data name="Data" xml:space="preserve">
     <value>数据</value>
   </data>

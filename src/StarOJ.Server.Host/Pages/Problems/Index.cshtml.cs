@@ -22,6 +22,11 @@ namespace StarOJ.Server.Host.Pages.Problems
             _authorizationService = authorizationService;
         }
 
+        public async Task<bool> GetModifyAuthorization()
+        {
+            return (await _authorizationService.AuthorizeAsync(User, Authorizations.Administrator)).Succeeded;
+        }
+
         public IList<ProblemModel> Problems { get; set; }
 
         [BindProperty]
@@ -42,7 +47,7 @@ namespace StarOJ.Server.Host.Pages.Problems
 
         public async Task<IActionResult> OnPostDeleteAsync()
         {
-            if ((await _authorizationService.AuthorizeAsync(User, Authorizations.Administrator)).Succeeded == false)
+            if (await GetModifyAuthorization())
             {
                 return Forbid();
             }
@@ -55,7 +60,7 @@ namespace StarOJ.Server.Host.Pages.Problems
             var client = new ProblemsClient(httpclient);
             try
             {
-                await client.DeleteAsync(PostData.Id);
+                await client.DeleteAsync(PostData.Metadata.Id);
                 return RedirectToPage();
             }
             catch

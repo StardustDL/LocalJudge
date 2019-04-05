@@ -70,13 +70,13 @@ namespace StarOJ.Server.Host.TagHelpers
                     icon.Attributes["class"] = "fa fa-microchip";
                     break;
                 case JudgeState.Pending:
-                    icon.Attributes["class"] = "fa fa-hourglass";
+                    icon.Attributes["class"] = "fa fa-hourglass-half";
                     break;
                 case JudgeState.Judging:
-                    icon.Attributes["class"] = "fa fa-hourglass";
+                    icon.Attributes["class"] = "fa fa-circle-o-notch fa-spin";
                     break;
                 case JudgeState.Compiling:
-                    icon.Attributes["class"] = "fa fa-hourglass";
+                    icon.Attributes["class"] = "fa fa-cog fa-spin";
                     break;
                 case JudgeState.CompileError:
                     icon.Attributes["class"] = "fa fa-code";

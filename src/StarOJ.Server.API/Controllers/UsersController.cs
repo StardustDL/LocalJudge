@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace StarOJ.Server.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
     {
@@ -38,9 +38,9 @@ namespace StarOJ.Server.API.Controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<UserMetadata>> Get(string id)
         {
-            var res = await (await _workspace.Users.Get(id))?.GetMetadata();
+            var res = await _workspace.Users.Get(id);
             if (res != null)
-                return Ok(res);
+                return Ok(await res.GetMetadata());
             else
                 return NotFound();
         }
@@ -51,9 +51,9 @@ namespace StarOJ.Server.API.Controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<UserMetadata>> GetByName(string name)
         {
-            var res = await (await _workspace.Users.GetByName(name))?.GetMetadata();
+            var res = await _workspace.Users.GetByName(name);
             if (res != null)
-                return Ok(res);
+                return Ok(await res.GetMetadata());
             else
                 return NotFound();
         }

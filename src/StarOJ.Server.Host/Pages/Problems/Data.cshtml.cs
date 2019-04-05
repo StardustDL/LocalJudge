@@ -51,6 +51,8 @@ namespace StarOJ.Server.Host.Pages.Problems
 
         public ProblemModel Problem { get; set; }
 
+        public string ShowId { get; set; }
+
         public IList<TestCasePreviewModel> SamplePreview { get; set; }
 
         public IList<TestCasePreviewModel> TestPreview { get; set; }
@@ -103,10 +105,12 @@ namespace StarOJ.Server.Host.Pages.Problems
             return true;
         }
 
-        public async Task<IActionResult> OnGetAsync(string id)
+        public async Task<IActionResult> OnGetAsync(string id, string showId)
         {
             if (string.IsNullOrEmpty(id))
                 return NotFound();
+
+            ShowId = showId;
 
             if (await GetData(id))
                 return Page();
@@ -255,6 +259,7 @@ namespace StarOJ.Server.Host.Pages.Problems
             }
             if (!ModelState.IsValid)
             {
+                ShowId = PostData.TestCaseId;
                 if (await GetData(PostData.ProblemId))
                     return Page();
                 else
@@ -266,7 +271,7 @@ namespace StarOJ.Server.Host.Pages.Problems
             try
             {
                 await client.UpdateTestAsync(PostData.ProblemId, PostData.TestCaseId, PostData.TestCase);
-                return RedirectToPage(new { id = PostData.ProblemId });
+                return RedirectToPage(new { id = PostData.ProblemId, showId = PostData.TestCaseId });
             }
             catch
             {
@@ -282,6 +287,7 @@ namespace StarOJ.Server.Host.Pages.Problems
             }
             if (!ModelState.IsValid)
             {
+                ShowId = PostData.TestCaseId;
                 if (await GetData(PostData.ProblemId))
                     return Page();
                 else
@@ -293,7 +299,63 @@ namespace StarOJ.Server.Host.Pages.Problems
             try
             {
                 await client.UpdateSampleAsync(PostData.ProblemId, PostData.TestCaseId, PostData.TestCase);
-                return RedirectToPage(new { id = PostData.ProblemId });
+                return RedirectToPage(new { id = PostData.ProblemId, showId = PostData.TestCaseId });
+            }
+            catch
+            {
+                return NotFound();
+            }
+        }
+
+        public async Task<IActionResult> OnPostCreateTestAsync()
+        {
+            if ((await GetModifyAuthorization()) == false)
+            {
+                return Forbid();
+            }
+            if (!ModelState.IsValid)
+            {
+                ShowId = PostData.TestCaseId;
+                if (await GetData(PostData.ProblemId))
+                    return Page();
+                else
+                    return NotFound();
+            }
+
+            var httpclient = clientFactory.CreateClient();
+            var client = new ProblemsClient(httpclient);
+            try
+            {
+                var tmeta = await client.CreateTestAsync(PostData.ProblemId, PostData.TestCase);
+                return RedirectToPage(new { id = PostData.ProblemId, showId = tmeta.Id });
+            }
+            catch
+            {
+                return NotFound();
+            }
+        }
+
+        public async Task<IActionResult> OnPostCreateSampleAsync()
+        {
+            if ((await GetModifyAuthorization()) == false)
+            {
+                return Forbid();
+            }
+            if (!ModelState.IsValid)
+            {
+                ShowId = PostData.TestCaseId;
+                if (await GetData(PostData.ProblemId))
+                    return Page();
+                else
+                    return NotFound();
+            }
+
+            var httpclient = clientFactory.CreateClient();
+            var client = new ProblemsClient(httpclient);
+            try
+            {
+                var tmeta = await client.CreateSampleAsync(PostData.ProblemId, PostData.TestCase);
+                return RedirectToPage(new { id = PostData.ProblemId, showId = tmeta.Id });
             }
             catch
             {

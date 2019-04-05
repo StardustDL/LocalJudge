@@ -11,9 +11,6 @@ namespace StarOJ.Server.Host.Pages.Problems
 {
     public class ProblemPostModel
     {
-        [Required]
-        public string Id { get; set; }
-
         public SubmitData SubmitData { get; set; }
 
         public ProblemDescription Description { get; set; }

@@ -181,7 +181,7 @@ namespace StarOJ.Server.Host.Pages.Problems
             var client = new ProblemsClient(httpclient);
             try
             {
-                await client.DeleteAsync(PostData.Id);
+                await client.DeleteAsync(PostData.Metadata.Id);
                 return RedirectToPage("/Problems/Index");
             }
             catch
@@ -206,54 +206,6 @@ namespace StarOJ.Server.Host.Pages.Problems
             {
                 var meta = await client.SubmitAsync(PostData.SubmitData);
                 return RedirectToPage("/Submissions/View", new { id = meta.Id });
-            }
-            catch
-            {
-                return NotFound();
-            }
-        }
-
-        public async Task<IActionResult> OnPostEditDescriptionAsync()
-        {
-            if ((await GetModifyAuthorization()) == false)
-            {
-                return Forbid();
-            }
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
-            var httpclient = clientFactory.CreateClient();
-            var client = new ProblemsClient(httpclient);
-            try
-            {
-                await client.UpdateDescriptionAsync(PostData.Id, PostData.Description);
-                return RedirectToPage(new { id = PostData.Id });
-            }
-            catch
-            {
-                return NotFound();
-            }
-        }
-
-        public async Task<IActionResult> OnPostEditMetadataAsync()
-        {
-            if ((await GetModifyAuthorization()) == false)
-            {
-                return Forbid();
-            }
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
-            var httpclient = clientFactory.CreateClient();
-            var client = new ProblemsClient(httpclient);
-            try
-            {
-                await client.UpdateMetadataAsync(PostData.Id, PostData.Metadata);
-                return RedirectToPage(new { id = PostData.Id });
             }
             catch
             {

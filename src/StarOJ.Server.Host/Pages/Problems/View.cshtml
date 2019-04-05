@@ -113,22 +113,6 @@
                 @Html.Raw(Markdig.Markdown.ToHtml(Model.Problem.Description.Hint, Model.MarkdownBuilder.Build()))
             </div>
         </div>
-
-        @if (canModify)
-        {
-            <div class="card border-0">
-                <div class="card-header border-0">
-                    <h2>
-                        <a class="card-link" data-toggle="collapse" href="#divEdit">
-                            @SharedLocalizer["Edit"]
-                        </a>
-                    </h2>
-                </div>
-                <div id="divEdit" class="collapse card-content">
-                    Edit...
-                </div>
-            </div>
-        }
     </div>
     <div class="col-3">
         <dl>
@@ -147,20 +131,23 @@
             <dd>@Html.DisplayFor(model => model.Problem.Metadata.Source)</dd>
 
             <dd>
-                <div class="row" style="margin-left:0px">
-                    <a asp-page="./Data" asp-route-id="@Model.Problem.Metadata.Id" class="btn btn-outline-primary">
-                        <i class="fa fa-database"></i>
-                    </a>
-                    @if (canModify)
-                    {
-                        <form method="post" style="margin-left:10px">
-                            <input type="hidden" asp-for="PostData.Id" value="@Model.Problem.Metadata.Id" />
+                <form method="post" style="margin-left:0px; margin-top:10px;">
+                    <input type="hidden" asp-for="PostData.Metadata.Id" value="@Model.Problem.Metadata.Id" />
+                    <div class="btn-group-toggle">
+                        <a asp-page="./Data" asp-route-id="@Model.Problem.Metadata.Id" class="btn btn-outline-secondary">
+                            <i class="fa fa-database"></i>
+                        </a>
+                        @if (canModify)
+                        {
+                            <a asp-page="./Edit" asp-route-id="@Model.Problem.Metadata.Id" class="btn btn-outline-primary">
+                                <i class="fa fa-edit"></i>
+                            </a>
                             <button type="submit" asp-page-handler="Delete" class="btn btn-outline-danger">
                                 <i class="fa fa-trash"></i>
                             </button>
-                        </form>
-                    }
-                </div>
+                        }
+                    </div>
+                </form>
             </dd>
         </dl>
         <br />
@@ -190,7 +177,7 @@
                         {
                             <tr>
                                 <td>
-                                    #@item.Id
+                                    <a asp-page="./Data" asp-route-id="@Model.Problem.Metadata.Id" asp-route-showId="@item.Id">#@item.Id</a>
                                 </td>
                                 <td>
                                     <timespan-display value="@item.TimeLimit"></timespan-display>
@@ -210,7 +197,7 @@
                     @SharedLocalizer["Test Cases"]
                 </a>
             </div>
-            <div id="divTestCases" class="collapse">
+            <div id="divTestCases" class="collapse show">
                 <table class="table table-sm table-hover">
                     <thead>
                         <tr>
@@ -230,7 +217,7 @@
                         {
                             <tr>
                                 <td>
-                                    #@item.Id
+                                    <a asp-page="./Data" asp-route-id="@Model.Problem.Metadata.Id" asp-route-showId="@item.Id">#@item.Id</a>
                                 </td>
                                 <td>
                                     <timespan-display value="@item.TimeLimit"></timespan-display>
@@ -260,7 +247,7 @@
         </select>
 
         <form method="post" style="margin-left:20px;">
-            <input type="hidden" asp-for="PostData.Id" value="@Model.Problem.Metadata.Id" />
+            <input type="hidden" asp-for="PostData.Metadata.Id" value="@Model.Problem.Metadata.Id" />
             <input type="hidden" asp-for="PostData.SubmitData.ProblemId" value="@Model.Problem.Metadata.Id" />
             <input type="hidden" asp-for="PostData.SubmitData.UserId" value="@Model.CurrentUser.Id" />
             <input type="hidden" asp-for="PostData.SubmitData.Language" id="formLang" />

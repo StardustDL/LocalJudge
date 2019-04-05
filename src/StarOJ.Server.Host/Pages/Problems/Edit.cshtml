@@ -1,0 +1,99 @@
+﻿@page
+@using Microsoft.AspNetCore.Identity
+@using StarOJ.Core.Identity
+@model StarOJ.Server.Host.Pages.Problems.EditModel
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@inject UserManager<UserMetadata> UserManager
+@{
+    if (Model.IsNew)
+    {
+        ViewData["Title"] = $"{SharedLocalizer["Create"]}";
+    }
+    else
+    {
+        ViewData["Title"] = $"{Model.Problem.Metadata.Name} - {SharedLocalizer["Edit"]}";
+    }
+    ViewData["Id"] = "Problems";
+}
+
+<ul class="breadcrumb">
+    <li class="breadcrumb-item"><a asp-page="/Index">StarOJ</a></li>
+    <li class="breadcrumb-item"><a asp-page="/Problems/Index">@SharedLocalizer["Problems"]</a></li>
+    @if (!Model.IsNew)
+    {
+        <li class="breadcrumb-item">
+            <a asp-page="/Problems/View" asp-route-id="@Model.Problem.Metadata.Id">@Html.DisplayFor(model => model.Problem.Metadata.Id)</a>
+        </li>
+        <li class="breadcrumb-item active">@SharedLocalizer["Edit"]</li>
+    }
+    else
+    {
+        <li class="breadcrumb-item active">@SharedLocalizer["Create"]</li>
+    }
+</ul>
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="btn-group-lg" style="text-align:left">
+        @if (Model.IsNew)
+        {
+            <button type="submit" asp-page-handler="Create" class="btn btn-outline-success">
+                <i class="fa fa-plus"></i>
+            </button>
+        }
+        else
+        {
+            <a asp-page="./Data" asp-route-id="@Model.Problem.Metadata.Id" class="btn btn-outline-secondary">
+                <i class="fa fa-database"></i>
+            </a>
+            <button type="submit" asp-page-handler="Edit" class="btn btn-outline-primary">
+                <i class="fa fa-edit"></i>
+            </button>
+            <button type="submit" asp-page-handler="Delete" class="btn btn-outline-danger">
+                <i class="fa fa-trash"></i>
+            </button>
+        }
+    </div>
+    <input type="hidden" asp-for="PostData.Metadata.Id" value="@Model.Problem.Metadata.Id" />
+    <input type="hidden" asp-for="PostData.Metadata.UserId" value="@(await UserManager.GetUserIdAsync(await UserManager.GetUserAsync(User)))" />
+    <div class="input-group" style="margin-top:10px">
+        <div class="input-group-prepend">
+            <span class="input-group-text">@SharedLocalizer["Name"]</span>
+        </div>
+        <input class="form-control" asp-for="PostData.Metadata.Name" value="@Model.Problem.Metadata.Name" />
+        <span asp-validation-for="PostData.Metadata.Name" class="text-danger"></span>
+    </div>
+    <div class="input-group" style="margin-top:10px">
+        <div class="input-group-prepend">
+            <span class="input-group-text">@SharedLocalizer["Source"]</span>
+        </div>
+        <input class="form-control" asp-for="PostData.Metadata.Source" value="@Model.Problem.Metadata.Source" />
+        <span asp-validation-for="PostData.Metadata.Source" class="text-danger"></span>
+    </div>
+    <style>
+        div textarea {
+            min-height: 200px;
+        }
+    </style>
+    <div class="form-group" style="margin-top:10px">
+        <label class="control-label">@SharedLocalizer["Description"]</label>
+        <textarea class="form-control" asp-for="PostData.Description.Description"></textarea>
+        <span asp-validation-for="PostData.Description.Description" class="text-danger"></span>
+    </div>
+    <div class="form-group" style="margin-top:10px;">
+        <label class="control-label">@SharedLocalizer["Input"]</label>
+        <textarea class="form-control" asp-for="PostData.Description.Input"></textarea>
+        <span asp-validation-for="PostData.Description.Input" class="text-danger"></span>
+    </div>
+    <div class="form-group" style="margin-top:10px">
+        <label class="control-label">@SharedLocalizer["Output"]</label>
+        <textarea class="form-control" asp-for="PostData.Description.Output"></textarea>
+        <span asp-validation-for="PostData.Description.Output" class="text-danger"></span>
+    </div>
+    <div class="form-group" style="margin-top:10px">
+        <label class="control-label">@SharedLocalizer["Hint"]</label>
+        <textarea class="form-control" asp-for="PostData.Description.Hint"></textarea>
+        <span asp-validation-for="PostData.Description.Hint" class="text-danger"></span>
+    </div>
+</form>

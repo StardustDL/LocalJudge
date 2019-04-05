@@ -6,6 +6,8 @@
 @{
     ViewData["Title"] = SharedLocalizer["Submissions"];
     ViewData["Id"] = "Submissions";
+
+    bool canModify = await Model.GetModifyAuthorization();
 }
 
 <ul class="breadcrumb">
@@ -57,7 +59,9 @@
                     <a asp-page="/Problems/View" asp-route-id="@item.Problem.Id">@Html.DisplayFor(modelItem => item.Problem.Name)</a>
                 </td>
                 <td>
-                    <judge-state value="@item.Result.State"></judge-state>
+                    <a asp-page="./View" asp-route-id="@item.Metadata.Id">
+                        <judge-state value="@item.Result.State"></judge-state>
+                    </a>
                 </td>
                 <td>
                     @if (item.Result.TotalCase.HasValue)
@@ -76,8 +80,10 @@
                     <memory-display value="@item.Result.MaximumMemory"></memory-display>
                 </td>
                 <td>
-                    <prolang-display value="@item.Metadata.Language"></prolang-display>
-                    (<memory-display value="@item.Metadata.CodeLength"></memory-display>)
+                    <a asp-page="./View" asp-route-id="@item.Metadata.Id">
+                        <prolang-display value="@item.Metadata.Language"></prolang-display>
+                        (<memory-display value="@item.Metadata.CodeLength"></memory-display>)
+                    </a>
                 </td>
                 <td>
                     <a asp-page="/Account/Index" asp-area="Identity" asp-route-id="@item.User.Id">@item.User.Name</a>
@@ -87,19 +93,18 @@
                 </td>
                 <td>
                     <div class="row" style="margin-left:0px">
-                        @if ((await AuthorizationService.AuthorizeAsync(User, Helpers.Authorizations.Administrator)).Succeeded)
+                        @if (canModify)
                         {
                             <form method="post">
                                 <input type="hidden" asp-for="PostData.Id" value="@item.Metadata.Id" />
-                                <button type="submit" asp-page-handler="Rejudge" class="btn btn-sm btn-outline-secondary">
-                                    <i class="fa fa-redo"></i>
-                                </button>
-                            </form>
-                            <form method="post" style="margin-left:10px">
-                                <input type="hidden" asp-for="PostData.Id" value="@item.Metadata.Id" />
-                                <button type="submit" asp-page-handler="Delete" class="btn btn-sm btn-outline-danger">
-                                    <i class="fa fa-trash"></i>
-                                </button>
+                                <div class="btn-group-sm">
+                                    <button type="submit" asp-page-handler="Rejudge" class="btn btn-outline-warning">
+                                        <i class="fa fa-redo"></i>
+                                    </button>
+                                    <button type="submit" asp-page-handler="Delete" class="btn btn-outline-danger">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
                             </form>
                         }
                     </div>

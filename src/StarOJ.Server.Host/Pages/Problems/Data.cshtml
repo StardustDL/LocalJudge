@@ -29,13 +29,13 @@
                     </a>
                 </div>
             </div>
-            <div id="@id" class="collapse" data-parent="#main">
+            <div id="@id" class="collapse @(Model.ShowId == item.Metadata.Id ? "show" : "")" data-parent="#main">
                 <div class="card-body">
                     <div class="row" style="margin-left:0px">
                         <strong>@SharedLocalizer["Input"]</strong>
                         <form method="post" style="margin-left:10px">
-                            <input type="hidden" asp-for="PostData.ProblemId"  value="@Model.Problem.Metadata.Id" />
-                            <input type="hidden" asp-for="PostData.TestCaseId"  value="@item.Metadata.Id" />
+                            <input type="hidden" asp-for="PostData.ProblemId" value="@Model.Problem.Metadata.Id" />
+                            <input type="hidden" asp-for="PostData.TestCaseId" value="@item.Metadata.Id" />
                             <button type="submit" asp-page-handler="SampleInputFile" class="btn btn-sm btn-outline-primary">
                                 <i class="fa fa-download"></i>
                             </button>
@@ -50,8 +50,8 @@
                     <div class="row" style="margin-left:0px">
                         <strong>@SharedLocalizer["Output"]</strong>
                         <form method="post" style="margin-left:10px">
-                            <input type="hidden" asp-for="PostData.ProblemId"  value="@Model.Problem.Metadata.Id" />
-                            <input type="hidden" asp-for="PostData.TestCaseId"  value="@item.Metadata.Id" />
+                            <input type="hidden" asp-for="PostData.ProblemId" value="@Model.Problem.Metadata.Id" />
+                            <input type="hidden" asp-for="PostData.TestCaseId" value="@item.Metadata.Id" />
                             <button type="submit" asp-page-handler="SampleOutputFile" class="btn btn-sm btn-outline-primary">
                                 <i class="fa fa-download"></i>
                             </button>
@@ -68,21 +68,31 @@
                         <strong>@SharedLocalizer["Edit"]</strong>
                         <form method="post" style="margin-top:10px">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                            <button type="submit" asp-page-handler="EditSample" class="btn btn-sm btn-outline-primary">
-                                <i class="fa fa-edit"></i>
-                            </button>
-                            <button type="submit" asp-page-handler="DeleteSample" class="btn btn-sm btn-outline-danger" style="margin-left:5px; margin-right:10px">
-                                <i class="fa fa-trash"></i>
-                            </button>
+                            <div class="btn-group-toggle">
+                                <button type="submit" asp-page-handler="EditSample" class="btn btn-outline-primary">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                <button type="submit" asp-page-handler="DeleteSample" class="btn btn-outline-danger">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                                <button type="submit" asp-page-handler="CreateSample" class="btn btn-outline-success">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
                             <input type="hidden" asp-for="PostData.ProblemId" value="@Model.Problem.Metadata.Id" />
                             <input type="hidden" asp-for="PostData.TestCaseId" value="@item.Metadata.Id" />
-                            <div class="form-group">
-                                <label class="control-label">@SharedLocalizer["TimeLimit"]</label>
+                            <input type="hidden" asp-for="PostData.TestCase.Metadata.Id" value="@item.Metadata.Id" />
+                            <div class="input-group" style="margin-top:10px">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">@SharedLocalizer["TimeLimit"]</span>
+                                </div>
                                 <input class="form-control" asp-for="PostData.TestCase.Metadata.TimeLimit" value="@item.Metadata.TimeLimit" />
                                 <span asp-validation-for="PostData.TestCase.Metadata.TimeLimit" class="text-danger"></span>
                             </div>
-                            <div class="form-group">
-                                <label class="control-label">@SharedLocalizer["MemoryLimit"]</label>
+                            <div class="input-group" style="margin-top:10px">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">@SharedLocalizer["MemoryLimit"]</span>
+                                </div>
                                 <input class="form-control" asp-for="PostData.TestCase.Metadata.MemoryLimit" value="@item.Metadata.MemoryLimit" />
                                 <span asp-validation-for="PostData.TestCase.Metadata.MemoryLimit" class="text-danger"></span>
                             </div>
@@ -103,11 +113,6 @@
         </div>
     }
 
-    @if (false)
-    {
-        // TODO: Clear sample, add sample
-    }
-
     @for (int i = 0; i < Model.TestPreview.Count; i++)
     {
         var item = Model.TestPreview[i];
@@ -120,13 +125,13 @@
                     </a>
                 </div>
             </div>
-            <div id="@id" class="collapse" data-parent="#main">
+            <div id="@id" class="collapse @(Model.ShowId == item.Metadata.Id ? "show" : "")" data-parent="#main">
                 <div class="card-body">
                     <div class="row" style="margin-left:0px">
                         <strong>@SharedLocalizer["Input"]</strong>
                         <form method="post" style="margin-left:10px">
-                            <input type="hidden" asp-for="PostData.ProblemId"  value="@Model.Problem.Metadata.Id" />
-                            <input type="hidden" asp-for="PostData.TestCaseId"  value="@item.Metadata.Id" />
+                            <input type="hidden" asp-for="PostData.ProblemId" value="@Model.Problem.Metadata.Id" />
+                            <input type="hidden" asp-for="PostData.TestCaseId" value="@item.Metadata.Id" />
                             <button type="submit" asp-page-handler="TestInputFile" class="btn btn-sm btn-outline-primary">
                                 <i class="fa fa-download"></i>
                             </button>
@@ -141,8 +146,8 @@
                     <div class="row" style="margin-left:0px">
                         <strong>@SharedLocalizer["Output"]</strong>
                         <form method="post" style="margin-left:10px">
-                            <input type="hidden" asp-for="PostData.ProblemId"  value="@Model.Problem.Metadata.Id" />
-                            <input type="hidden" asp-for="PostData.TestCaseId"  value="@item.Metadata.Id" />
+                            <input type="hidden" asp-for="PostData.ProblemId" value="@Model.Problem.Metadata.Id" />
+                            <input type="hidden" asp-for="PostData.TestCaseId" value="@item.Metadata.Id" />
                             <button type="submit" asp-page-handler="TestOutputFile" class="btn btn-sm btn-outline-primary">
                                 <i class="fa fa-download"></i>
                             </button>
@@ -159,21 +164,31 @@
                         <strong>@SharedLocalizer["Edit"]</strong>
                         <form method="post" style="margin-top:10px">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                            <button type="submit" asp-page-handler="EditTest" class="btn btn-sm btn-outline-primary">
-                                <i class="fa fa-edit"></i>
-                            </button>
-                            <button type="submit" asp-page-handler="DeleteTest" class="btn btn-sm btn-outline-danger" style="margin-left:5px; margin-right:10px">
-                                <i class="fa fa-trash"></i>
-                            </button>
+                            <div class="btn-group-toggle">
+                                <button type="submit" asp-page-handler="EditTest" class="btn btn-outline-primary">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                <button type="submit" asp-page-handler="DeleteTest" class="btn btn-outline-danger">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                                <button type="submit" asp-page-handler="CreateTest" class="btn btn-outline-success">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
                             <input type="hidden" asp-for="PostData.ProblemId" value="@Model.Problem.Metadata.Id" />
                             <input type="hidden" asp-for="PostData.TestCaseId" value="@item.Metadata.Id" />
-                            <div class="form-group">
-                                <label class="control-label">@SharedLocalizer["TimeLimit"]</label>
+                            <input type="hidden" asp-for="PostData.TestCase.Metadata.Id" value="@item.Metadata.Id" />
+                            <div class="input-group" style="margin-top:10px">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">@SharedLocalizer["TimeLimit"]</span>
+                                </div>
                                 <input class="form-control" asp-for="PostData.TestCase.Metadata.TimeLimit" value="@item.Metadata.TimeLimit" />
                                 <span asp-validation-for="PostData.TestCase.Metadata.TimeLimit" class="text-danger"></span>
                             </div>
-                            <div class="form-group">
-                                <label class="control-label">@SharedLocalizer["MemoryLimit"]</label>
+                            <div class="input-group" style="margin-top:10px">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">@SharedLocalizer["MemoryLimit"]</span>
+                                </div>
                                 <input class="form-control" asp-for="PostData.TestCase.Metadata.MemoryLimit" value="@item.Metadata.MemoryLimit" />
                                 <span asp-validation-for="PostData.TestCase.Metadata.MemoryLimit" class="text-danger"></span>
                             </div>
