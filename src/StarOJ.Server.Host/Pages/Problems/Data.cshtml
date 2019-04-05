@@ -78,23 +78,23 @@
                             <input type="hidden" asp-for="PostData.TestCaseId" value="@item.Metadata.Id" />
                             <div class="form-group">
                                 <label class="control-label">@SharedLocalizer["TimeLimit"]</label>
-                                <input class="form-control" asp-for="PostData.TimeLimit" value="@item.Metadata.TimeLimit" />
-                                <span asp-validation-for="PostData.TimeLimit" class="text-danger"></span>
+                                <input class="form-control" asp-for="PostData.TestCase.Metadata.TimeLimit" value="@item.Metadata.TimeLimit" />
+                                <span asp-validation-for="PostData.TestCase.Metadata.TimeLimit" class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <label class="control-label">@SharedLocalizer["MemoryLimit"]</label>
-                                <input class="form-control" asp-for="PostData.MemoryLimit" value="@item.Metadata.MemoryLimit" />
-                                <span asp-validation-for="PostData.MemoryLimit" class="text-danger"></span>
+                                <input class="form-control" asp-for="PostData.TestCase.Metadata.MemoryLimit" value="@item.Metadata.MemoryLimit" />
+                                <span asp-validation-for="PostData.TestCase.Metadata.MemoryLimit" class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <label class="control-label">@SharedLocalizer["Input"]</label>
-                                <textarea class="form-control" asp-for="PostData.Input"></textarea>
-                                <span asp-validation-for="PostData.Input" class="text-danger"></span>
+                                <textarea class="form-control" asp-for="PostData.TestCase.Input"></textarea>
+                                <span asp-validation-for="PostData.TestCase.Input" class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <label class="control-label">@SharedLocalizer["Output"]</label>
-                                <textarea class="form-control" asp-for="PostData.Output"></textarea>
-                                <span asp-validation-for="PostData.Output" class="text-danger"></span>
+                                <textarea class="form-control" asp-for="PostData.TestCase.Output"></textarea>
+                                <span asp-validation-for="PostData.TestCase.Output" class="text-danger"></span>
                             </div>
                         </form>
                     }
@@ -169,23 +169,23 @@
                             <input type="hidden" asp-for="PostData.TestCaseId" value="@item.Metadata.Id" />
                             <div class="form-group">
                                 <label class="control-label">@SharedLocalizer["TimeLimit"]</label>
-                                <input class="form-control" asp-for="PostData.TimeLimit" value="@item.Metadata.TimeLimit"/>
-                                <span asp-validation-for="PostData.TimeLimit" class="text-danger"></span>
+                                <input class="form-control" asp-for="PostData.TestCase.Metadata.TimeLimit" value="@item.Metadata.TimeLimit" />
+                                <span asp-validation-for="PostData.TestCase.Metadata.TimeLimit" class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <label class="control-label">@SharedLocalizer["MemoryLimit"]</label>
-                                <input class="form-control" asp-for="PostData.MemoryLimit" value="@item.Metadata.MemoryLimit" />
-                                <span asp-validation-for="PostData.MemoryLimit" class="text-danger"></span>
+                                <input class="form-control" asp-for="PostData.TestCase.Metadata.MemoryLimit" value="@item.Metadata.MemoryLimit" />
+                                <span asp-validation-for="PostData.TestCase.Metadata.MemoryLimit" class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <label class="control-label">@SharedLocalizer["Input"]</label>
-                                <textarea class="form-control"asp-for="PostData.Input"></textarea>
-                                <span asp-validation-for="PostData.Input" class="text-danger"></span>
+                                <textarea class="form-control" asp-for="PostData.TestCase.Input"></textarea>
+                                <span asp-validation-for="PostData.TestCase.Input" class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <label class="control-label">@SharedLocalizer["Output"]</label>
-                                <textarea class="form-control"asp-for="PostData.Output"></textarea>
-                                <span asp-validation-for="PostData.Output" class="text-danger"></span>
+                                <textarea class="form-control" asp-for="PostData.TestCase.Output"></textarea>
+                                <span asp-validation-for="PostData.TestCase.Output" class="text-danger"></span>
                             </div>
                         </form>
                     }

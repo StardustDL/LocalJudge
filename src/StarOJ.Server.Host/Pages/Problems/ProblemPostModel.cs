@@ -1,4 +1,6 @@
-﻿using StarOJ.Server.Host.APIClients;
+﻿using StarOJ.Core.Problems;
+using StarOJ.Server.API.Clients;
+using StarOJ.Server.API.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

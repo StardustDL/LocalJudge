@@ -1,10 +1,11 @@
-﻿using StarOJ.Server.Host.APIClients;
+﻿using StarOJ.Server.API.Clients;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Localization;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using StarOJ.Core.Judgers;
 
 namespace StarOJ.Server.Host.TagHelpers
 {

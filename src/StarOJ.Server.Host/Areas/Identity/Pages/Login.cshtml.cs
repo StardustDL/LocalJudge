@@ -9,7 +9,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using StarOJ.Server.Host.APIClients;
+using StarOJ.Server.API.Clients;
+using StarOJ.Core.Identity;
 
 namespace StarOJ.Server.Host.Areas.Identity.Pages
 {

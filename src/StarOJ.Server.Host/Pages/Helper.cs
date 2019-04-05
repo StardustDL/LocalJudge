@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using StarOJ.Server.Host.APIClients;
+using StarOJ.Core;
+using StarOJ.Core.Identity;
+using StarOJ.Core.Judgers;
+using StarOJ.Server.API.Clients;
 using System;
 using System.Collections.Generic;
 using System.Linq;

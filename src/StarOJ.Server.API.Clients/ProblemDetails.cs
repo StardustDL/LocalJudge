@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace StarOJ.Server.Judger.APIClients
+namespace StarOJ.Server.API.Clients
 {
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.13.27.0 (Newtonsoft.Json v11.0.0.0)")]
     public partial class ProblemDetails

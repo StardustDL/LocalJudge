@@ -4,11 +4,12 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using StarOJ.Server.Host.APIClients;
+using StarOJ.Server.API.Clients;
 using StarOJ.Server.Host.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using StarOJ.Core.Helpers;
 
 namespace StarOJ.Server.Host.Pages.Submissions
 {

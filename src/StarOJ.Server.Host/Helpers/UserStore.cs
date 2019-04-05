@@ -1,4 +1,4 @@
-﻿using StarOJ.Server.Host.APIClients;
+﻿using StarOJ.Server.API.Clients;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using StarOJ.Core.Identity;
 
 namespace StarOJ.Server.Host.Helpers
 {

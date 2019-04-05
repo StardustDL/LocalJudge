@@ -3,7 +3,7 @@ using StarOJ.Core;
 using StarOJ.Core.Helpers;
 using StarOJ.Core.Judgers;
 using StarOJ.Core.Submissions;
-using StarOJ.Server.Judger.APIClients;
+using StarOJ.Server.API.Clients;
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -31,7 +31,11 @@ namespace StarOJ.Server.Judger
 
         static IHttpClientFactory HttpClientFactory = null;
 
-        public static string ApiServer { get; set; }
+        public static string ApiServer
+        {
+            get => API.Clients.BaseClient.Url;
+            set => API.Clients.BaseClient.Url = value;
+        }
 
         static void Main(string[] args)
         {
@@ -108,7 +112,7 @@ namespace StarOJ.Server.Judger
             {
                 JudgeSubmissionAsync(id).Wait();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"Judging Failed for submission: {id}.");
                 Console.WriteLine(ex.ToString());

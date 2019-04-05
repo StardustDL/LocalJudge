@@ -5,9 +5,9 @@ using System.Text;
 
 namespace StarOJ.Core.Helpers
 {
-    public class ProgrammingLanguageHelper
+    public static class ProgrammingLanguageHelper
     {
-        public static readonly Dictionary<ProgrammingLanguage, string> Extends = new Dictionary<ProgrammingLanguage, string>
+        public static readonly IReadOnlyDictionary<ProgrammingLanguage, string> Extends = new Dictionary<ProgrammingLanguage, string>
         {
             [ProgrammingLanguage.C] = "c",
             [ProgrammingLanguage.Cpp] = "cpp",

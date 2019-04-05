@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace StarOJ.Server.Host.APIClients
+namespace StarOJ.Server.API.Clients
 {
     public abstract class BaseClient
     {
-        public string BaseUrl { get => Program.ApiServer; }
+        public static string Url { get; set; }
+
+        public string BaseUrl { get => Url; }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using StarOJ.Server.Host.APIClients;
+using StarOJ.Server.API.Clients;
 using StarOJ.Server.Host.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

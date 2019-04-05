@@ -16,7 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\StarOJ.Core.Judgers\StarOJ.Core.Judgers.csproj" />
+    <ProjectReference Include="..\StarOJ.Core.Models\StarOJ.Core.Models.csproj" />
     <ProjectReference Include="..\StarOJ.Core\StarOJ.Core.csproj" />
+    <ProjectReference Include="..\StarOJ.Data.Provider\StarOJ.Data.Provider.csproj" />
   </ItemGroup>
 
   <ItemGroup>

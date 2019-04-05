@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@inject SignInManager<APIClients.UserMetadata> SignInManager
-@inject UserManager<APIClients.UserMetadata> UserManager
+@using StarOJ.Core.Identity
+@inject SignInManager<UserMetadata> SignInManager
+@inject UserManager<UserMetadata> UserManager
 @inject IHtmlLocalizer<SharedResource> SharedLocalizer
 
 <ul class="navbar-nav">

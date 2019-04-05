@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using StarOJ.Server.Host.APIClients;
+using StarOJ.Core.Identity;
+using StarOJ.Core.Problems;
+using StarOJ.Server.API.Clients;
 
 namespace StarOJ.Server.Host.Pages.Problems
 {

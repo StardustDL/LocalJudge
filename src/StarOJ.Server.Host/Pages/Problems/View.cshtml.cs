@@ -4,31 +4,22 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using StarOJ.Server.Host.APIClients;
+using StarOJ.Server.API.Clients;
 using StarOJ.Server.Host.Helpers;
 using Markdig;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using StarOJ.Core.Identity;
+using StarOJ.Core.Problems;
+using StarOJ.Server.API.Models;
+using StarOJ.Core.Judgers;
 
 namespace StarOJ.Server.Host.Pages.Problems
 {
     public class ViewModel : PageModel
     {
-        public class TestCaseData
-        {
-            public TestCaseMetadata Metadata { get; set; }
-
-            public double TimeLimit { get => Metadata.TimeLimit.TotalSeconds; }
-
-            public long MemoryLimit { get => Metadata.MemoryLimit / 1024 / 1024; }
-
-            public string Input { get; set; }
-
-            public string Output { get; set; }
-        }
-
         private readonly IHttpClientFactory clientFactory;
         private readonly UserManager<UserMetadata> _userManager;
         private readonly IAuthorizationService _authorizationService;

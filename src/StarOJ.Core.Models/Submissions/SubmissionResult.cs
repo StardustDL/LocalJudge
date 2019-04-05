@@ -1,11 +1,13 @@
 ﻿using StarOJ.Core.Judgers;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace StarOJ.Core.Submissions
 {
     public class SubmissionResult
     {
+        [Required]
         public JudgeState State { get; set; }
 
         public List<JudgeResult> Samples { get; set; }

@@ -18,7 +18,11 @@ namespace StarOJ.Server.Host
 
         public static uint HttpsPort { get; set; }
 
-        public static string ApiServer { get; set; }
+        public static string ApiServer
+        {
+            get => API.Clients.BaseClient.Url;
+            set => API.Clients.BaseClient.Url = value;
+        }
 
         public static void Main(string[] args)
         {

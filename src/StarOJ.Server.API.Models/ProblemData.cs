@@ -9,8 +9,8 @@ namespace StarOJ.Server.API.Models
 
         public ProblemDescription Description { get; set; }
 
-        public List<TestCaseData> Tests { get; set; }
+        public IList<TestCaseData> Tests { get; set; }
 
-        public List<TestCaseData> Samples { get; set; }
+        public IList<TestCaseData> Samples { get; set; }
     }
 }

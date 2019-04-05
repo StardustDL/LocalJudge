@@ -13,5 +13,11 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
     <PackageReference Include="System.CommandLine.Experimental" Version="0.2.0-alpha.19174.3" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\StarOJ.Core.Models\StarOJ.Core.Models.csproj" />
+    <ProjectReference Include="..\StarOJ.Server.API.Clients\StarOJ.Server.API.Clients.csproj" />
+    <ProjectReference Include="..\StarOJ.Server.API.Models\StarOJ.Server.API.Models.csproj" />
+  </ItemGroup>
 
 </Project>

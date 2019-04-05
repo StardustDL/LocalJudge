@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using StarOJ.Server.Host.APIClients;
+using StarOJ.Server.API.Clients;
 using StarOJ.Server.Host.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -16,6 +16,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Identity;
+using StarOJ.Core.Identity;
 
 namespace StarOJ.Server.Host
 {

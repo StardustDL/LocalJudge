@@ -9,7 +9,7 @@
 }
 
 @section header{
-    @if (Model.Submission.Result.State == APIClients.JudgeState.Compiling || Model.Submission.Result.State == APIClients.JudgeState.Judging || Model.Submission.Result.State == APIClients.JudgeState.Pending)
+    @if (Model.Submission.Result.State == StarOJ.Core.Judgers.JudgeState.Compiling || Model.Submission.Result.State == StarOJ.Core.Judgers.JudgeState.Judging || Model.Submission.Result.State == StarOJ.Core.Judgers.JudgeState.Pending)
     {
         <meta http-equiv="refresh" content="3">// Auto refresh
     }
@@ -147,7 +147,7 @@
             </dd>
         </dl>
         <br />
-        @if (Model.Submission.Result.State == APIClients.JudgeState.Compiling || Model.Submission.Result.State == APIClients.JudgeState.Judging || Model.Submission.Result.State == APIClients.JudgeState.Pending)
+        @if (Model.Submission.Result.State == StarOJ.Core.Judgers.JudgeState.Compiling || Model.Submission.Result.State == StarOJ.Core.Judgers.JudgeState.Judging || Model.Submission.Result.State == StarOJ.Core.Judgers.JudgeState.Pending)
         {
             @if (Model.Submission.Result.Samples?.Count > 0)
             {

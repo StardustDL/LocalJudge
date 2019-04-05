@@ -5,12 +5,13 @@ using System.Linq;
 using System.Net.Http;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using StarOJ.Server.Host.APIClients;
+using StarOJ.Server.API.Clients;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using StarOJ.Core.Identity;
 
 namespace StarOJ.Server.Host.Areas.Identity.Pages.Account
 {

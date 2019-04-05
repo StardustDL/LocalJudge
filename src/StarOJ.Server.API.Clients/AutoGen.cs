@@ -11,12 +11,12 @@ using StarOJ.Core.Problems;
 using StarOJ.Core.Submissions;
 using StarOJ.Server.API.Models;
 
-namespace StarOJ.Server.Judger.APIClients
+namespace StarOJ.Server.API.Clients
 {
     #pragma warning disable
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "12.0.18.0 (NJsonSchema v9.13.27.0 (Newtonsoft.Json v11.0.0.0))")]
-    public partial class ProblemsClient : StarOJ.Server.Judger.APIClients.BaseClient
+    public partial class ProblemsClient : StarOJ.Server.API.Clients.BaseClient
     {
         private System.Net.Http.HttpClient _httpClient;
         private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
@@ -2447,7 +2447,7 @@ namespace StarOJ.Server.Judger.APIClients
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "12.0.18.0 (NJsonSchema v9.13.27.0 (Newtonsoft.Json v11.0.0.0))")]
-    public partial class RolesClient : StarOJ.Server.Judger.APIClients.BaseClient
+    public partial class RolesClient : StarOJ.Server.API.Clients.BaseClient
     {
         private System.Net.Http.HttpClient _httpClient;
         private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
@@ -3050,7 +3050,7 @@ namespace StarOJ.Server.Judger.APIClients
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "12.0.18.0 (NJsonSchema v9.13.27.0 (Newtonsoft.Json v11.0.0.0))")]
-    public partial class SubmissionsClient : StarOJ.Server.Judger.APIClients.BaseClient
+    public partial class SubmissionsClient : StarOJ.Server.API.Clients.BaseClient
     {
         private System.Net.Http.HttpClient _httpClient;
         private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
@@ -3740,7 +3740,7 @@ namespace StarOJ.Server.Judger.APIClients
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "12.0.18.0 (NJsonSchema v9.13.27.0 (Newtonsoft.Json v11.0.0.0))")]
-    public partial class UsersClient : StarOJ.Server.Judger.APIClients.BaseClient
+    public partial class UsersClient : StarOJ.Server.API.Clients.BaseClient
     {
         private System.Net.Http.HttpClient _httpClient;
         private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
@@ -4343,7 +4343,7 @@ namespace StarOJ.Server.Judger.APIClients
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "12.0.18.0 (NJsonSchema v9.13.27.0 (Newtonsoft.Json v11.0.0.0))")]
-    public partial class WorkspaceClient : StarOJ.Server.Judger.APIClients.BaseClient
+    public partial class WorkspaceClient : StarOJ.Server.API.Clients.BaseClient
     {
         private System.Net.Http.HttpClient _httpClient;
         private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;

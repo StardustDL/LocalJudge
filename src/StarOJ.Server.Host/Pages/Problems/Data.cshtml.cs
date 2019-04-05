@@ -4,12 +4,15 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using StarOJ.Server.Host.APIClients;
+using StarOJ.Server.API.Clients;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Authorization;
 using StarOJ.Server.Host.Helpers;
 using System.ComponentModel.DataAnnotations;
+using StarOJ.Core;
+using StarOJ.Core.Problems;
+using StarOJ.Server.API.Models;
 
 namespace StarOJ.Server.Host.Pages.Problems
 {
@@ -34,19 +37,7 @@ namespace StarOJ.Server.Host.Pages.Problems
             [Required]
             public string TestCaseId { get; set; }
 
-            [Required]
-            [DataType(DataType.Duration)]
-            public System.TimeSpan TimeLimit { get; set; }
-
-            [Required]
-            [Range(TagHelpers.MemoryDisplayTagHelper.MB, 512 * TagHelpers.MemoryDisplayTagHelper.GB)]
-            public long MemoryLimit { get; set; }
-
-            [DataType(DataType.MultilineText)]
-            public string Input { get; set; }
-
-            [DataType(DataType.MultilineText)]
-            public string Output { get; set; }
+            public TestCaseData TestCase { get; set; }
         }
 
         private readonly IHttpClientFactory clientFactory;
@@ -274,16 +265,7 @@ namespace StarOJ.Server.Host.Pages.Problems
             var client = new ProblemsClient(httpclient);
             try
             {
-                await client.UpdateTestAsync(PostData.ProblemId, PostData.TestCaseId, new TestCaseData
-                {
-                    Metadata = new TestCaseMetadata
-                    {
-                        TimeLimit = PostData.TimeLimit,
-                        MemoryLimit = PostData.MemoryLimit
-                    },
-                    Input = PostData.Input,
-                    Output = PostData.Output
-                });
+                await client.UpdateTestAsync(PostData.ProblemId, PostData.TestCaseId, PostData.TestCase);
                 return RedirectToPage(new { id = PostData.ProblemId });
             }
             catch
@@ -310,16 +292,7 @@ namespace StarOJ.Server.Host.Pages.Problems
             var client = new ProblemsClient(httpclient);
             try
             {
-                await client.UpdateSampleAsync(PostData.ProblemId, PostData.TestCaseId, new TestCaseData
-                {
-                    Metadata = new TestCaseMetadata
-                    {
-                        TimeLimit = PostData.TimeLimit,
-                        MemoryLimit = PostData.MemoryLimit
-                    },
-                    Input = PostData.Input,
-                    Output = PostData.Output
-                });
+                await client.UpdateSampleAsync(PostData.ProblemId, PostData.TestCaseId, PostData.TestCase);
                 return RedirectToPage(new { id = PostData.ProblemId });
             }
             catch
