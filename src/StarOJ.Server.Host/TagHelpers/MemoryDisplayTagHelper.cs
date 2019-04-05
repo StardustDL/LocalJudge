@@ -5,7 +5,7 @@ namespace StarOJ.Server.Host.TagHelpers
     [HtmlTargetElement("memory-display")]
     public class MemoryDisplayTagHelper : TagHelper
     {
-        const long KB = 1024, MB = 1024 * 1024, GB = 1024 * 1024 * 1024;
+        public const long KB = 1024, MB = 1024 * 1024, GB = 1024 * 1024 * 1024;
 
         public long? Value { get; set; }
 

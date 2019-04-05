@@ -43,6 +43,11 @@ namespace StarOJ.Server.Host.Pages.Problems
             _authorizationService = authorizationService;
         }
 
+        public async Task<bool> GetModifyAuthorization()
+        {
+            return (await _authorizationService.AuthorizeAsync(User, Authorizations.Administrator)).Succeeded;
+        }
+
         [BindProperty]
         public ProblemPostModel PostData { get; set; }
 
@@ -217,5 +222,52 @@ namespace StarOJ.Server.Host.Pages.Problems
             }
         }
 
+        public async Task<IActionResult> OnPostEditDescriptionAsync()
+        {
+            if ((await GetModifyAuthorization()) == false)
+            {
+                return Forbid();
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var httpclient = clientFactory.CreateClient();
+            var client = new ProblemsClient(httpclient);
+            try
+            {
+                await client.UpdateDescriptionAsync(PostData.Id, PostData.Description);
+                return RedirectToPage(new { id = PostData.Id });
+            }
+            catch
+            {
+                return NotFound();
+            }
+        }
+
+        public async Task<IActionResult> OnPostEditMetadataAsync()
+        {
+            if ((await GetModifyAuthorization()) == false)
+            {
+                return Forbid();
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var httpclient = clientFactory.CreateClient();
+            var client = new ProblemsClient(httpclient);
+            try
+            {
+                await client.UpdateMetadataAsync(PostData.Id, PostData.Metadata);
+                return RedirectToPage(new { id = PostData.Id });
+            }
+            catch
+            {
+                return NotFound();
+            }
+        }
     }
 }

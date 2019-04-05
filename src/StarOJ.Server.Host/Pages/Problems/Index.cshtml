@@ -59,7 +59,7 @@
                         @if ((await AuthorizationService.AuthorizeAsync(User, Helpers.Authorizations.Administrator)).Succeeded)
                         {
                             <form method="post" style="margin-left:0px">
-                                <input type="text" asp-for="PostData.Id" style="display:none" value="@item.Metadata.Id" />
+                                <input type="hidden" asp-for="PostData.Id"  value="@item.Metadata.Id" />
                                 <button type="submit" asp-page-handler="Delete" class="btn btn-sm btn-outline-danger">
                                     <i class="fa fa-trash"></i>
                                 </button>

@@ -135,6 +135,9 @@
   <data name="Description" xml:space="preserve">
     <value>描述</value>
   </data>
+  <data name="Edit" xml:space="preserve">
+    <value>编辑</value>
+  </data>
   <data name="Hint" xml:space="preserve">
     <value>提示</value>
   </data>

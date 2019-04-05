@@ -2,9 +2,9 @@
 
 StarOJ is an Online-Judge written in C#.
 
-Now, StarOJ only supports file-system provider.
+Now, StarOJ supports both SqlServer provider (recommended) and file-system provider.
 
-StarOJ can use local filesystem to bring an easy and friendly interface for problem judging.
+StarOJ can use multi-providers to bring an easy and friendly interface for problem judging.
 
 - Easy to deploy
 - Easy to run
@@ -16,7 +16,7 @@ StarOJ can use local filesystem to bring an easy and friendly interface for prob
 This project contains three applications:
 
 - `StarOJ.Server.Judger`: Judger
-- `StarOJ.Server.API`: API Server, provide interface to access StarOJ's workspace.
+- `StarOJ.Server.API`: API Server, provide services and interfaces to access StarOJ's workspace.
 - `StarOJ.Server.Host`: Host Server, use API Server to provide web application for users.
 
 The judger and the API server must be in the same host, because they share the same StarOJ's workspace, and use named-pipeline to communicate.
@@ -31,6 +31,8 @@ You can see the command-line options of the applications above in `server-start.
 5. Open StarOJ in browser and switch to `Admin` page.
 6. Click `Initialize` button.
 7. Enjoy it!
+
+The root user is `Admin` with default password `admin`.
 
 To generate problems, we recommend [gop](https://github.com/StardustDL/generator-oj-problem). It has `StarOJ` in its target platform list.
 

@@ -82,7 +82,7 @@ namespace StarOJ.Server.Host.Pages.Submissions
             try
             {
                 await client.DeleteAsync(PostData.Id);
-                return RedirectToPage("/Submissions/Index");
+                return RedirectToPage("./Index");
             }
             catch
             {
@@ -105,12 +105,14 @@ namespace StarOJ.Server.Host.Pages.Submissions
             try
             {
                 await client.RejudgeAsync(PostData.Id);
-                return RedirectToPage("./View",new { id = PostData.Id });
+                return RedirectToPage(new { id = PostData.Id });
             }
             catch
             {
                 return NotFound();
             }
         }
+
+
     }
 }

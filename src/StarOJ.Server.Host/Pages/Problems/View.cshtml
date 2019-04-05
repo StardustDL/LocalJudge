@@ -2,10 +2,11 @@
 @model StarOJ.Server.Host.Pages.Problems.ViewModel
 @inject IViewLocalizer Localizer
 @inject IHtmlLocalizer<SharedResource> SharedLocalizer
-@inject IAuthorizationService AuthorizationService
 @{
     ViewData["Title"] = Model.Problem.Metadata.Name;
     ViewData["Id"] = "Problems";
+
+    bool canModify = await Model.GetModifyAuthorization();
 }
 
 @section header{
@@ -112,11 +113,36 @@
                 @Html.Raw(Markdig.Markdown.ToHtml(Model.Problem.Description.Hint, Model.MarkdownBuilder.Build()))
             </div>
         </div>
+
+        @if (canModify)
+        {
+            <div class="card border-0">
+                <div class="card-header border-0">
+                    <h2>
+                        <a class="card-link" data-toggle="collapse" href="#divEdit">
+                            @SharedLocalizer["Edit"]
+                        </a>
+                    </h2>
+                </div>
+                <div id="divEdit" class="collapse card-content">
+                    Edit...
+                </div>
+            </div>
+        }
     </div>
     <div class="col-3">
         <dl>
             <dt style="float:left; min-width:30px"><i class="fa fa-user"></i></dt>
-            <dd>@(Model.Problem.User?.Name ?? Model.Problem.Metadata.UserId)</dd>
+            <dd>
+                @if (Model.Problem.User == null)
+                {
+                    <text>Model.Problem.Metadata.UserId</text>
+                }
+                else
+                {
+                    <a asp-page="/Account/Index" asp-area="Identity" asp-route-id="@Model.Problem.User.Id">@Model.Problem.User.Name</a>
+                }
+            </dd>
             <dt style="float:left; min-width:30px"><i class="fa fa-map-marker"></i></dt>
             <dd>@Html.DisplayFor(model => model.Problem.Metadata.Source)</dd>
 
@@ -125,10 +151,10 @@
                     <a asp-page="./Data" asp-route-id="@Model.Problem.Metadata.Id" class="btn btn-outline-primary">
                         <i class="fa fa-database"></i>
                     </a>
-                    @if ((await AuthorizationService.AuthorizeAsync(User, Helpers.Authorizations.Administrator)).Succeeded)
+                    @if (canModify)
                     {
                         <form method="post" style="margin-left:10px">
-                            <input type="text" asp-for="PostData.Id" style="display:none" value="@Model.Problem.Metadata.Id" />
+                            <input type="hidden" asp-for="PostData.Id" value="@Model.Problem.Metadata.Id" />
                             <button type="submit" asp-page-handler="Delete" class="btn btn-outline-danger">
                                 <i class="fa fa-trash"></i>
                             </button>
@@ -234,11 +260,11 @@
         </select>
 
         <form method="post" style="margin-left:20px;">
-            <input type="text" asp-for="PostData.Id" style="display:none" value="@Model.Problem.Metadata.Id" />
-            <input type="text" asp-for="PostData.SubmitData.ProblemId" style="display:none" value="@Model.Problem.Metadata.Id" />
-            <input type="text" asp-for="PostData.SubmitData.UserId" style="display:none" value="@Model.CurrentUser.Id" />
-            <input type="text" asp-for="PostData.SubmitData.Language" id="formLang" style="display:none" />
-            <textarea type="text" asp-for="PostData.SubmitData.Code" id="formCode" style="display:none"></textarea>
+            <input type="hidden" asp-for="PostData.Id" value="@Model.Problem.Metadata.Id" />
+            <input type="hidden" asp-for="PostData.SubmitData.ProblemId" value="@Model.Problem.Metadata.Id" />
+            <input type="hidden" asp-for="PostData.SubmitData.UserId" value="@Model.CurrentUser.Id" />
+            <input type="hidden" asp-for="PostData.SubmitData.Language" id="formLang" />
+            <textarea style="display:none" asp-for="PostData.SubmitData.Code" id="formCode"></textarea>
             <input type="submit" value="@Localizer["Submit"]" asp-page-handler="Submit" class="btn btn-primary" style="width:100px" />
         </form>
     </div>
@@ -255,8 +281,7 @@
         tex2jax: {
         inlineMath: [ ['$','$'], ["\\(","\\)"] ],
         displayMath: [ ['$$','$$'], ["\\[","\\]"] ]
-        },
-        jax: ["input/TeX","output/SVG"]
+        }
         });
     </script>
 

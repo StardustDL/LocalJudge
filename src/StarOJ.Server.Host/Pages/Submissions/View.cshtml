@@ -39,8 +39,8 @@
         <div class="row" style="margin-left:0px">
             <h2 style="display:inline">@SharedLocalizer["Code"]</h2>
             <form method="post" style="margin-left:10px">
-                <input type="text" asp-for="PostData.Language" style="display:none" value="@Model.Submission.Metadata.Language" />
-                <input type="text" asp-for="PostData.Id" style="display:none" value="@Model.Submission.Metadata.Id" />
+                <input type="hidden" asp-for="PostData.Language"  value="@Model.Submission.Metadata.Language" />
+                <input type="hidden" asp-for="PostData.Id"  value="@Model.Submission.Metadata.Id" />
                 <button type="submit" asp-page-handler="DownloadCode" class="btn btn-sm btn-outline-primary">
                     <i class="fa fa-download"></i>
                 </button>
@@ -131,13 +131,13 @@
                     @if ((await AuthorizationService.AuthorizeAsync(User, Helpers.Authorizations.Administrator)).Succeeded)
                     {
                         <form method="post" style="margin-left:10px">
-                            <input type="text" asp-for="PostData.Id" style="display:none" value="@Model.Submission.Metadata.Id" />
+                            <input type="hidden" asp-for="PostData.Id"  value="@Model.Submission.Metadata.Id" />
                             <button type="submit" asp-page-handler="Rejudge" class="btn btn-outline-secondary">
                                 <i class="fa fa-redo"></i>
                             </button>
                         </form>
                         <form method="post" style="margin-left:10px">
-                            <input type="text" asp-for="PostData.Id" style="display:none" value="@Model.Submission.Metadata.Id" />
+                            <input type="hidden" asp-for="PostData.Id"  value="@Model.Submission.Metadata.Id" />
                             <button type="submit" asp-page-handler="Delete" class="btn btn-outline-danger">
                                 <i class="fa fa-trash"></i>
                             </button>

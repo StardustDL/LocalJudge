@@ -61,6 +61,20 @@ namespace StarOJ.Server.API.Controllers
                 return NotFound();
         }
 
+        [HttpPut("{id}/description")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult> UpdateDescription(string id, [FromBody] ProblemDescription data)
+        {
+            var res = await _workspace.Problems.Get(id);
+            if (res == null)
+                return NotFound();
+
+            await res.SetDescription(data);
+            return Accepted();
+        }
+
         [HttpGet("{id}/samples")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -68,16 +82,40 @@ namespace StarOJ.Server.API.Controllers
         public async Task<ActionResult<IEnumerable<TestCaseMetadata>>> GetSamples(string id)
         {
             var res = await _workspace.Problems.Get(id);
-            if (res != null){
+            if (res != null)
+            {
                 var all = await res.Samples.GetAll();
                 List<TestCaseMetadata> ans = new List<TestCaseMetadata>();
-                foreach(var v in all){
+                foreach (var v in all)
+                {
                     ans.Add(await v.GetMetadata());
                 }
                 return Ok(ans);
             }
             else
                 return NotFound();
+        }
+
+        [HttpPut("{id}/samples/clear")]
+        public async Task ClearSample(string id)
+        {
+            var res = await _workspace.Problems.Get(id);
+            if (res == null) return;
+            await res.Samples.Clear();
+        }
+
+        [HttpPost("{id}/samples")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<TestCaseMetadata>> AddSample(string id, [FromBody] TestCaseData data)
+        {
+            var res = await _workspace.Problems.Get(id);
+            if (res == null) return NotFound();
+            var item = await res.Samples.Create(data.Metadata);
+            await item.SetInput(data.Input);
+            await item.SetOutput(data.Output);
+            return Accepted();
         }
 
         [HttpGet("{id}/samples/{tid}")]
@@ -91,6 +129,30 @@ namespace StarOJ.Server.API.Controllers
                 return Ok(await (await res.Samples.Get(tid)).GetMetadata());
             else
                 return NotFound();
+        }
+
+        [HttpDelete("{id}/samples/{tid}")]
+        public async Task DeleteSample(string id, string tid)
+        {
+            var res = await _workspace.Problems.Get(id);
+            if (res == null) return;
+            await res.Samples.Delete(tid);
+        }
+
+        [HttpPut("{id}/samples/{tid}")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<TestCaseMetadata>> UpdateSample(string id, string tid, [FromBody] TestCaseData data)
+        {
+            var res = await _workspace.Problems.Get(id);
+            if (res == null) return NotFound();
+            var item = await res.Samples.Get(tid);
+            if (item == null) return NotFound();
+            await item.SetMetadata(data.Metadata);
+            await item.SetInput(data.Input);
+            await item.SetOutput(data.Output);
+            return Accepted();
         }
 
         [HttpGet("{id}/samples/{tid}/input/{num}/preview")]
@@ -156,16 +218,40 @@ namespace StarOJ.Server.API.Controllers
         public async Task<ActionResult<IEnumerable<TestCaseMetadata>>> GetTests(string id)
         {
             var res = await _workspace.Problems.Get(id);
-            if (res != null){
+            if (res != null)
+            {
                 var all = await res.Tests.GetAll();
                 List<TestCaseMetadata> ans = new List<TestCaseMetadata>();
-                foreach(var v in all){
+                foreach (var v in all)
+                {
                     ans.Add(await v.GetMetadata());
                 }
                 return Ok(ans);
             }
             else
                 return NotFound();
+        }
+
+        [HttpPut("{id}/tests/clear")]
+        public async Task ClearTest(string id)
+        {
+            var res = await _workspace.Problems.Get(id);
+            if (res == null) return;
+            await res.Tests.Clear();
+        }
+
+        [HttpPost("{id}/tests")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<TestCaseMetadata>> AddTest(string id, [FromBody] TestCaseData data)
+        {
+            var res = await _workspace.Problems.Get(id);
+            if (res == null) return NotFound();
+            var item = await res.Tests.Create(data.Metadata);
+            await item.SetInput(data.Input);
+            await item.SetOutput(data.Output);
+            return Accepted();
         }
 
         [HttpGet("{id}/tests/{tid}")]
@@ -179,6 +265,30 @@ namespace StarOJ.Server.API.Controllers
                 return Ok(await (await res.Tests.Get(tid)).GetMetadata());
             else
                 return NotFound();
+        }
+
+        [HttpDelete("{id}/tests/{tid}")]
+        public async Task DeleteTest(string id, string tid)
+        {
+            var res = await _workspace.Problems.Get(id);
+            if (res == null) return;
+            await res.Tests.Delete(tid);
+        }
+
+        [HttpPut("{id}/tests/{tid}")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<TestCaseMetadata>> UpdateTest(string id, string tid, [FromBody] TestCaseData data)
+        {
+            var res = await _workspace.Problems.Get(id);
+            if (res == null) return NotFound();
+            var item = await res.Tests.Get(tid);
+            if (item == null) return NotFound();
+            await item.SetMetadata(data.Metadata);
+            await item.SetInput(data.Input);
+            await item.SetOutput(data.Output);
+            return Accepted();
         }
 
         [HttpGet("{id}/tests/{tid}/input/{num}/preview")]
@@ -243,18 +353,15 @@ namespace StarOJ.Server.API.Controllers
             return _workspace.Problems.Delete(id);
         }
 
-        [HttpPut]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesDefaultResponseType]
         public async Task<ActionResult<ProblemMetadata>> Create([FromBody] ProblemData data)
         {
             var res = await _workspace.Problems.Create(data.Metadata);
-            if (res == null)
-                return Conflict();
 
             await res.SetDescription(data.Description);
-            foreach(var v in data.Samples)
+            foreach (var v in data.Samples)
             {
                 var item = await res.Samples.Create(v.Metadata);
                 await item.SetInput(v.Input);
@@ -269,6 +376,20 @@ namespace StarOJ.Server.API.Controllers
             }
 
             return Created($"problems/{res.Id}", await res.GetMetadata());
+        }
+
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult> UpdateMetadata(string id, [FromBody] ProblemMetadata data)
+        {
+            var res = await _workspace.Problems.Get(id);
+            if (res == null)
+                return NotFound();
+
+            await res.SetMetadata(data);
+            return Accepted();
         }
     }
 }

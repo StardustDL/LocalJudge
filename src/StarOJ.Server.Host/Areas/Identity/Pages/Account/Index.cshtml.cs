@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace StarOJ.Server.Host.Areas.Identity.Pages.Account
 {
-    [Authorize]
     public partial class IndexModel : PageModel
     {
         private readonly UserManager<UserMetadata> _userManager;
