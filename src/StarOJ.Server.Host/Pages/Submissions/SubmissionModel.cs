@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -20,6 +21,8 @@ namespace StarOJ.Server.Host.Pages.Submissions
 
         public UserMetadata User { get; set; }
 
+        public string Code { get; set; }
+
         public static async Task<SubmissionModel> GetAsync(SubmissionMetadata metadata, HttpClient client)
         {
             var res = new SubmissionModel
@@ -37,6 +40,17 @@ namespace StarOJ.Server.Host.Pages.Submissions
                 {
                     State = JudgeState.Pending
                 };
+            }
+            try
+            {
+                var scli = new SubmissionsClient(client);
+                using (var file = await scli.GetCodeAsync(metadata.Id))
+                using (var sr = new StreamReader(file.Stream))
+                    res.Code = await sr.ReadToEndAsync();
+            }
+            catch
+            {
+                res.Code = "<Loading error>.";
             }
             try
             {

@@ -39,9 +39,6 @@ namespace StarOJ.Server.API.Controllers
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesDefaultResponseType]
         public async Task<ActionResult<SubmissionMetadata>> Submit([FromBody] SubmitData data)
         {
             if (await _workspace.Problems.Has(data.ProblemId) == false)
@@ -50,7 +47,6 @@ namespace StarOJ.Server.API.Controllers
             if (await _workspace.Users.Has(data.UserId) == false)
                 return NotFound();
 
-            if (data.Code == null) data.Code = string.Empty;
             var meta = new SubmissionMetadata
             {
                 Id = Guid.NewGuid().ToString(),
@@ -59,12 +55,21 @@ namespace StarOJ.Server.API.Controllers
                 Language = data.Language,
                 Time = DateTimeOffset.Now,
                 CodeLength = (uint)Encoding.UTF8.GetByteCount(data.Code),
-                Code = data.Code,
             };
             var sub = await _workspace.Submissions.Create(meta);
             if (sub == null) return Forbid();
             try
             {
+                if(data.CodeFile != null)
+                {
+                    using (var s = data.CodeFile.OpenReadStream())
+                        await sub.SetCode(s);
+                }
+                else
+                {
+                    using (var ms = TextIO.ToStream(data.Code ?? ""))
+                        await sub.SetCode(ms);
+                }
                 SendJudgeRequest(sub.Id);
                 return Created($"submissions/{meta.Id}", await sub.GetMetadata());
             }
@@ -88,9 +93,6 @@ namespace StarOJ.Server.API.Controllers
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesDefaultResponseType]
         public async Task<ActionResult<SubmissionMetadata>> Get(string id)
         {
             var res = await (await _workspace.Submissions.Get(id))?.GetMetadata();
@@ -102,9 +104,6 @@ namespace StarOJ.Server.API.Controllers
 
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesDefaultResponseType]
         public async Task<ActionResult> Rejudge(string id)
         {
             var res = await _workspace.Submissions.Get(id);
@@ -126,9 +125,6 @@ namespace StarOJ.Server.API.Controllers
         }
 
         [HttpGet("{id}/result")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesDefaultResponseType]
         public async Task<ActionResult<SubmissionResult>> GetResult(string id)
         {
             var res = await(await _workspace.Submissions.Get(id))?.GetResult();
@@ -140,8 +136,6 @@ namespace StarOJ.Server.API.Controllers
 
         [HttpPut("{id}/result")]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesDefaultResponseType]
         public async Task<ActionResult> SetResult(string id,[FromBody] SubmissionResult value)
         {
             var res = await _workspace.Submissions.Get(id);
@@ -152,6 +146,16 @@ namespace StarOJ.Server.API.Controllers
             }
             else
                 return NotFound();
+        }
+
+        [HttpGet("{id}/code")]
+        public async Task<ActionResult> GetCode(string id)
+        {
+            var res = await _workspace.Submissions.Get(id);
+            if (res == null) return NotFound();
+            var code = await res.GetCode();
+            var lang = (await res.GetMetadata()).Language;
+            return File(code, "text/plain", $"{id}.{ProgrammingLanguageHelper.Extends[lang]}");
         }
 
         [HttpDelete("{id}")]

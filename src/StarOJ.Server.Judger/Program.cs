@@ -161,7 +161,10 @@ namespace StarOJ.Server.Judger
                     {
                         var lang = Configs[submission.Language];
 
-                        await TextIO.WriteAllInUTF8Async(codePath, submission.Code);
+                        var code = await scli.GetCodeAsync(submission.Id);
+
+                        using (var fs = File.Open(codePath, FileMode.Create))
+                            await code.Stream.CopyToAsync(fs);
 
                         CompileResult compileResult = null;
 
@@ -205,8 +208,10 @@ namespace StarOJ.Server.Judger
                             {
                                 var casemdata = await pcli.GetSampleAsync(problem.Id, item.Id);
                                 JudgeResult res = null;
-                                using (var input = new StringReader(await pcli.GetSampleInputAsync(problem.Id, item.Id)))
-                                using (var output = new StringReader(await pcli.GetSampleOutputAsync(problem.Id, item.Id)))
+                                using (var fin = await pcli.GetSampleInputAsync(problem.Id, item.Id))
+                                using (var fout = await pcli.GetSampleOutputAsync(problem.Id, item.Id))
+                                using (var input = new StreamReader(fin.Stream))
+                                using (var output = new StreamReader(fout.Stream))
                                     res = Core.Judgers.Judger.Judge(casemdata.Id, lang.RunCommand.Resolve(vars), rootDir, casemdata.TimeLimit, casemdata.MemoryLimit, input, output, comparer);
                                 result.Samples.Add(res);
                             }
@@ -216,8 +221,10 @@ namespace StarOJ.Server.Judger
                             {
                                 var casemdata = await pcli.GetTestAsync(problem.Id, item.Id);
                                 JudgeResult res = null;
-                                using (var input = new StringReader(await pcli.GetTestInputAsync(problem.Id, item.Id)))
-                                using (var output = new StringReader(await pcli.GetTestOutputAsync(problem.Id, item.Id)))
+                                using (var fin = await pcli.GetTestInputAsync(problem.Id, item.Id))
+                                using (var fout = await pcli.GetTestOutputAsync(problem.Id, item.Id))
+                                using (var input = new StreamReader(fin.Stream))
+                                using (var output = new StreamReader(fout.Stream))
                                     res = Core.Judgers.Judger.Judge(casemdata.Id, lang.RunCommand.Resolve(vars), rootDir, casemdata.TimeLimit, casemdata.MemoryLimit, input, output, comparer);
                                 result.Tests.Add(res);
                             }

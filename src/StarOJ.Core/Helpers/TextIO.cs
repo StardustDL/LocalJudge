@@ -10,6 +10,11 @@ namespace StarOJ.Core.Helpers
     {
         public static readonly Encoding UTF8WithoutBOM = new UTF8Encoding(false);
 
+        public static Stream ToStream(string str)
+        {
+            return new MemoryStream(Encoding.UTF8.GetBytes(str));
+        }
+
         public static DataPreview GetPreviewInUTF8(string path, int maxLength)
         {
             using (var fs = File.OpenRead(path))

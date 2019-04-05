@@ -60,7 +60,7 @@ namespace StarOJ.Data.Provider.FileSystem
         public static async Task<SubmissionProvider> Initialize(string root, SubmissionMetadata metadata = null)
         {
             var res = new SubmissionProvider(root);
-            if (metadata == null) metadata = new SubmissionMetadata() { CodeLength = 0, Code = "" };
+            if (metadata == null) metadata = new SubmissionMetadata() { CodeLength = 0};
             metadata.Id = res.Id;
             await res.SetMetadata(metadata);
             return res;

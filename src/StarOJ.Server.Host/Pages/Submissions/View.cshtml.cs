@@ -64,8 +64,8 @@ namespace StarOJ.Server.Host.Pages.Submissions
             var client = new SubmissionsClient(httpclient);
             try
             {
-                var bytes = Encoding.UTF8.GetBytes((await client.GetAsync(PostData.Id)).Code);
-                return File(bytes, "text/plain", $"{PostData.Id}.{ProgrammingLanguageHelper.Extends[PostData.Language]}");
+                var file = await client.GetCodeAsync(PostData.Id);
+                return File(file.Stream, "text/plain", $"{PostData.Id}.{ProgrammingLanguageHelper.Extends[PostData.Language]}");
             }
             catch
             {

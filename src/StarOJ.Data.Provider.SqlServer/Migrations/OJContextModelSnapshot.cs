@@ -59,27 +59,6 @@ namespace StarOJ.Data.Provider.SqlServer.Migrations
                     b.ToTable("Roles");
                 });
 
-            modelBuilder.Entity("StarOJ.Data.Provider.SqlServer.Models.SampleCase", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Input");
-
-                    b.Property<long>("MemoryLimit");
-
-                    b.Property<string>("Output");
-
-                    b.Property<int>("ProblemId");
-
-                    b.Property<TimeSpan>("TimeLimit");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Samples");
-                });
-
             modelBuilder.Entity("StarOJ.Data.Provider.SqlServer.Models.Submission", b =>
                 {
                     b.Property<int>("Id")
@@ -88,7 +67,7 @@ namespace StarOJ.Data.Provider.SqlServer.Migrations
 
                     b.Property<int?>("AcceptedCase");
 
-                    b.Property<string>("Code");
+                    b.Property<long>("CodeLength");
 
                     b.Property<bool>("HasIssue");
 
@@ -125,11 +104,9 @@ namespace StarOJ.Data.Provider.SqlServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Input");
+                    b.Property<bool>("IsSample");
 
                     b.Property<long>("MemoryLimit");
-
-                    b.Property<string>("Output");
 
                     b.Property<int>("ProblemId");
 

@@ -21,46 +21,60 @@
     {
         var item = Model.SamplePreview[i];
         var id = $"sample{i}";
+        if (item.IsNew && !canModify)
+        {
+            continue;
+        }
         <div class="card border-0">
             <div class="card-header border-0">
                 <div class="row">
                     <a class="card-link" data-toggle="collapse" href="#@id" style="margin-left:10px">
-                        @SharedLocalizer["Sample"] #@item.Metadata.Id
+                        @if (item.IsNew)
+                        {
+                            <text>@SharedLocalizer["Create"] @SharedLocalizer["Sample"]</text>
+                        }
+                        else
+                        {
+                            <text>@SharedLocalizer["Sample"] #@item.Metadata.Id</text>
+                        }
                     </a>
                 </div>
             </div>
             <div id="@id" class="collapse @(Model.ShowId == item.Metadata.Id ? "show" : "")" data-parent="#main">
                 <div class="card-body">
-                    <div class="row" style="margin-left:0px">
-                        <strong>@SharedLocalizer["Input"]</strong>
-                        <form method="post" style="margin-left:10px">
-                            <input type="hidden" asp-for="PostData.ProblemId" value="@Model.Problem.Metadata.Id" />
-                            <input type="hidden" asp-for="PostData.TestCaseId" value="@item.Metadata.Id" />
-                            <button type="submit" asp-page-handler="SampleInputFile" class="btn btn-sm btn-outline-primary">
-                                <i class="fa fa-download"></i>
-                            </button>
-                        </form>
-                    </div>
-                    <pre style="margin-top:10px">@item.Input.Content</pre>
-                    @if (item.Input.RemainBytes > 0)
+                    @if (!item.IsNew)
                     {
-                        <p>@item.Input.RemainBytes bytes omitted.</p>
-                    }
+                        <div class="row" style="margin-left:0px">
+                            <strong>@SharedLocalizer["Input"]</strong>
+                            <form method="post" style="margin-left:10px">
+                                <input type="hidden" asp-for="PostData.ProblemId" value="@Model.Problem.Metadata.Id" />
+                                <input type="hidden" asp-for="PostData.TestCaseId" value="@item.Metadata.Id" />
+                                <button type="submit" asp-page-handler="SampleInputFile" class="btn btn-sm btn-outline-primary">
+                                    <i class="fa fa-download"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <pre style="margin-top:10px">@item.Input.Content</pre>
+                        @if (item.Input.RemainBytes > 0)
+                        {
+                            <p>@item.Input.RemainBytes bytes omitted.</p>
+                        }
 
-                    <div class="row" style="margin-left:0px">
-                        <strong>@SharedLocalizer["Output"]</strong>
-                        <form method="post" style="margin-left:10px">
-                            <input type="hidden" asp-for="PostData.ProblemId" value="@Model.Problem.Metadata.Id" />
-                            <input type="hidden" asp-for="PostData.TestCaseId" value="@item.Metadata.Id" />
-                            <button type="submit" asp-page-handler="SampleOutputFile" class="btn btn-sm btn-outline-primary">
-                                <i class="fa fa-download"></i>
-                            </button>
-                        </form>
-                    </div>
-                    <pre style="margin-top:10px">@item.Output.Content</pre>
-                    @if (item.Output.RemainBytes > 0)
-                    {
-                        <p>@item.Output.RemainBytes bytes omitted.</p>
+                        <div class="row" style="margin-left:0px">
+                            <strong>@SharedLocalizer["Output"]</strong>
+                            <form method="post" style="margin-left:10px">
+                                <input type="hidden" asp-for="PostData.ProblemId" value="@Model.Problem.Metadata.Id" />
+                                <input type="hidden" asp-for="PostData.TestCaseId" value="@item.Metadata.Id" />
+                                <button type="submit" asp-page-handler="SampleOutputFile" class="btn btn-sm btn-outline-primary">
+                                    <i class="fa fa-download"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <pre style="margin-top:10px">@item.Output.Content</pre>
+                        @if (item.Output.RemainBytes > 0)
+                        {
+                            <p>@item.Output.RemainBytes bytes omitted.</p>
+                        }
                     }
 
                     @if (canModify)
@@ -69,15 +83,21 @@
                         <form method="post" style="margin-top:10px">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                             <div class="btn-group-toggle">
-                                <button type="submit" asp-page-handler="EditSample" class="btn btn-outline-primary">
-                                    <i class="fa fa-edit"></i>
-                                </button>
-                                <button type="submit" asp-page-handler="DeleteSample" class="btn btn-outline-danger">
-                                    <i class="fa fa-trash"></i>
-                                </button>
-                                <button type="submit" asp-page-handler="CreateSample" class="btn btn-outline-success">
-                                    <i class="fa fa-plus"></i>
-                                </button>
+                                @if (item.IsNew)
+                                {
+                                    <button type="submit" asp-page-handler="CreateSample" class="btn btn-outline-success">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="submit" asp-page-handler="EditSample" class="btn btn-outline-primary">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                    <button type="submit" asp-page-handler="DeleteSample" class="btn btn-outline-danger">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                }
                             </div>
                             <input type="hidden" asp-for="PostData.ProblemId" value="@Model.Problem.Metadata.Id" />
                             <input type="hidden" asp-for="PostData.TestCaseId" value="@item.Metadata.Id" />
@@ -96,12 +116,12 @@
                                 <input class="form-control" asp-for="PostData.TestCase.Metadata.MemoryLimit" value="@item.Metadata.MemoryLimit" />
                                 <span asp-validation-for="PostData.TestCase.Metadata.MemoryLimit" class="text-danger"></span>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" style="margin-top:10px">
                                 <label class="control-label">@SharedLocalizer["Input"]</label>
                                 <textarea class="form-control" asp-for="PostData.TestCase.Input"></textarea>
                                 <span asp-validation-for="PostData.TestCase.Input" class="text-danger"></span>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" style="margin-top:10px">
                                 <label class="control-label">@SharedLocalizer["Output"]</label>
                                 <textarea class="form-control" asp-for="PostData.TestCase.Output"></textarea>
                                 <span asp-validation-for="PostData.TestCase.Output" class="text-danger"></span>
@@ -117,46 +137,60 @@
     {
         var item = Model.TestPreview[i];
         var id = $"test{i}";
+        if (item.IsNew && !canModify)
+        {
+            continue;
+        }
         <div class="card border-0">
             <div class="card-header border-0">
                 <div class="row">
                     <a class="card-link" data-toggle="collapse" href="#@id" style="margin-left:10px">
-                        @SharedLocalizer["Test"] #@item.Metadata.Id
+                        @if (item.IsNew)
+                        {
+                            <text>@SharedLocalizer["Create"] @SharedLocalizer["Test"]</text>
+                        }
+                        else
+                        {
+                            <text>@SharedLocalizer["Test"] #@item.Metadata.Id</text>
+                        }
                     </a>
                 </div>
             </div>
             <div id="@id" class="collapse @(Model.ShowId == item.Metadata.Id ? "show" : "")" data-parent="#main">
                 <div class="card-body">
-                    <div class="row" style="margin-left:0px">
-                        <strong>@SharedLocalizer["Input"]</strong>
-                        <form method="post" style="margin-left:10px">
-                            <input type="hidden" asp-for="PostData.ProblemId" value="@Model.Problem.Metadata.Id" />
-                            <input type="hidden" asp-for="PostData.TestCaseId" value="@item.Metadata.Id" />
-                            <button type="submit" asp-page-handler="TestInputFile" class="btn btn-sm btn-outline-primary">
-                                <i class="fa fa-download"></i>
-                            </button>
-                        </form>
-                    </div>
-                    <pre style="margin-top:10px">@item.Input.Content</pre>
-                    @if (item.Input.RemainBytes > 0)
+                    @if (!item.IsNew)
                     {
-                        <p>@item.Input.RemainBytes bytes omitted.</p>
-                    }
+                        <div class="row" style="margin-left:0px">
+                            <strong>@SharedLocalizer["Input"]</strong>
+                            <form method="post" style="margin-left:10px">
+                                <input type="hidden" asp-for="PostData.ProblemId" value="@Model.Problem.Metadata.Id" />
+                                <input type="hidden" asp-for="PostData.TestCaseId" value="@item.Metadata.Id" />
+                                <button type="submit" asp-page-handler="TestInputFile" class="btn btn-sm btn-outline-primary">
+                                    <i class="fa fa-download"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <pre style="margin-top:10px">@item.Input.Content</pre>
+                        @if (item.Input.RemainBytes > 0)
+                        {
+                            <p>@item.Input.RemainBytes bytes omitted.</p>
+                        }
 
-                    <div class="row" style="margin-left:0px">
-                        <strong>@SharedLocalizer["Output"]</strong>
-                        <form method="post" style="margin-left:10px">
-                            <input type="hidden" asp-for="PostData.ProblemId" value="@Model.Problem.Metadata.Id" />
-                            <input type="hidden" asp-for="PostData.TestCaseId" value="@item.Metadata.Id" />
-                            <button type="submit" asp-page-handler="TestOutputFile" class="btn btn-sm btn-outline-primary">
-                                <i class="fa fa-download"></i>
-                            </button>
-                        </form>
-                    </div>
-                    <pre style="margin-top:10px">@item.Output.Content</pre>
-                    @if (item.Output.RemainBytes > 0)
-                    {
-                        <p>@item.Output.RemainBytes bytes omitted.</p>
+                        <div class="row" style="margin-left:0px">
+                            <strong>@SharedLocalizer["Output"]</strong>
+                            <form method="post" style="margin-left:10px">
+                                <input type="hidden" asp-for="PostData.ProblemId" value="@Model.Problem.Metadata.Id" />
+                                <input type="hidden" asp-for="PostData.TestCaseId" value="@item.Metadata.Id" />
+                                <button type="submit" asp-page-handler="TestOutputFile" class="btn btn-sm btn-outline-primary">
+                                    <i class="fa fa-download"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <pre style="margin-top:10px">@item.Output.Content</pre>
+                        @if (item.Output.RemainBytes > 0)
+                        {
+                            <p>@item.Output.RemainBytes bytes omitted.</p>
+                        }
                     }
 
                     @if (canModify)
@@ -165,15 +199,21 @@
                         <form method="post" style="margin-top:10px">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                             <div class="btn-group-toggle">
-                                <button type="submit" asp-page-handler="EditTest" class="btn btn-outline-primary">
-                                    <i class="fa fa-edit"></i>
-                                </button>
-                                <button type="submit" asp-page-handler="DeleteTest" class="btn btn-outline-danger">
-                                    <i class="fa fa-trash"></i>
-                                </button>
-                                <button type="submit" asp-page-handler="CreateTest" class="btn btn-outline-success">
-                                    <i class="fa fa-plus"></i>
-                                </button>
+                                @if (item.IsNew)
+                                {
+                                    <button type="submit" asp-page-handler="CreateTest" class="btn btn-outline-success">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="submit" asp-page-handler="EditTest" class="btn btn-outline-primary">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                    <button type="submit" asp-page-handler="DeleteTest" class="btn btn-outline-danger">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                }
                             </div>
                             <input type="hidden" asp-for="PostData.ProblemId" value="@Model.Problem.Metadata.Id" />
                             <input type="hidden" asp-for="PostData.TestCaseId" value="@item.Metadata.Id" />
@@ -192,12 +232,12 @@
                                 <input class="form-control" asp-for="PostData.TestCase.Metadata.MemoryLimit" value="@item.Metadata.MemoryLimit" />
                                 <span asp-validation-for="PostData.TestCase.Metadata.MemoryLimit" class="text-danger"></span>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" style="margin-top:10px">
                                 <label class="control-label">@SharedLocalizer["Input"]</label>
                                 <textarea class="form-control" asp-for="PostData.TestCase.Input"></textarea>
                                 <span asp-validation-for="PostData.TestCase.Input" class="text-danger"></span>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" style="margin-top:10px">
                                 <label class="control-label">@SharedLocalizer["Output"]</label>
                                 <textarea class="form-control" asp-for="PostData.TestCase.Output"></textarea>
                                 <span asp-validation-for="PostData.TestCase.Output" class="text-danger"></span>

@@ -13,5 +13,9 @@ namespace StarOJ.Core.Submissions
         Task<SubmissionResult> GetResult();
 
         Task SetResult(SubmissionResult value);
+
+        Task<Stream> GetCode();
+
+        Task SetCode(Stream value);
     }
 }

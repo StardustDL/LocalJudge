@@ -3,6 +3,7 @@ using StarOJ.Core;
 using StarOJ.Core.Judgers;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace StarOJ.Server.API.Controllers
 {

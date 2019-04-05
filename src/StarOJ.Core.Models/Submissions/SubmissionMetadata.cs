@@ -22,7 +22,5 @@ namespace StarOJ.Core.Submissions
         public DateTimeOffset Time { get; set; }
 
         public uint CodeLength { get; set; }
-
-        public string Code { get; set; }
     }
 }

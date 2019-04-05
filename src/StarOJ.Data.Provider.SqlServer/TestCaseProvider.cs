@@ -3,6 +3,7 @@ using StarOJ.Core.Problems;
 using StarOJ.Data.Provider.SqlServer.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,6 +11,8 @@ namespace StarOJ.Data.Provider.SqlServer
 {
     public class TestCaseProvider : ITestCaseProvider
     {
+        public const string PF_Input = "input.data", PF_Output = "output.data";
+
         private readonly Workspace _workspace;
         private readonly OJContext _context;
         private readonly TestCase _testcase;
@@ -21,22 +24,28 @@ namespace StarOJ.Data.Provider.SqlServer
             _testcase = testcase;
         }
 
+        internal string GetRoot() => Path.Join(_workspace.TestCaseStoreRoot, Id);
+
+        private string GetInputPath() => Path.Join(GetRoot(), PF_Input);
+
+        private string GetOutputPath() => Path.Join(GetRoot(), PF_Output);
+
         public string Id => _testcase.Id.ToString();
 
-        public Task<string> GetInput()
-        {
-            return Task.FromResult(_testcase.Input);
-        }
+        public Task<Stream> GetInput() => Task.FromResult((Stream)File.OpenRead(GetInputPath()));
 
         public Task<DataPreview> GetInputPreview(int maxbytes)
         {
-            var bytes = Encoding.UTF8.GetBytes(_testcase.Input);
-            int len = Math.Min(bytes.Length, maxbytes);
-            return Task.FromResult(new DataPreview
+            using (var fs = File.OpenRead(GetInputPath()))
             {
-                Content = Encoding.UTF8.GetString(bytes, 0, len),
-                RemainBytes = bytes.Length - len,
-            });
+                int len = (int)Math.Min(fs.Length, maxbytes);
+                using (var br = new BinaryReader(fs))
+                    return Task.FromResult(new DataPreview
+                    {
+                        Content = Encoding.UTF8.GetString(br.ReadBytes(len), 0, len),
+                        RemainBytes = fs.Length - len,
+                    });
+            }
         }
 
         public Task<TestCaseMetadata> GetMetadata()
@@ -49,26 +58,26 @@ namespace StarOJ.Data.Provider.SqlServer
             });
         }
 
-        public Task<string> GetOutput()
-        {
-            return Task.FromResult(_testcase.Output);
-        }
+        public Task<Stream> GetOutput() => Task.FromResult((Stream)File.OpenRead(GetOutputPath()));
 
         public Task<DataPreview> GetOutputPreview(int maxbytes)
         {
-            var bytes = Encoding.UTF8.GetBytes(_testcase.Output);
-            int len = Math.Min(bytes.Length, maxbytes);
-            return Task.FromResult(new DataPreview
+            using (var fs = File.OpenRead(GetOutputPath()))
             {
-                Content = Encoding.UTF8.GetString(bytes, 0, len),
-                RemainBytes = bytes.Length - len,
-            });
+                int len = (int)Math.Min(fs.Length, maxbytes);
+                using (var br = new BinaryReader(fs))
+                    return Task.FromResult(new DataPreview
+                    {
+                        Content = Encoding.UTF8.GetString(br.ReadBytes(len), 0, len),
+                        RemainBytes = fs.Length - len,
+                    });
+            }
         }
 
-        public async Task SetInput(string value)
+        public async Task SetInput(Stream value)
         {
-            _testcase.Input = value;
-            await _context.SaveChangesAsync();
+            using (var fs = File.Open(GetInputPath(), FileMode.Create))
+                await value.CopyToAsync(fs);
         }
 
         public async Task SetMetadata(TestCaseMetadata value)
@@ -78,87 +87,10 @@ namespace StarOJ.Data.Provider.SqlServer
             await _context.SaveChangesAsync();
         }
 
-        public async Task SetOutput(string value)
+        public async Task SetOutput(Stream value)
         {
-            _testcase.Output = value;
-            await _context.SaveChangesAsync();
-        }
-    }
-
-    public class SampleCaseProvider : ITestCaseProvider
-    {
-        private readonly Workspace _workspace;
-        private readonly OJContext _context;
-        private readonly SampleCase _testcase;
-
-        public SampleCaseProvider(Workspace workspace, OJContext context, SampleCase testcase)
-        {
-            _workspace = workspace;
-            _context = context;
-            _testcase = testcase;
-        }
-
-        public string Id => _testcase.Id.ToString();
-
-        public Task<string> GetInput()
-        {
-            return Task.FromResult(_testcase.Input);
-        }
-
-        public Task<DataPreview> GetInputPreview(int maxbytes)
-        {
-            var bytes = Encoding.UTF8.GetBytes(_testcase.Input);
-            int len = Math.Min(bytes.Length, maxbytes);
-            return Task.FromResult(new DataPreview
-            {
-                Content = Encoding.UTF8.GetString(bytes, 0, len),
-                RemainBytes = bytes.Length - len,
-            });
-        }
-
-        public Task<TestCaseMetadata> GetMetadata()
-        {
-            return Task.FromResult(new TestCaseMetadata
-            {
-                Id = Id,
-                MemoryLimit = _testcase.MemoryLimit,
-                TimeLimit = _testcase.TimeLimit,
-            });
-        }
-
-        public Task<string> GetOutput()
-        {
-            return Task.FromResult(_testcase.Output);
-        }
-
-        public Task<DataPreview> GetOutputPreview(int maxbytes)
-        {
-            var bytes = Encoding.UTF8.GetBytes(_testcase.Output);
-            int len = Math.Min(bytes.Length, maxbytes);
-            return Task.FromResult(new DataPreview
-            {
-                Content = Encoding.UTF8.GetString(bytes, 0, len),
-                RemainBytes = bytes.Length - len,
-            });
-        }
-
-        public async Task SetInput(string value)
-        {
-            _testcase.Input = value;
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task SetMetadata(TestCaseMetadata value)
-        {
-            _testcase.MemoryLimit = value.MemoryLimit;
-            _testcase.TimeLimit = value.TimeLimit;
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task SetOutput(string value)
-        {
-            _testcase.Output = value;
-            await _context.SaveChangesAsync();
+            using (var fs = File.Open(GetOutputPath(), FileMode.Create))
+                await value.CopyToAsync(fs);
         }
     }
 }

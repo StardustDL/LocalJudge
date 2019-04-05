@@ -17,6 +17,11 @@ namespace StarOJ.Server.API
 {
     public class Startup
     {
+        public class AppConfig
+        {
+            public string FileStoreRoot { get; set; }
+        }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -31,6 +36,15 @@ namespace StarOJ.Server.API
             services.AddDbContext<Data.Provider.SqlServer.Models.OJContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            var appconfig = Configuration.GetSection("AppConfig").Get<AppConfig>();
+
+            services.AddScoped((provider) =>
+            {
+                return new StarOJ.Data.Provider.SqlServer.WorkspaceStartup
+                {
+                    FileStoreRoot = appconfig.FileStoreRoot
+                };
+            });
             services.AddScoped<StarOJ.Core.IWorkspace, StarOJ.Data.Provider.SqlServer.Workspace>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);

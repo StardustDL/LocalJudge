@@ -2,9 +2,9 @@
 
 StarOJ is an Online-Judge written in C#.
 
-Now, StarOJ supports both SqlServer provider (recommended) and file-system provider.
+Now, StarOJ support SqlServer provider.
 
-StarOJ can use multi-providers to bring an easy and friendly interface for problem judging.
+StarOJ's goal is to bring an easy and friendly interface for problem judging.
 
 - Easy to deploy
 - Easy to run

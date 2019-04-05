@@ -11,12 +11,12 @@ namespace StarOJ.Core.Problems
 
         Task<DataPreview> GetOutputPreview(int maxbytes);
 
-        Task<string> GetInput();
+        Task<Stream> GetInput();
 
-        Task<string> GetOutput();
+        Task<Stream> GetOutput();
 
-        Task SetInput(string value);
+        Task SetInput(Stream value);
 
-        Task SetOutput(string value);
+        Task SetOutput(Stream value);
     }
 }

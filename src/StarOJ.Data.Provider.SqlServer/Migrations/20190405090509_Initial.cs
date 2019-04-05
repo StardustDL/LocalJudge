@@ -42,23 +42,6 @@ namespace StarOJ.Data.Provider.SqlServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Samples",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    ProblemId = table.Column<int>(nullable: false),
-                    TimeLimit = table.Column<TimeSpan>(nullable: false),
-                    MemoryLimit = table.Column<long>(nullable: false),
-                    Input = table.Column<string>(nullable: true),
-                    Output = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Samples", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Submissions",
                 columns: table => new
                 {
@@ -68,7 +51,7 @@ namespace StarOJ.Data.Provider.SqlServer.Migrations
                     UserId = table.Column<int>(nullable: false),
                     Language = table.Column<int>(nullable: false),
                     Time = table.Column<DateTimeOffset>(nullable: false),
-                    Code = table.Column<string>(nullable: true),
+                    CodeLength = table.Column<long>(nullable: false),
                     State = table.Column<int>(nullable: false),
                     SampleResults = table.Column<string>(nullable: true),
                     TestResults = table.Column<string>(nullable: true),
@@ -93,8 +76,7 @@ namespace StarOJ.Data.Provider.SqlServer.Migrations
                     ProblemId = table.Column<int>(nullable: false),
                     TimeLimit = table.Column<TimeSpan>(nullable: false),
                     MemoryLimit = table.Column<long>(nullable: false),
-                    Input = table.Column<string>(nullable: true),
-                    Output = table.Column<string>(nullable: true)
+                    IsSample = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -140,9 +122,6 @@ namespace StarOJ.Data.Provider.SqlServer.Migrations
 
             migrationBuilder.DropTable(
                 name: "Roles");
-
-            migrationBuilder.DropTable(
-                name: "Samples");
 
             migrationBuilder.DropTable(
                 name: "Submissions");

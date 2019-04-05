@@ -19,13 +19,7 @@ namespace StarOJ.Data.Provider.SqlServer.Models
 
         public DateTimeOffset Time { get; set; }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public uint CodeLength
-        {
-            get => Code == null ? 0 : (uint)Encoding.UTF8.GetByteCount(Code);
-        }
-
-        public string Code { get; set; }
+        public uint CodeLength { get; set; }
 
         #endregion
 

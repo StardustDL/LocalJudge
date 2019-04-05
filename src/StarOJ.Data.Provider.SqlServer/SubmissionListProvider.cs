@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using StarOJ.Core.Submissions;
@@ -23,6 +24,7 @@ namespace StarOJ.Data.Provider.SqlServer
             _context.Submissions.Add(empty);
             await _context.SaveChangesAsync();
             var res = new SubmissionProvider(_workspace, _context, empty);
+            Directory.CreateDirectory(res.GetRoot());
             await res.SetMetadata(metadata);
             return res;
         }
@@ -38,6 +40,8 @@ namespace StarOJ.Data.Provider.SqlServer
             var item = await _context.Submissions.FindAsync(_id);
             if (item != null)
             {
+                var res = new SubmissionProvider(_workspace, _context, item);
+                Directory.Delete(res.GetRoot(), true);
                 _context.Submissions.Remove(item);
                 await _context.SaveChangesAsync();
             }
@@ -76,6 +80,8 @@ namespace StarOJ.Data.Provider.SqlServer
         public async Task Clear()
         {
             _context.Submissions.RemoveRange(_context.Submissions.ToArray());
+            foreach (var s in Directory.GetDirectories(_workspace.SubmissionStoreRoot))
+                Directory.Delete(s, true);
             await _context.SaveChangesAsync();
         }
     }

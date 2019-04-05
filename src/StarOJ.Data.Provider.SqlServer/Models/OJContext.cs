@@ -25,8 +25,6 @@ namespace StarOJ.Data.Provider.SqlServer.Models
 
         public DbSet<TestCase> Tests { get; set; }
 
-        public DbSet<SampleCase> Samples { get; set; }
-
         public DbSet<WorkspaceInfo> WorkspaceInfos { get; set; }
     }
 

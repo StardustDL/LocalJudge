@@ -19,8 +19,8 @@ namespace StarOJ.Data.Provider.SqlServer
             _workspace = workspace;
             _context = context;
             _problem = problem;
-            Samples = new SampleCaseListProvider(_workspace, _context, _problem.Id);
-            Tests = new TestCaseListProvider(_workspace, _context, _problem.Id);
+            Samples = new TestCaseListProvider(_workspace, _context, _problem.Id, true);
+            Tests = new TestCaseListProvider(_workspace, _context, _problem.Id, false);
         }
 
         public string Id => _problem.Id.ToString();
@@ -28,33 +28,6 @@ namespace StarOJ.Data.Provider.SqlServer
         public ITestCaseListProvider Samples { get; private set; }
 
         public ITestCaseListProvider Tests { get; private set; }
-
-        public async Task DeleteSample(string id)
-        {
-            int _id = int.Parse(id);
-            var test = await _context.Samples.FindAsync(_id);
-            if (test == null || test.ProblemId != _problem.Id)
-                return;
-            _context.Samples.Remove(test);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DeleteTest(string id)
-        {
-            int _id = int.Parse(id);
-            var test = await _context.Tests.FindAsync(_id);
-            if (test == null || test.ProblemId != _problem.Id)
-                return;
-            _context.Tests.Remove(test);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DeleteTests()
-        {
-            var tests = (from x in _context.Tests where x.ProblemId == _problem.Id select x).ToArray();
-            _context.Tests.RemoveRange(tests);
-            await _context.SaveChangesAsync();
-        }
 
         public Task<ProblemDescription> GetDescription()
         {

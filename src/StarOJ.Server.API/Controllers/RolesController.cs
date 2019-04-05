@@ -33,9 +33,6 @@ namespace StarOJ.Server.API.Controllers
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesDefaultResponseType]
         public async Task<ActionResult<RoleMetadata>> Get(string id)
         {
             var res = await _workspace.Roles.Get(id);
@@ -46,9 +43,6 @@ namespace StarOJ.Server.API.Controllers
         }
 
         [HttpGet("name/{name}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesDefaultResponseType]
         public async Task<ActionResult<RoleMetadata>> GetByName(string name)
         {
             var res = await _workspace.Roles.GetByName(name);
@@ -59,16 +53,13 @@ namespace StarOJ.Server.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public Task Delete(string id)
         {
             return _workspace.Roles.Delete(id);
         }
 
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesDefaultResponseType]
         public async Task<ActionResult<RoleMetadata>> Create([FromBody] RoleMetadata data)
         {
             try
@@ -83,10 +74,7 @@ namespace StarOJ.Server.API.Controllers
         }
 
         [HttpPut]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesDefaultResponseType]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
         public async Task<ActionResult> Update([FromBody] RoleMetadata data)
         {
             try
@@ -95,7 +83,7 @@ namespace StarOJ.Server.API.Controllers
                 if (prov != null)
                 {
                     await prov.SetMetadata(data);
-                    return Ok();
+                    return Accepted();
                 }
                 else
                 {

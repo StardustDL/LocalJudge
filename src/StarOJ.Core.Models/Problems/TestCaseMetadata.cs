@@ -10,11 +10,9 @@ namespace StarOJ.Core.Problems
 
         public string Id { get; set; }
 
-        [Required]
         [DataType(DataType.Duration)]
         public TimeSpan TimeLimit { get; set; }
 
-        [Required]
         [Range(MinimumMemoryLimit, MaximumMemoryLimit)]
         public long MemoryLimit { get; set; }
     }

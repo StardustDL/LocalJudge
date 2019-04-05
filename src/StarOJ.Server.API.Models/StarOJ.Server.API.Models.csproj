@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\StarOJ.Core.Models\StarOJ.Core.Models.csproj" />
     <ProjectReference Include="..\StarOJ.Core\StarOJ.Core.csproj" />
   </ItemGroup>

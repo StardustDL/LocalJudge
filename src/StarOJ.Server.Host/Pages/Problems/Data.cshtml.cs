@@ -13,6 +13,7 @@ using System.ComponentModel.DataAnnotations;
 using StarOJ.Core;
 using StarOJ.Core.Problems;
 using StarOJ.Server.API.Models;
+using StarOJ.Core.Helpers;
 
 namespace StarOJ.Server.Host.Pages.Problems
 {
@@ -27,6 +28,8 @@ namespace StarOJ.Server.Host.Pages.Problems
             public DataPreview Input { get; set; }
 
             public DataPreview Output { get; set; }
+
+            public bool IsNew { get; set; }
         }
 
         public class TestCaseModel
@@ -74,6 +77,17 @@ namespace StarOJ.Server.Host.Pages.Problems
                 return false;
             }
 
+            var emptyTestCase = new TestCasePreviewModel
+            {
+                Metadata = new TestCaseMetadata
+                {
+                    Id = "empty",
+                    TimeLimit = TimeSpan.FromSeconds(1),
+                    MemoryLimit = 128 * MemoryValueHelper.MB,
+                },
+                IsNew = true,
+            };
+
             {
                 var ls = new List<TestCasePreviewModel>();
                 foreach (var item in Problem.Samples)
@@ -83,8 +97,10 @@ namespace StarOJ.Server.Host.Pages.Problems
                         Metadata = item,
                         Input = await client.GetSampleInputPreviewAsync(Problem.Metadata.Id, item.Id, MaxPreviewBytes),
                         Output = await client.GetSampleOutputPreviewAsync(Problem.Metadata.Id, item.Id, MaxPreviewBytes),
+                        IsNew = false,
                     });
                 }
+                ls.Add(emptyTestCase);
                 SamplePreview = ls;
             }
 
@@ -99,6 +115,7 @@ namespace StarOJ.Server.Host.Pages.Problems
                         Output = await client.GetTestOutputPreviewAsync(Problem.Metadata.Id, item.Id, MaxPreviewBytes),
                     });
                 }
+                ls.Add(emptyTestCase);
                 TestPreview = ls;
             }
 
@@ -129,8 +146,8 @@ namespace StarOJ.Server.Host.Pages.Problems
             var client = new ProblemsClient(httpclient);
             try
             {
-                var bytes = Encoding.UTF8.GetBytes(await client.GetSampleInputAsync(PostData.ProblemId, PostData.TestCaseId));
-                return File(bytes, "text/plain", $"sample{PostData.TestCaseId}.in");
+                var file = await client.GetSampleInputAsync(PostData.ProblemId, PostData.TestCaseId);
+                return File(file.Stream, "text/plain", $"{PostData.TestCaseId}.in");
             }
             catch
             {
@@ -149,8 +166,8 @@ namespace StarOJ.Server.Host.Pages.Problems
             var client = new ProblemsClient(httpclient);
             try
             {
-                var bytes = Encoding.UTF8.GetBytes(await client.GetSampleOutputAsync(PostData.ProblemId, PostData.TestCaseId));
-                return File(bytes, "text/plain", $"sample{PostData.TestCaseId}.out");
+                var file = await client.GetSampleOutputAsync(PostData.ProblemId, PostData.TestCaseId);
+                return File(file.Stream, "text/plain", $"{PostData.TestCaseId}.out");
             }
             catch
             {
@@ -169,8 +186,8 @@ namespace StarOJ.Server.Host.Pages.Problems
             var client = new ProblemsClient(httpclient);
             try
             {
-                var bytes = Encoding.UTF8.GetBytes(await client.GetTestInputAsync(PostData.ProblemId, PostData.TestCaseId));
-                return File(bytes, "text/plain", $"test{PostData.TestCaseId}.in");
+                var file = await client.GetTestInputAsync(PostData.ProblemId, PostData.TestCaseId);
+                return File(file.Stream, "text/plain", $"{PostData.TestCaseId}.in");
             }
             catch
             {
@@ -189,8 +206,8 @@ namespace StarOJ.Server.Host.Pages.Problems
             var client = new ProblemsClient(httpclient);
             try
             {
-                var bytes = Encoding.UTF8.GetBytes(await client.GetTestOutputAsync(PostData.ProblemId, PostData.TestCaseId));
-                return File(bytes, "text/plain", $"test{PostData.TestCaseId}.out");
+                var file = await client.GetTestOutputAsync(PostData.ProblemId, PostData.TestCaseId);
+                return File(file.Stream, "text/plain", $"test{PostData.TestCaseId}.out");
             }
             catch
             {

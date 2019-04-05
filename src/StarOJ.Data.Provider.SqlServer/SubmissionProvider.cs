@@ -5,6 +5,7 @@ using StarOJ.Core.Submissions;
 using StarOJ.Data.Provider.SqlServer.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,9 +13,15 @@ namespace StarOJ.Data.Provider.SqlServer
 {
     public class SubmissionProvider : ISubmissionProvider
     {
+        public const string PF_Code = "code.txt";
+
         private readonly Workspace _workspace;
         private readonly OJContext _context;
         private readonly Submission _submission;
+
+        internal string GetRoot() => Path.Join(_workspace.SubmissionStoreRoot, Id);
+
+        private string GetCodePath() => Path.Join(GetRoot(), PF_Code);
 
         public SubmissionProvider(Workspace workspace, OJContext context, Submission submission)
         {
@@ -25,12 +32,13 @@ namespace StarOJ.Data.Provider.SqlServer
 
         public string Id => _submission.Id.ToString();
 
+        public Task<Stream> GetCode() => Task.FromResult((Stream)File.OpenRead(GetCodePath()));
+
         public Task<SubmissionMetadata> GetMetadata()
         {
             return Task.FromResult(new SubmissionMetadata
             {
                 Id = Id,
-                Code = _submission.Code,
                 CodeLength = _submission.CodeLength,
                 Language = _submission.Language,
                 ProblemId = _submission.ProblemId.ToString(),
@@ -58,9 +66,14 @@ namespace StarOJ.Data.Provider.SqlServer
             });
         }
 
+        public async Task SetCode(Stream value)
+        {
+            using (var fs = File.Open(GetCodePath(), FileMode.Create))
+                await value.CopyToAsync(fs);
+        }
+
         public async Task SetMetadata(SubmissionMetadata value)
         {
-            _submission.Code = value.Code;
             _submission.Language = value.Language;
             _submission.ProblemId = int.Parse(value.ProblemId);
             _submission.Time = value.Time;
