@@ -73,7 +73,7 @@ namespace StarOJ.Server.Host.TagHelpers
                     icon.Attributes["class"] = "fa fa-hourglass-half";
                     break;
                 case JudgeState.Judging:
-                    icon.Attributes["class"] = "fa fa-circle-o-notch fa-spin";
+                    icon.Attributes["class"] = "fa fa-cog fa-spin";
                     break;
                 case JudgeState.Compiling:
                     icon.Attributes["class"] = "fa fa-cog fa-spin";

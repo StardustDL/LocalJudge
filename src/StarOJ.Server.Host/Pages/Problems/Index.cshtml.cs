@@ -8,6 +8,7 @@ using StarOJ.Server.Host.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Text;
 
 namespace StarOJ.Server.Host.Pages.Problems
 {
@@ -47,7 +48,7 @@ namespace StarOJ.Server.Host.Pages.Problems
 
         public async Task<IActionResult> OnPostDeleteAsync()
         {
-            if (await GetModifyAuthorization())
+            if (!await GetModifyAuthorization())
             {
                 return Forbid();
             }
@@ -62,6 +63,31 @@ namespace StarOJ.Server.Host.Pages.Problems
             {
                 await client.DeleteAsync(PostData.Metadata.Id);
                 return RedirectToPage();
+            }
+            catch
+            {
+                return NotFound();
+            }
+        }
+
+        public async Task<IActionResult> OnPostExportAsync()
+        {
+            if (!await GetModifyAuthorization())
+            {
+                return Forbid();
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var httpclient = clientFactory.CreateClient();
+            var client = new ProblemsClient(httpclient);
+            try
+            {
+                var package = await client.ExportAsync(PostData.Metadata.Id);
+                var str = Newtonsoft.Json.JsonConvert.SerializeObject(package);
+                return File(Encoding.UTF8.GetBytes(str), "text/plain", $"{PostData.Metadata.Id}.json");
             }
             catch
             {

@@ -54,7 +54,6 @@ namespace StarOJ.Server.API.Controllers
                 UserId = data.UserId,
                 Language = data.Language,
                 Time = DateTimeOffset.Now,
-                CodeLength = (uint)Encoding.UTF8.GetByteCount(data.Code),
             };
             var sub = await _workspace.Submissions.Create(meta);
             if (sub == null) return Forbid();
@@ -63,13 +62,18 @@ namespace StarOJ.Server.API.Controllers
                 if(data.CodeFile != null)
                 {
                     using (var s = data.CodeFile.OpenReadStream())
+                    {
+                        meta.CodeLength = (uint)s.Length;
                         await sub.SetCode(s);
+                    }   
                 }
                 else
                 {
+                    meta.CodeLength = (uint)Encoding.UTF8.GetByteCount(data.Code);
                     using (var ms = TextIO.ToStream(data.Code ?? ""))
                         await sub.SetCode(ms);
                 }
+                await sub.SetMetadata(meta);
                 SendJudgeRequest(sub.Id);
                 return Created($"submissions/{meta.Id}", await sub.GetMetadata());
             }

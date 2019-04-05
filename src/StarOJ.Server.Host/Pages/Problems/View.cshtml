@@ -30,10 +30,15 @@
     <li class="breadcrumb-item active">@Html.DisplayFor(model => model.Problem.Metadata.Id)</li>
 </ul>
 
-<h1 class="display-4">@Html.DisplayFor(model => model.Problem.Metadata.Name)</h1>
+<div class="row" style="margin-left:0px">
+    <h1 class="display-4">@Html.DisplayFor(model => model.Problem.Metadata.Name)</h1>
+    <button class="btn btn-sm btn-outline-secondary" onclick="toggleSidebar()" style="margin-left:20px; margin-top:auto; margin-bottom:auto">
+        <i class="fa fa-expand"></i>
+    </button>
+</div>
 
 <div class="row" style="margin-top:20px">
-    <div class="col-9">
+    <div class="col-9" id="divMain">
         <style>
             .card-content {
                 padding: 20px;
@@ -114,7 +119,7 @@
             </div>
         </div>
     </div>
-    <div class="col-3">
+    <div class="col-3" id="divSidebar">
         <dl>
             <dt style="float:left; min-width:30px"><i class="fa fa-user"></i></dt>
             <dd>
@@ -295,6 +300,23 @@
                 }
             );
         </script>*@
+
+    <script>
+        var isSidebarShow = true;
+        function toggleSidebar() {
+            if (isSidebarShow) {
+                document.getElementById("divMain").className = "col-12";
+                document.getElementById("divSidebar").style = "display:none";
+                isSidebarShow = false;
+            }
+            else {
+                document.getElementById("divMain").className = "col-9";
+                document.getElementById("divSidebar").style = "";
+                isSidebarShow = true;
+            }
+        }
+    </script>
+
     @if (Model.EnableCode)
     {
         <environment include="Development">

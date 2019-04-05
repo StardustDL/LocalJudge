@@ -6,10 +6,8 @@ namespace StarOJ.Server.API.Models
 {
     public class SubmitData
     {
-        [Required]
         public string ProblemId { get; set; }
 
-        [Required]
         public string UserId { get; set; }
 
         [DataType(DataType.MultilineText)]

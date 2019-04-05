@@ -351,5 +351,95 @@ namespace StarOJ.Server.API.Controllers
             await res.SetMetadata(data);
             return Accepted();
         }
+
+        [HttpGet("{id}/export")]
+        public async Task<ActionResult<ProblemPackage>> Export(string id)
+        {
+            var res = await _workspace.Problems.Get(id);
+            if (res == null)
+                return NotFound();
+
+            try
+            {
+
+                ProblemPackage package = new ProblemPackage
+                {
+                    Metadata = await res.GetMetadata(),
+                    Description = await res.GetDescription(),
+                };
+
+                {
+                    var ls = new List<ProblemPackage.TestCasePackage>();
+                    var ss = await res.Samples.GetAll();
+                    foreach (var s in ss)
+                    {
+                        var t = new ProblemPackage.TestCasePackage
+                        {
+                            Metadata = await s.GetMetadata(),
+                            Input = await TextIO.ToString(await s.GetInput()),
+                            Output = await TextIO.ToString(await s.GetOutput()),
+                        };
+                        ls.Add(t);
+                    }
+                    package.Samples = ls;
+                }
+
+                {
+                    var ls = new List<ProblemPackage.TestCasePackage>();
+                    var ss = await res.Tests.GetAll();
+                    foreach (var s in ss)
+                    {
+                        var t = new ProblemPackage.TestCasePackage
+                        {
+                            Metadata = await s.GetMetadata(),
+                            Input = await TextIO.ToString(await s.GetInput()),
+                            Output = await TextIO.ToString(await s.GetOutput()),
+                        };
+                        ls.Add(t);
+                    }
+                    package.Tests = ls;
+                }
+
+                return Ok(package);
+            }
+            catch
+            {
+                return NoContent();
+            }
+        }
+
+        [HttpPost("import")]
+        [RequestSizeLimit(104857600)] // 100MB
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        public async Task<ActionResult<ProblemMetadata>> Import([FromBody] ProblemPackage data)
+        {
+            var res = await _workspace.Problems.Create(data.Metadata);
+
+            await res.SetDescription(data.Description);
+
+            if (data.Samples != null)
+                foreach (var v in data.Samples)
+                {
+                    var item = await res.Samples.Create(v.Metadata);
+                    await UpdateIOData(new TestCaseData
+                    {
+                        Input = v.Input,
+                        Output = v.Output
+                    }, item);
+                }
+
+            if (data.Tests != null)
+                foreach (var v in data.Tests)
+                {
+                    var item = await res.Tests.Create(v.Metadata);
+                    await UpdateIOData(new TestCaseData
+                    {
+                        Input = v.Input,
+                        Output = v.Output
+                    }, item);
+                }
+
+            return Created($"problems/{res.Id}", await res.GetMetadata());
+        }
     }
 }

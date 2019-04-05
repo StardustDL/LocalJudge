@@ -1,4 +1,5 @@
-﻿using StarOJ.Core.Problems;
+﻿using Microsoft.AspNetCore.Http;
+using StarOJ.Core.Problems;
 using StarOJ.Server.API.Clients;
 using StarOJ.Server.API.Models;
 using System;
@@ -16,5 +17,7 @@ namespace StarOJ.Server.Host.Pages.Problems
         public ProblemDescription Description { get; set; }
 
         public ProblemMetadata Metadata { get; set; }
+
+        public IFormFile ImportFile { get; set; }
     }
 }

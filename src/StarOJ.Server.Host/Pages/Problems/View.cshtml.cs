@@ -192,10 +192,6 @@ namespace StarOJ.Server.Host.Pages.Problems
 
         public async Task<IActionResult> OnPostSubmitAsync()
         {
-            if ((await _authorizationService.AuthorizeAsync(User, Authorizations.Administrator)).Succeeded == false)
-            {
-                return Forbid();
-            }
             if (!ModelState.IsValid)
             {
                 return BadRequest();

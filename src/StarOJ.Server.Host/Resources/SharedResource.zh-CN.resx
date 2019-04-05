@@ -141,6 +141,9 @@
   <data name="Edit" xml:space="preserve">
     <value>编辑</value>
   </data>
+  <data name="Export" xml:space="preserve">
+    <value>导出</value>
+  </data>
   <data name="Hint" xml:space="preserve">
     <value>提示</value>
   </data>
@@ -149,6 +152,9 @@
   </data>
   <data name="Id" xml:space="preserve">
     <value>编号</value>
+  </data>
+  <data name="Import" xml:space="preserve">
+    <value>导入</value>
   </data>
   <data name="Input" xml:space="preserve">
     <value>输入</value>

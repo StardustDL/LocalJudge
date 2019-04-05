@@ -10,6 +10,7 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
 using System.IO.Pipes;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -296,6 +297,7 @@ namespace StarOJ.Server.Judger
                 result.Issues.Add(new Issue(IssueLevel.Error, ex.ToString()));
             }
 
+            result.HasIssue = result.Issues.Count + result.Samples.Sum(x => x.Issues?.Count ?? 0) + result.Tests.Sum(x => x.Issues?.Count ?? 0) > 0;
             await scli.SetResultAsync(submission.Id, result);
 
             Console.WriteLine($"Judged submission: {id}");

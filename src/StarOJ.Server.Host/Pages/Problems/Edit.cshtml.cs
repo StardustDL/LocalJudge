@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -8,11 +9,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using StarOJ.Core.Identity;
+using StarOJ.Core.Problems;
 using StarOJ.Server.API.Clients;
 
 namespace StarOJ.Server.Host.Pages.Problems
 {
     [Authorize]
+    [RequestSizeLimit(104857600)] // 100MB
     public class EditModel : PageModel
     {
         private readonly IHttpClientFactory clientFactory;
@@ -85,27 +88,35 @@ namespace StarOJ.Server.Host.Pages.Problems
             }
         }
 
-        async Task<bool> CheckModel()
+        async Task<bool> CheckModel(bool isImport)
         {
             if (ModelState.IsValid == false) return false;
-            try
+            if (!isImport)
             {
-                var user = await _userManager.GetUserAsync(User);
-                if(await _userManager.GetUserIdAsync(user) != PostData.Metadata.UserId)
+                try
+                {
+                    var user = await _userManager.GetUserAsync(User);
+                    if (await _userManager.GetUserIdAsync(user) != PostData.Metadata.UserId)
+                    {
+                        return false;
+                    }
+                }
+                catch
                 {
                     return false;
                 }
             }
-            catch
+            else
             {
-                return false;
+                if (PostData.ImportFile == null)
+                    return false;
             }
             return true;
         }
 
         public async Task<IActionResult> OnPostEditAsync()
         {
-            if (!await CheckModel())
+            if (!await CheckModel(false))
             {
                 if (await GetData(PostData.Metadata.Id))
                     return Page();
@@ -129,7 +140,7 @@ namespace StarOJ.Server.Host.Pages.Problems
 
         public async Task<IActionResult> OnPostCreateAsync()
         {
-            if (!await CheckModel())
+            if (!await CheckModel(false))
             {
                 if (await GetData(PostData.Metadata.Id))
                     return Page();
@@ -156,7 +167,7 @@ namespace StarOJ.Server.Host.Pages.Problems
 
         public async Task<IActionResult> OnPostDeleteAsync()
         {
-            if (!await CheckModel())
+            if (!await CheckModel(false))
             {
                 return BadRequest();
             }
@@ -166,6 +177,32 @@ namespace StarOJ.Server.Host.Pages.Problems
             {
                 await client.DeleteAsync(PostData.Metadata.Id);
                 return RedirectToPage("/Problems/Index");
+            }
+            catch
+            {
+                return NotFound();
+            }
+        }
+
+        public async Task<IActionResult> OnPostImportAsync()
+        {
+            if (!await CheckModel(true))
+            {
+                return BadRequest();
+            }
+
+            var httpclient = clientFactory.CreateClient();
+            var client = new ProblemsClient(httpclient);
+            try
+            {
+                string sp = "";
+                using (var st = PostData.ImportFile.OpenReadStream())
+                using (var sr = new StreamReader(st))
+                    sp = await sr.ReadToEndAsync();
+                var package = Newtonsoft.Json.JsonConvert.DeserializeObject<ProblemPackage>(sp);
+                package.Metadata.UserId = PostData.Metadata.UserId;
+                var pro = await client.ImportAsync(package);
+                return RedirectToPage(new { id = pro.Id });
             }
             catch
             {

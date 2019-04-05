@@ -33,7 +33,7 @@
 </ul>
 
 <div class="row">
-    <div class="col-8">
+    <div class="col-8" id="divMain">
         <h1 class="display-4">
             <judge-state value="@Model.Submission.Result.State"></judge-state>
         </h1>
@@ -43,14 +43,17 @@
             <form method="post" style="margin-left:10px">
                 <input type="hidden" asp-for="PostData.Language" value="@Model.Submission.Metadata.Language" />
                 <input type="hidden" asp-for="PostData.Id" value="@Model.Submission.Metadata.Id" />
-                <button type="submit" asp-page-handler="DownloadCode" class="btn btn-sm btn-outline-primary">
+                <button type="submit" asp-page-handler="DownloadCode" class="btn btn-lg btn-outline-primary">
                     <i class="fa fa-download"></i>
                 </button>
             </form>
+            <button class="btn btn-lg btn-outline-secondary" onclick="toggleSidebar()" style="margin-left:10px">
+                <i class="fa fa-expand"></i>
+            </button>
         </div>
 
         <pre id="rawCode" style="display:none">@Html.DisplayFor(model=>model.Submission.Code)</pre>
-        <div id="code" style="min-height:600px"></div>
+        <div id="code" style="min-height:600px; margin-top:10px"></div>
 
         <br />
 
@@ -90,7 +93,7 @@
             </ul>
         }
     </div>
-    <div class="col-4">
+    <div class="col-4" id="divSidebar">
         <dl>
             <dt style="float:left; min-width:30px"><i class="fa fa-question"></i></dt>
             <dd><a asp-page="/Problems/View" asp-route-id="@Model.Submission.Problem.Id">@Html.DisplayFor(model => model.Submission.Problem.Name)</a></dd>
@@ -221,6 +224,23 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.16.2/min/vs/editor/editor.main.js"
                 asp-fallback-src="../lib/monaco-editor/min/vs/editor/editor.main.js"></script>
     </environment>
+
+    <script>
+        var isSidebarShow = true;
+        function toggleSidebar() {
+            if (isSidebarShow) {
+                document.getElementById("divMain").className = "col-12";
+                document.getElementById("divSidebar").style = "display:none";
+                isSidebarShow = false;
+            }
+            else {
+                document.getElementById("divMain").className = "col-8";
+                document.getElementById("divSidebar").style = "";
+                isSidebarShow = true;
+            }
+            editor.layout();
+        }
+    </script>
 
     <script>
         var editor = monaco.editor.create(document.getElementById("code"), {

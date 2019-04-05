@@ -17,11 +17,11 @@
 
 @if (canModify)
 {
-<div class="btn-group-toggle" style="text-align:right; margin-bottom:10px">
-    <a asp-page="./Edit" class="btn btn-outline-success">
-        <i class="fa fa-plus"></i>
-    </a>
-</div>
+    <div class="btn-group-toggle" style="text-align:right; margin-bottom:10px">
+        <a asp-page="./Edit" class="btn btn-outline-success">
+            <i class="fa fa-plus"></i>
+        </a>
+    </div>
 }
 
 <table class="table table-hover">
@@ -39,7 +39,7 @@
             <th style="width:10%">
                 @SharedLocalizer[Html.DisplayNameFor(model => model.Problems[0].Metadata.Source)]
             </th>
-            <th style="width:12%">@SharedLocalizer["Operations"]</th>
+            <th style="width:15%">@SharedLocalizer["Operations"]</th>
         </tr>
     </thead>
     <tbody>
@@ -75,6 +75,9 @@
                                 </a>
                                 @if (canModify)
                                 {
+                                    <button type="submit" asp-page-handler="Export" class="btn btn-outline-info">
+                                        <i class="fa fa-file-export"></i>
+                                    </button>
                                     <a asp-page="./Edit" asp-route-id="@item.Metadata.Id" class="btn btn-outline-primary">
                                         <i class="fa fa-edit"></i>
                                     </a>

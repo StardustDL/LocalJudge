@@ -15,6 +15,14 @@ namespace StarOJ.Core.Helpers
             return new MemoryStream(Encoding.UTF8.GetBytes(str));
         }
 
+        public static async Task<string> ToString(Stream str)
+        {
+            using(var sr = new StreamReader(str))
+            {
+                return await sr.ReadToEndAsync();
+            }
+        }
+
         public static DataPreview GetPreviewInUTF8(string path, int maxLength)
         {
             using (var fs = File.OpenRead(path))

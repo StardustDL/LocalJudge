@@ -78,6 +78,7 @@ namespace StarOJ.Data.Provider.SqlServer
             _submission.ProblemId = int.Parse(value.ProblemId);
             _submission.Time = value.Time;
             _submission.UserId = int.Parse(value.UserId);
+            _submission.CodeLength = value.CodeLength;
             await _context.SaveChangesAsync();
         }
 

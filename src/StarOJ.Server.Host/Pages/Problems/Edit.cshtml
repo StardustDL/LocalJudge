@@ -12,7 +12,7 @@
     }
     else
     {
-        ViewData["Title"] = $"{Model.Problem.Metadata.Name} - {SharedLocalizer["Edit"]}";
+        ViewData["Title"] = $"{Model.Problem.Metadata.Name} - {SharedLocalizer["Edit"].Value}";
     }
     ViewData["Id"] = "Problems";
 }
@@ -33,13 +33,16 @@
     }
 </ul>
 
-<form method="post">
+<form method="post" enctype="multipart/form-data">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="btn-group-lg" style="text-align:left">
         @if (Model.IsNew)
         {
             <button type="submit" asp-page-handler="Create" class="btn btn-outline-success">
                 <i class="fa fa-plus"></i>
+            </button>
+            <button type="submit" asp-page-handler="Import" class="btn btn-outline-info">
+                <i class="fa fa-file-import"></i>
             </button>
         }
         else
@@ -57,6 +60,16 @@
     </div>
     <input type="hidden" asp-for="PostData.Metadata.Id" value="@Model.Problem.Metadata.Id" />
     <input type="hidden" asp-for="PostData.Metadata.UserId" value="@(await UserManager.GetUserIdAsync(await UserManager.GetUserAsync(User)))" />
+    @if (Model.IsNew)
+    {
+        <div class="input-group" style="margin-top:10px">
+            <div class="input-group-prepend">
+                <span class="input-group-text">@SharedLocalizer["Import"]</span>
+            </div>
+            <input type="file" class="form-control" asp-for="PostData.ImportFile" />
+            <span asp-validation-for="PostData.ImportFile" class="text-danger"></span>
+        </div>
+    }
     <div class="input-group" style="margin-top:10px">
         <div class="input-group-prepend">
             <span class="input-group-text">@SharedLocalizer["Name"]</span>
