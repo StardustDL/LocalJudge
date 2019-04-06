@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace StarOJ.Core.Judgers
 {
@@ -31,6 +32,14 @@ namespace StarOJ.Core.Judgers
         public string Error { get; private set; }
 
         public TextReader Input { get; set; }
+
+        public int DataCollectSpeed { get; set; } = 5;
+
+
+        /// <summary>
+        /// True if read all input before write to process
+        /// </summary>
+        public bool InputAll { get; set; } = true;
 
         public long? MemoryLimit { get; set; }
 
@@ -64,7 +73,7 @@ namespace StarOJ.Core.Judgers
             State = RunnerState.Pending;
         }
 
-        public void Run()
+        public async Task Run()
         {
             StartInfo.UseShellExecute = false;
             StartInfo.RedirectStandardError = true;
@@ -95,7 +104,7 @@ namespace StarOJ.Core.Judgers
                             State = RunnerState.OutOfMemory;
                             Process.Kill();
                         }
-                        Thread.Sleep(5);
+                        Thread.Sleep(DataCollectSpeed);
                     }
                     catch
                     {
@@ -107,19 +116,30 @@ namespace StarOJ.Core.Judgers
 
             State = RunnerState.Running;
 
-            StartTime = DateTimeOffset.Now;
+            bwMemory.RunWorkerAsync();
 
             Process.Start();
+
+            StartTime = DateTimeOffset.Now;
+
             if (Input != null)
             {
-                while (Input.Peek() != -1)
+                if (InputAll)
                 {
-                    Process.StandardInput.WriteLine(Input.ReadLine());
+                    var input = await Input.ReadToEndAsync();
+                    await Process.StandardInput.WriteAsync(input);
+                    StartTime = DateTimeOffset.Now;
+                }
+                else
+                {
+                    while (Input.Peek() != -1)
+                    {
+                        await Process.StandardInput.WriteLineAsync(await Input.ReadLineAsync());
+                    }
+                    StartTime = DateTimeOffset.Now;
                 }
             }
-            Process.StandardInput.Close();
-
-            bwMemory.RunWorkerAsync();
+            Process.StandardInput.Close();            
 
             if (Process.WaitForExit((int)Math.Ceiling(TimeLimit.TotalMilliseconds)))
             {

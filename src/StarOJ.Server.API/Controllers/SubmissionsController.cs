@@ -59,13 +59,13 @@ namespace StarOJ.Server.API.Controllers
             if (sub == null) return Forbid();
             try
             {
-                if(data.CodeFile != null)
+                if (data.CodeFile != null)
                 {
                     using (var s = data.CodeFile.OpenReadStream())
                     {
                         meta.CodeLength = (uint)s.Length;
                         await sub.SetCode(s);
-                    }   
+                    }
                 }
                 else
                 {
@@ -106,6 +106,18 @@ namespace StarOJ.Server.API.Controllers
                 return NotFound();
         }
 
+        [HttpGet("query")]
+        public async Task<ActionResult<IEnumerable<SubmissionMetadata>>> Query(string id, string problemId, string userId, ProgrammingLanguage? language, JudgeState? state)
+        {
+            var all = await _workspace.Submissions.Query(id, problemId, userId, language, state);
+            List<SubmissionMetadata> ans = new List<SubmissionMetadata>();
+            foreach (var v in all)
+            {
+                ans.Add(await v.GetMetadata());
+            }
+            return ans;
+        }
+
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         public async Task<ActionResult> Rejudge(string id)
@@ -131,7 +143,7 @@ namespace StarOJ.Server.API.Controllers
         [HttpGet("{id}/result")]
         public async Task<ActionResult<SubmissionResult>> GetResult(string id)
         {
-            var res = await(await _workspace.Submissions.Get(id))?.GetResult();
+            var res = await (await _workspace.Submissions.Get(id))?.GetResult();
             if (res != null)
                 return Ok(res);
             else
@@ -140,7 +152,7 @@ namespace StarOJ.Server.API.Controllers
 
         [HttpPut("{id}/result")]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
-        public async Task<ActionResult> SetResult(string id,[FromBody] SubmissionResult value)
+        public async Task<ActionResult> SetResult(string id, [FromBody] SubmissionResult value)
         {
             var res = await _workspace.Submissions.Get(id);
             if (res != null)

@@ -24,10 +24,24 @@
     </div>
 }
 
-<table class="table table-hover">
+<div class="text-center" style="width:100%">
+    <form method="post" class="form-inline" style="display:inline-flex">
+        <label class="control-label">@SharedLocalizer["Id"]</label>
+        <input class="form-control" asp-for="PostData.QueryId" style="margin-left:10px; width:100px" />
+        <label class="control-label" style="margin-left:10px">@Localizer["Author Id"]</label>
+        <input class="form-control" asp-for="PostData.QueryUserId" style="margin-left:10px; width:100px" />
+        <label class="control-label" style="margin-left:10px">@SharedLocalizer["Name"]</label>
+        <input class="form-control" asp-for="PostData.QueryName" style="margin-left:10px; width:150px" />
+        <label class="control-label" style="margin-left:10px">@SharedLocalizer["Source"]</label>
+        <input class="form-control" asp-for="PostData.QuerySource" style="margin-left:10px; width:150px" />
+        <button type="submit" asp-page-handler="Query" class="btn btn-outline-dark" style="margin-left:10px">@SharedLocalizer["Query"]</button>
+    </form>
+</div>
+
+<table class="table table-hover" style="margin-top:10px">
     <thead>
         <tr>
-            <th style="width:10%">
+            <th style="width:6%">
                 @SharedLocalizer[Html.DisplayNameFor(model => model.Problems[0].Metadata.Id)]
             </th>
             <th>

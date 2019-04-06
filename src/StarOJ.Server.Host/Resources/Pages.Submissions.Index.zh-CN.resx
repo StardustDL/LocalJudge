@@ -123,10 +123,16 @@
   <data name="Memory" xml:space="preserve">
     <value>内存</value>
   </data>
+  <data name="Problem Id" xml:space="preserve">
+    <value>题目编号</value>
+  </data>
   <data name="Submission Time" xml:space="preserve">
     <value>提交时间</value>
   </data>
   <data name="Time" xml:space="preserve">
     <value>耗时</value>
+  </data>
+  <data name="User Id" xml:space="preserve">
+    <value>用户编号</value>
   </data>
 </root>

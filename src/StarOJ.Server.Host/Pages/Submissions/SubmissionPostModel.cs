@@ -8,9 +8,14 @@ namespace StarOJ.Server.Host.Pages.Submissions
     {
         public string ProblemId { get; set; }
 
-        [Required]
         public string Id { get; set; }
 
         public ProgrammingLanguage Language { get; set; }
+
+        public string QueryJudgeState { get; set; }
+
+        public string QueryLanguage { get; set; }
+
+        public string UserId { get; set; }
     }
 }

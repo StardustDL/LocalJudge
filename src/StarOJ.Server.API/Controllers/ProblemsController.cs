@@ -61,6 +61,18 @@ namespace StarOJ.Server.API.Controllers
             return Ok(ans);
         }
 
+        [HttpGet("query")]
+        public async Task<ActionResult<IEnumerable<ProblemMetadata>>> Query(string id, string userId,string name,string source)
+        {
+            var all = await _workspace.Problems.Query(id, userId, name, source);
+            List<ProblemMetadata> ans = new List<ProblemMetadata>();
+            foreach (var v in all)
+            {
+                ans.Add(await v.GetMetadata());
+            }
+            return ans;
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<ProblemMetadata>> Get(string id)
         {

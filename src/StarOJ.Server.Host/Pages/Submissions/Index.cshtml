@@ -15,7 +15,23 @@
     <li class="breadcrumb-item active">@ViewData["Title"]</li>
 </ul>
 
-<table class="table table-hover">
+<div class="text-center" style="width:100%">
+    <form method="post" class="form-inline" style="display:inline-flex">
+        <label class="control-label">@SharedLocalizer["Id"]</label>
+        <input class="form-control" asp-for="PostData.Id" style="margin-left:10px; width:100px" />
+        <label class="control-label" style="margin-left:10px">@Localizer["Problem Id"]</label>
+        <input class="form-control" asp-for="PostData.ProblemId" style="margin-left:10px; width:100px" />
+        <label class="control-label" style="margin-left:10px">@Localizer["User Id"]</label>
+        <input class="form-control" asp-for="PostData.UserId" style="margin-left:10px; width:100px" />
+        <label class="control-label" style="margin-left:10px">@SharedLocalizer["Language"]</label>
+        <select class="form-control" asp-for="PostData.QueryLanguage" asp-items="Model.QueryLanguages" style="margin-left:10px"></select>
+        <label class="control-label" style="margin-left:10px">@SharedLocalizer["State"]</label>
+        <select class="form-control" asp-for="PostData.QueryJudgeState" asp-items="Model.QueryJudgeStates" style="margin-left:10px"></select>
+        <button type="submit" asp-page-handler="Query" class="btn btn-outline-dark" style="margin-left:10px">@SharedLocalizer["Query"]</button>
+    </form>
+</div>
+
+<table class="table table-hover" style="margin-top:10px">
     <thead>
         <tr>
             <th>

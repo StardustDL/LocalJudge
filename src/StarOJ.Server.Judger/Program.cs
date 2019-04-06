@@ -179,7 +179,7 @@ namespace StarOJ.Server.Judger
                             // gcc/g++ code.c -> code.(out/exe)
                             // csc code.cs -> code.exe
 
-                            compileResult = Compiler.Compile(lang.CompileCommand, rootDir, codePath, outputPath, lang.CompileTimeLimit, lang.CompileMemoryLimit);
+                            compileResult = await Compiler.Compile(lang.CompileCommand, rootDir, codePath, outputPath, lang.CompileTimeLimit, lang.CompileMemoryLimit);
                             if (compileResult.State != CompileState.Compiled)
                             {
                                 result.Issues.Add(new Issue(IssueLevel.Error, "Compiled error with internal error: " + compileResult.State.ToString()));
@@ -213,7 +213,7 @@ namespace StarOJ.Server.Judger
                                 using (var fout = await pcli.GetSampleOutputAsync(problem.Id, item.Id))
                                 using (var input = new StreamReader(fin.Stream))
                                 using (var output = new StreamReader(fout.Stream))
-                                    res = Core.Judgers.Judger.Judge(casemdata.Id, lang.RunCommand.Resolve(vars), rootDir, casemdata.TimeLimit, casemdata.MemoryLimit, input, output, comparer);
+                                    res = await Core.Judgers.Judger.Judge(casemdata.Id, lang.RunCommand.Resolve(vars), rootDir, casemdata.TimeLimit, casemdata.MemoryLimit, input, output, comparer);
                                 result.Samples.Add(res);
                             }
 
@@ -226,7 +226,7 @@ namespace StarOJ.Server.Judger
                                 using (var fout = await pcli.GetTestOutputAsync(problem.Id, item.Id))
                                 using (var input = new StreamReader(fin.Stream))
                                 using (var output = new StreamReader(fout.Stream))
-                                    res = Core.Judgers.Judger.Judge(casemdata.Id, lang.RunCommand.Resolve(vars), rootDir, casemdata.TimeLimit, casemdata.MemoryLimit, input, output, comparer);
+                                    res = await Core.Judgers.Judger.Judge(casemdata.Id, lang.RunCommand.Resolve(vars), rootDir, casemdata.TimeLimit, casemdata.MemoryLimit, input, output, comparer);
                                 result.Tests.Add(res);
                             }
 

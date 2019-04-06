@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace StarOJ.Core.Judgers
 {
@@ -252,7 +253,7 @@ namespace StarOJ.Core.Judgers
 
         public const string V_CodeFile = "{codefile}", V_CompileOutput = "{compiled}";
 
-        public static JudgeResult Judge(string name, Command executor,string workingDirectory, TimeSpan timeLimit, long memoryLimit, TextReader input, TextReader output, IJudgeComparer comparer)
+        public static async Task<JudgeResult> Judge(string name, Command executor,string workingDirectory, TimeSpan timeLimit, long memoryLimit, TextReader input, TextReader output, IJudgeComparer comparer)
         {
             JudgeResult res = new JudgeResult
             {
@@ -274,7 +275,7 @@ namespace StarOJ.Core.Judgers
                 })
                 {
                     res.State = JudgeState.Judging;
-                    runner.Run();
+                    await runner.Run();
                     res.Time = runner.RunningTime;
                     res.Memory = runner.MaximumMemory;
                     if (!string.IsNullOrEmpty(runner.Error))

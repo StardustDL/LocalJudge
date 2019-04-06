@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using StarOJ.Core.Judgers;
+using StarOJ.Core.Helpers;
 
 namespace StarOJ.Server.Host.TagHelpers
 {
@@ -92,39 +93,7 @@ namespace StarOJ.Server.Host.TagHelpers
 
             var text = new TagBuilder("span");
             text.Attributes["style"] = "margin-left: 10px";
-            switch (Value)
-            {
-                case JudgeState.Accepted:
-                    text.InnerHtml.Append(_localizer["Accepted"]);
-                    break;
-                case JudgeState.WrongAnswer:
-                    text.InnerHtml.Append(_localizer["Wrong Answer"]);
-                    break;
-                case JudgeState.TimeLimitExceeded:
-                    text.InnerHtml.Append(_localizer["Time Limit Exceeded"]);
-                    break;
-                case JudgeState.MemoryLimitExceeded:
-                    text.InnerHtml.Append(_localizer["Memory Limit Exceeded"]);
-                    break;
-                case JudgeState.Pending:
-                    text.InnerHtml.Append(_localizer["Pending"]);
-                    break;
-                case JudgeState.Judging:
-                    text.InnerHtml.Append(_localizer["Judging"]);
-                    break;
-                case JudgeState.Compiling:
-                    text.InnerHtml.Append(_localizer["Compiling"]);
-                    break;
-                case JudgeState.CompileError:
-                    text.InnerHtml.Append(_localizer["Compile Error"]);
-                    break;
-                case JudgeState.RuntimeError:
-                    text.InnerHtml.Append(_localizer["Runtime Error"]);
-                    break;
-                case JudgeState.SystemError:
-                    text.InnerHtml.Append(_localizer["System Error"]);
-                    break;
-            }
+            text.InnerHtml.Append(_localizer[JudgeStateHelper.DisplayNames[Value]]);
             output.Content.AppendHtml(text);
             base.Process(context, output);
         }

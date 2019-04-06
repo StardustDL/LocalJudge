@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using StarOJ.Core.Judgers;
+using StarOJ.Core.Helpers;
 
 namespace StarOJ.Server.Host.TagHelpers
 {
@@ -57,30 +58,7 @@ namespace StarOJ.Server.Host.TagHelpers
 
             var name = new TagBuilder("span");
             name.Attributes["style"] = "margin-left: 5px";
-            switch (Value)
-            {
-                case ProgrammingLanguage.C:
-                    name.InnerHtml.Append("C");
-                    break;
-                case ProgrammingLanguage.Cpp:
-                    name.InnerHtml.Append("C++");
-                    break;
-                case ProgrammingLanguage.Python:
-                    name.InnerHtml.Append("Python");
-                    break;
-                case ProgrammingLanguage.Java:
-                    name.InnerHtml.Append("Java");
-                    break;
-                case ProgrammingLanguage.CSharp:
-                    name.InnerHtml.Append("C#");
-                    break;
-                case ProgrammingLanguage.Rust:
-                    name.InnerHtml.Append("Rust");
-                    break;
-                case ProgrammingLanguage.VisualBasic:
-                    name.InnerHtml.Append("Visual Basic");
-                    break;
-            }
+            name.InnerHtml.Append(ProgrammingLanguageHelper.DisplayNames[Value]);
             output.Content.AppendHtml(name);
             base.Process(context, output);
         }

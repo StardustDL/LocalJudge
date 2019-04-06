@@ -2,6 +2,8 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using StarOJ.Core.Judgers;
 using StarOJ.Core.Submissions;
 using StarOJ.Data.Provider.SqlServer.Models;
 
@@ -61,14 +63,15 @@ namespace StarOJ.Data.Provider.SqlServer
             }
         }
 
-        public Task<IEnumerable<ISubmissionProvider>> GetAll()
+        public async Task<IEnumerable<ISubmissionProvider>> GetAll()
         {
             List<ISubmissionProvider> res = new List<ISubmissionProvider>();
-            foreach (var v in _context.Submissions)
+            var all = await (from item in _context.Submissions orderby item.Time descending select item).ToArrayAsync();
+            foreach (var v in all)
             {
                 res.Add(new SubmissionProvider(_workspace, _context, v));
             }
-            return Task.FromResult((IEnumerable<ISubmissionProvider>)res);
+            return res;
         }
 
         public async Task<bool> Has(string id)
@@ -79,10 +82,37 @@ namespace StarOJ.Data.Provider.SqlServer
 
         public async Task Clear()
         {
-            _context.Submissions.RemoveRange(_context.Submissions.ToArray());
+            _context.Submissions.RemoveRange(await _context.Submissions.ToArrayAsync());
             foreach (var s in Directory.GetDirectories(_workspace.SubmissionStoreRoot))
                 Directory.Delete(s, true);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<ISubmissionProvider>> Query(string id,string problemId, string userId, ProgrammingLanguage? language,JudgeState? state)
+        {
+            var query = from item in _context.Submissions select item;
+            if (!string.IsNullOrEmpty(id) && int.TryParse(id, out var _id))
+            {
+                query = query.Where(item => item.Id == _id);
+            }
+            if (!string.IsNullOrEmpty(problemId) && int.TryParse(problemId, out var _problemId))
+            {
+                query = query.Where(item => item.ProblemId == _problemId);
+            }
+            if (!string.IsNullOrEmpty(userId) && int.TryParse(userId, out var _userId))
+            {
+                query = query.Where(item => item.UserId == _userId);
+            }
+            if (language.HasValue)
+            {
+                query = query.Where(item => item.Language == language.Value);
+            }
+            if (state.HasValue)
+            {
+                query = query.Where(item => item.State == state.Value);
+            }
+            query = query.OrderByDescending(item => item.Time);
+            return (await query.ToListAsync()).Select(x => new SubmissionProvider(_workspace, _context, x));
         }
     }
 }

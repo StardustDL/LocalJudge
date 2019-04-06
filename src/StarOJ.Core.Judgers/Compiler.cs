@@ -1,6 +1,7 @@
 ﻿using StarOJ.Core.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace StarOJ.Core.Judgers
 {
@@ -8,7 +9,7 @@ namespace StarOJ.Core.Judgers
     {
         public const string V_CodeFile = "{codefile}", V_Output = "{output}";
 
-        public static CompileResult Compile(Command executor, string workingDirectory, string codePath, string outputPath, TimeSpan timeLimit, long memoryLimit)
+        public static async Task<CompileResult> Compile(Command executor, string workingDirectory, string codePath, string outputPath, TimeSpan timeLimit, long memoryLimit)
         {
             CompileResult res = new CompileResult
             {
@@ -36,7 +37,7 @@ namespace StarOJ.Core.Judgers
                 })
                 {
                     res.State = CompileState.Compiling;
-                    runner.Run();
+                    await runner.Run();
                     res.Time = runner.RunningTime;
                     res.Memory = runner.MaximumMemory;
                     if (!string.IsNullOrEmpty(runner.Output))

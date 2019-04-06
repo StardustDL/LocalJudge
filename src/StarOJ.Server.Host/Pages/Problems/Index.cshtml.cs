@@ -46,6 +46,27 @@ namespace StarOJ.Server.Host.Pages.Problems
             Problems = ss;
         }
 
+        public async Task<IActionResult> OnPostQueryAsync()
+        {
+            try
+            {
+                var httpclient = clientFactory.CreateClient();
+                var client = new ProblemsClient(httpclient);
+                var ms = (await client.QueryAsync(PostData.QueryId, PostData.QueryUserId, PostData.QueryName, PostData.QuerySource)).ToList();
+                var ss = new List<ProblemModel>();
+                foreach (var v in ms)
+                {
+                    ss.Add(await ProblemModel.GetAsync(v, httpclient, false, false));
+                }
+                Problems = ss;
+            }
+            catch
+            {
+                Problems = Array.Empty<ProblemModel>();
+            }
+            return Page();
+        }
+
         public async Task<IActionResult> OnPostDeleteAsync()
         {
             if (!await GetModifyAuthorization())

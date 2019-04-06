@@ -26,6 +26,13 @@ namespace StarOJ.Data.Provider.SqlServer
         public async Task Clear()
         {
             var tests = (from x in _context.Tests where x.ProblemId == _problemId && x.IsSample == _isSample select x).ToArray();
+
+            foreach(var v in tests)
+            {
+                var item = new TestCaseProvider(_workspace, _context, v);
+                Directory.Delete(item.GetRoot(), true);
+            }
+
             _context.Tests.RemoveRange(tests);
             await _context.SaveChangesAsync();
         }
