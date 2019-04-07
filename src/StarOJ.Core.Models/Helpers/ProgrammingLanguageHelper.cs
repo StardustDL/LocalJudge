@@ -1,7 +1,5 @@
 ﻿using StarOJ.Core.Judgers;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace StarOJ.Core.Helpers
 {
@@ -48,7 +46,7 @@ namespace StarOJ.Core.Helpers
     {
         public static readonly IReadOnlyDictionary<JudgeState, string> DisplayNames = new Dictionary<JudgeState, string>
         {
-            [JudgeState.Accepted]= "Accepted",
+            [JudgeState.Accepted] = "Accepted",
             [JudgeState.CompileError] = "Compile Error",
             [JudgeState.Compiling] = "Compiling",
             [JudgeState.Judging] = "Judging",

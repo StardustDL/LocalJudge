@@ -1,13 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using StarOJ.Core.Identity;
+﻿using StarOJ.Core.Identity;
 using StarOJ.Core.Judgers;
 using StarOJ.Core.Problems;
 using StarOJ.Core.Submissions;
 using StarOJ.Server.API.Clients;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace StarOJ.Server.Host.Pages.Submissions
 {
@@ -25,13 +23,13 @@ namespace StarOJ.Server.Host.Pages.Submissions
 
         public static async Task<SubmissionModel> GetAsync(SubmissionMetadata metadata, HttpClient client)
         {
-            var res = new SubmissionModel
+            SubmissionModel res = new SubmissionModel
             {
                 Metadata = metadata
             };
             try
             {
-                var scli = new SubmissionsClient(client);
+                SubmissionsClient scli = new SubmissionsClient(client);
                 res.Result = await scli.GetResultAsync(metadata.Id);
             }
             catch
@@ -43,9 +41,9 @@ namespace StarOJ.Server.Host.Pages.Submissions
             }
             try
             {
-                var scli = new SubmissionsClient(client);
-                using (var file = await scli.GetCodeAsync(metadata.Id))
-                using (var sr = new StreamReader(file.Stream))
+                SubmissionsClient scli = new SubmissionsClient(client);
+                using (FileResponse file = await scli.GetCodeAsync(metadata.Id))
+                using (StreamReader sr = new StreamReader(file.Stream))
                     res.Code = await sr.ReadToEndAsync();
             }
             catch
@@ -54,7 +52,7 @@ namespace StarOJ.Server.Host.Pages.Submissions
             }
             try
             {
-                var pcli = new ProblemsClient(client);
+                ProblemsClient pcli = new ProblemsClient(client);
                 res.Problem = await pcli.GetAsync(metadata.ProblemId);
             }
             catch
@@ -67,7 +65,7 @@ namespace StarOJ.Server.Host.Pages.Submissions
             }
             try
             {
-                var ucli = new UsersClient(client);
+                UsersClient ucli = new UsersClient(client);
                 res.User = await ucli.GetAsync(metadata.UserId);
             }
             catch

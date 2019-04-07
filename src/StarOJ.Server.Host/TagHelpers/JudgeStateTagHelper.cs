@@ -1,12 +1,8 @@
-﻿using StarOJ.Server.API.Clients;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Localization;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using StarOJ.Core.Judgers;
 using StarOJ.Core.Helpers;
+using StarOJ.Core.Judgers;
 
 namespace StarOJ.Server.Host.TagHelpers
 {
@@ -55,7 +51,7 @@ namespace StarOJ.Server.Host.TagHelpers
             output.TagMode = TagMode.StartTagAndEndTag;
             output.Attributes.SetAttribute("style", $"color:{GetStateColor(Value)}");
 
-            var icon = new TagBuilder("i");
+            TagBuilder icon = new TagBuilder("i");
             switch (Value)
             {
                 case JudgeState.Accepted:
@@ -91,7 +87,7 @@ namespace StarOJ.Server.Host.TagHelpers
             }
             output.Content.AppendHtml(icon);
 
-            var text = new TagBuilder("span");
+            TagBuilder text = new TagBuilder("span");
             text.Attributes["style"] = "margin-left: 10px";
             text.InnerHtml.Append(_localizer[JudgeStateHelper.DisplayNames[Value]]);
             output.Content.AppendHtml(text);

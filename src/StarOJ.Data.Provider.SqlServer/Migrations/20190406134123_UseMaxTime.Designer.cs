@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StarOJ.Data.Provider.SqlServer.Models;
 
 namespace StarOJ.Data.Provider.SqlServer.Migrations
 {
     [DbContext(typeof(OJContext))]
-    partial class OJContextModelSnapshot : ModelSnapshot
+    [Migration("20190406134123_UseMaxTime")]
+    partial class UseMaxTime
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

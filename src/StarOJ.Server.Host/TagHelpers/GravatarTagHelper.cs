@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Razor.TagHelpers;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Threading.Tasks;
 
 namespace StarOJ.Server.Host.TagHelpers
 {
@@ -28,7 +25,7 @@ namespace StarOJ.Server.Host.TagHelpers
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             string email = Gravatar.Trim().ToLower();
-            var src = $"https://www.gravatar.com/avatar/{ComputeHash(email).ToLower()}?size={Size}&d={Default}";
+            string src = $"https://www.gravatar.com/avatar/{ComputeHash(email).ToLower()}?size={Size}&d={Default}";
             output.Attributes.SetAttribute("src", src);
             base.Process(context, output);
         }

@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using StarOJ.Server.API.Clients;
+using StarOJ.Server.Host.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
-using StarOJ.Server.API.Clients;
-using StarOJ.Server.Host.Helpers;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace StarOJ.Server.Host.Pages.Problems
 {
@@ -35,11 +35,11 @@ namespace StarOJ.Server.Host.Pages.Problems
 
         public async Task OnGetAsync()
         {
-            var httpclient = clientFactory.CreateClient();
-            var client = new ProblemsClient(httpclient);
-            var ms = await client.GetAllAsync();
-            var ss = new List<ProblemModel>();
-            foreach (var v in ms)
+            HttpClient httpclient = clientFactory.CreateClient();
+            ProblemsClient client = new ProblemsClient(httpclient);
+            IList<Core.Problems.ProblemMetadata> ms = await client.GetAllAsync();
+            List<ProblemModel> ss = new List<ProblemModel>();
+            foreach (Core.Problems.ProblemMetadata v in ms)
             {
                 ss.Add(await ProblemModel.GetAsync(v, httpclient, false, false));
             }
@@ -50,11 +50,11 @@ namespace StarOJ.Server.Host.Pages.Problems
         {
             try
             {
-                var httpclient = clientFactory.CreateClient();
-                var client = new ProblemsClient(httpclient);
-                var ms = (await client.QueryAsync(PostData.QueryId, PostData.QueryUserId, PostData.QueryName, PostData.QuerySource)).ToList();
-                var ss = new List<ProblemModel>();
-                foreach (var v in ms)
+                HttpClient httpclient = clientFactory.CreateClient();
+                ProblemsClient client = new ProblemsClient(httpclient);
+                List<Core.Problems.ProblemMetadata> ms = (await client.QueryAsync(PostData.QueryId, PostData.QueryUserId, PostData.QueryName, PostData.QuerySource)).ToList();
+                List<ProblemModel> ss = new List<ProblemModel>();
+                foreach (Core.Problems.ProblemMetadata v in ms)
                 {
                     ss.Add(await ProblemModel.GetAsync(v, httpclient, false, false));
                 }
@@ -78,8 +78,8 @@ namespace StarOJ.Server.Host.Pages.Problems
                 return BadRequest();
             }
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new ProblemsClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            ProblemsClient client = new ProblemsClient(httpclient);
             try
             {
                 await client.DeleteAsync(PostData.Metadata.Id);
@@ -102,12 +102,12 @@ namespace StarOJ.Server.Host.Pages.Problems
                 return BadRequest();
             }
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new ProblemsClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            ProblemsClient client = new ProblemsClient(httpclient);
             try
             {
-                var package = await client.ExportAsync(PostData.Metadata.Id);
-                var str = Newtonsoft.Json.JsonConvert.SerializeObject(package);
+                Core.Problems.ProblemPackage package = await client.ExportAsync(PostData.Metadata.Id);
+                string str = Newtonsoft.Json.JsonConvert.SerializeObject(package);
                 return File(Encoding.UTF8.GetBytes(str), "text/plain", $"{PostData.Metadata.Id}.json");
             }
             catch

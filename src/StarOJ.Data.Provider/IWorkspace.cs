@@ -1,13 +1,9 @@
-﻿using StarOJ.Core.Helpers;
-using StarOJ.Core.Identity;
-using StarOJ.Core.Judgers;
+﻿using StarOJ.Core.Identity;
 using StarOJ.Core.Problems;
 using StarOJ.Core.Submissions;
-using System;
-using System.IO;
 using System.Threading.Tasks;
 
-namespace StarOJ.Core
+namespace StarOJ.Data.Provider
 {
     public interface IWorkspace
     {
@@ -20,9 +16,11 @@ namespace StarOJ.Core
 
         IUserListProvider Users { get; }
 
-        IRoleListProvider Roles { get;}
+        IRoleListProvider Roles { get; }
 
-        bool HasInitialized{get;}
+        IStatisticProvider Statistics { get; }
+
+        bool HasInitialized { get; }
 
         Task Initialize();
 

@@ -35,29 +35,6 @@
 
 <form method="post" enctype="multipart/form-data">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <div class="btn-group-lg" style="text-align:left">
-        @if (Model.IsNew)
-        {
-            <button type="submit" asp-page-handler="Create" class="btn btn-outline-success">
-                <i class="fa fa-plus"></i>
-            </button>
-            <button type="submit" asp-page-handler="Import" class="btn btn-outline-info">
-                <i class="fa fa-file-import"></i>
-            </button>
-        }
-        else
-        {
-            <a asp-page="./Data" asp-route-id="@Model.Problem.Metadata.Id" class="btn btn-outline-secondary">
-                <i class="fa fa-database"></i>
-            </a>
-            <button type="submit" asp-page-handler="Edit" class="btn btn-outline-primary">
-                <i class="fa fa-edit"></i>
-            </button>
-            <button type="submit" asp-page-handler="Delete" class="btn btn-outline-danger">
-                <i class="fa fa-trash"></i>
-            </button>
-        }
-    </div>
     <input type="hidden" asp-for="PostData.Metadata.Id" value="@Model.Problem.Metadata.Id" />
     <input type="hidden" asp-for="PostData.Metadata.UserId" value="@(await UserManager.GetUserIdAsync(await UserManager.GetUserAsync(User)))" />
     @if (Model.IsNew)
@@ -68,6 +45,11 @@
             </div>
             <input type="file" class="form-control" asp-for="PostData.ImportFile" />
             <span asp-validation-for="PostData.ImportFile" class="text-danger"></span>
+            <div class="input-group-append">
+                <button type="submit" asp-page-handler="Import" class="btn btn-info">
+                    <i class="fa fa-file-export"></i>
+                </button>
+            </div>
         </div>
     }
     <div class="input-group" style="margin-top:10px">
@@ -76,6 +58,26 @@
         </div>
         <input class="form-control" asp-for="PostData.Metadata.Name" value="@Model.Problem.Metadata.Name" />
         <span asp-validation-for="PostData.Metadata.Name" class="text-danger"></span>
+        <div class="input-group-append">
+            @if (Model.IsNew)
+            {
+                <button type="submit" asp-page-handler="Create" class="btn btn-success">
+                    <i class="fa fa-plus"></i>
+                </button>
+            }
+            else
+            {
+                <a asp-page="./Data" asp-route-id="@Model.Problem.Metadata.Id" class="btn btn-secondary">
+                    <i class="fa fa-database"></i>
+                </a>
+                <button type="submit" asp-page-handler="Edit" class="btn btn-primary">
+                    <i class="fa fa-save"></i>
+                </button>
+                <button type="submit" asp-page-handler="Delete" class="btn btn-danger">
+                    <i class="fa fa-trash"></i>
+                </button>
+            }
+        </div>
     </div>
     <div class="input-group" style="margin-top:10px">
         <div class="input-group-prepend">

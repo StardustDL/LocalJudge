@@ -132,8 +132,12 @@
                     <a asp-page="/Account/Index" asp-area="Identity" asp-route-id="@Model.Problem.User.Id">@Model.Problem.User.Name</a>
                 }
             </dd>
+
             <dt style="float:left; min-width:30px"><i class="fa fa-map-marker"></i></dt>
             <dd>@Html.DisplayFor(model => model.Problem.Metadata.Source)</dd>
+
+            <dt style="float:left; min-width:30px"><i class="fa fa-percentage"></i></dt>
+            <dd>@Html.DisplayFor(model => model.Problem.AcceptedRate)</dd>
 
             <dd>
                 <form method="post" style="margin-left:0px; margin-top:10px;">

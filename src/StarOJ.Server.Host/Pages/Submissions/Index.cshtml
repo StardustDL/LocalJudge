@@ -27,7 +27,9 @@
         <select class="form-control" asp-for="PostData.QueryLanguage" asp-items="Model.QueryLanguages" style="margin-left:10px"></select>
         <label class="control-label" style="margin-left:10px">@SharedLocalizer["State"]</label>
         <select class="form-control" asp-for="PostData.QueryJudgeState" asp-items="Model.QueryJudgeStates" style="margin-left:10px"></select>
-        <button type="submit" asp-page-handler="Query" class="btn btn-outline-dark" style="margin-left:10px">@SharedLocalizer["Query"]</button>
+        <button type="submit" asp-page-handler="Query" class="btn btn-outline-dark" style="margin-left:10px">
+            <i class="fa fa-search"></i>
+        </button>
     </form>
 </div>
 
@@ -90,7 +92,7 @@
                     }
                 </td>
                 <td>
-                    <timespan-display value="@item.Result.TotalTime"></timespan-display>
+                    <timespan-display value="@item.Result.MaximumTime"></timespan-display>
                 </td>
                 <td>
                     <memory-display value="@item.Result.MaximumMemory"></memory-display>

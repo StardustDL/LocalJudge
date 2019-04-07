@@ -1,12 +1,10 @@
-﻿using StarOJ.Server.API.Clients;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
+using StarOJ.Core.Identity;
+using StarOJ.Server.API.Clients;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using StarOJ.Core.Identity;
 
 namespace StarOJ.Server.Host.Helpers
 {
@@ -72,8 +70,8 @@ namespace StarOJ.Server.Host.Helpers
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new UsersClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            UsersClient client = new UsersClient(httpclient);
             try
             {
                 await client.CreateAsync(user);
@@ -89,8 +87,8 @@ namespace StarOJ.Server.Host.Helpers
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new UsersClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            UsersClient client = new UsersClient(httpclient);
             try
             {
                 await client.DeleteAsync(user.Id);
@@ -116,8 +114,8 @@ namespace StarOJ.Server.Host.Helpers
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new UsersClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            UsersClient client = new UsersClient(httpclient);
             return await client.GetAsync(userId);
         }
 
@@ -125,8 +123,8 @@ namespace StarOJ.Server.Host.Helpers
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new UsersClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            UsersClient client = new UsersClient(httpclient);
             try
             {
                 return await client.GetByNameAsync(normalizedUserName);
@@ -248,8 +246,8 @@ namespace StarOJ.Server.Host.Helpers
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new UsersClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            UsersClient client = new UsersClient(httpclient);
             try
             {
                 await client.UpdateAsync(user);

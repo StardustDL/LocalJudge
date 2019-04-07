@@ -1,7 +1,4 @@
-﻿using System;
-using System.Text;
-
-namespace StarOJ.Core
+﻿namespace StarOJ.Core
 {
     public enum IssueLevel
     {

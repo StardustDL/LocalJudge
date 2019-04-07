@@ -2,10 +2,6 @@
 using StarOJ.Core;
 using StarOJ.Core.Identity;
 using StarOJ.Core.Judgers;
-using StarOJ.Server.API.Clients;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -13,11 +9,11 @@ namespace StarOJ.Server.Host.Pages
 {
     public class Helper
     {
-        public async static Task<string> TryGetUserEmail(ClaimsPrincipal user, UserManager<UserMetadata> manager)
+        public static async Task<string> TryGetUserEmail(ClaimsPrincipal user, UserManager<UserMetadata> manager)
         {
             try
             {
-                var ru = await manager.GetUserAsync(user);
+                UserMetadata ru = await manager.GetUserAsync(user);
                 return await manager.GetEmailAsync(ru);
             }
             catch

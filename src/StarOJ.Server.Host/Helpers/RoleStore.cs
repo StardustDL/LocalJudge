@@ -1,10 +1,9 @@
-﻿using StarOJ.Server.API.Clients;
-using Microsoft.AspNetCore.Identity;
-using System;
+﻿using Microsoft.AspNetCore.Identity;
+using StarOJ.Core.Identity;
+using StarOJ.Server.API.Clients;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using StarOJ.Core.Identity;
 
 namespace StarOJ.Server.Host.Helpers
 {
@@ -21,8 +20,8 @@ namespace StarOJ.Server.Host.Helpers
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new RolesClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            RolesClient client = new RolesClient(httpclient);
             try
             {
                 await client.CreateAsync(role);
@@ -38,8 +37,8 @@ namespace StarOJ.Server.Host.Helpers
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new RolesClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            RolesClient client = new RolesClient(httpclient);
             try
             {
                 await client.DeleteAsync(role.Id);
@@ -53,15 +52,15 @@ namespace StarOJ.Server.Host.Helpers
 
         public void Dispose()
         {
-            
+
         }
 
         public async Task<RoleMetadata> FindByIdAsync(string roleId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new RolesClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            RolesClient client = new RolesClient(httpclient);
             return await client.GetAsync(roleId);
         }
 
@@ -69,8 +68,8 @@ namespace StarOJ.Server.Host.Helpers
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new RolesClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            RolesClient client = new RolesClient(httpclient);
             try
             {
                 return await client.GetByNameAsync(normalizedRoleName);
@@ -122,8 +121,8 @@ namespace StarOJ.Server.Host.Helpers
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new RolesClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            RolesClient client = new RolesClient(httpclient);
             try
             {
                 await client.UpdateAsync(role);

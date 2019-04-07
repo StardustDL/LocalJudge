@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace StarOJ.Core.Judgers
@@ -253,7 +252,7 @@ namespace StarOJ.Core.Judgers
 
         public const string V_CodeFile = "{codefile}", V_CompileOutput = "{compiled}";
 
-        public static async Task<JudgeResult> Judge(string name, Command executor,string workingDirectory, TimeSpan timeLimit, long memoryLimit, TextReader input, TextReader output, IJudgeComparer comparer)
+        public static async Task<JudgeResult> Judge(string name, Command executor, string workingDirectory, TimeSpan timeLimit, long memoryLimit, TextReader input, TextReader output, IJudgeComparer comparer)
         {
             JudgeResult res = new JudgeResult
             {
@@ -263,11 +262,11 @@ namespace StarOJ.Core.Judgers
             };
             try
             {
-                var startInfo = new System.Diagnostics.ProcessStartInfo(executor.Name, string.Join(" ", executor.Arguments))
+                System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo(executor.Name, string.Join(" ", executor.Arguments))
                 {
                     WorkingDirectory = workingDirectory
                 };
-                using (var runner = new Runner(startInfo)
+                using (Runner runner = new Runner(startInfo)
                 {
                     TimeLimit = timeLimit,
                     MemoryLimit = memoryLimit,
@@ -290,9 +289,9 @@ namespace StarOJ.Core.Judgers
                                     res.State = JudgeState.RuntimeError;
                                     break;
                                 }
-                                var expected = output;
-                                var real = new StringReader(runner.Output ?? "");
-                                var diff = comparer.Compare(expected, real).ToArray();
+                                TextReader expected = output;
+                                StringReader real = new StringReader(runner.Output ?? "");
+                                Issue[] diff = comparer.Compare(expected, real).ToArray();
                                 if (diff.Length != 0)
                                 {
                                     res.Issues.AddRange(diff);
@@ -306,14 +305,14 @@ namespace StarOJ.Core.Judgers
                             }
                         case RunnerState.OutOfMemory:
                             {
-                                var message = $"Used {runner.MaximumMemory} bytes, limit {memoryLimit} bytes.";
+                                string message = $"Used {runner.MaximumMemory} bytes, limit {memoryLimit} bytes.";
                                 res.Issues.Add(new Issue(IssueLevel.Error, $"Memory limit exceeded for {name}. {message}"));
                                 res.State = JudgeState.MemoryLimitExceeded;
                                 break;
                             }
                         case RunnerState.OutOfTime:
                             {
-                                var message = $"Used {runner.RunningTime.TotalSeconds} seconds, limit {timeLimit.TotalSeconds} seconds.";
+                                string message = $"Used {runner.RunningTime.TotalSeconds} seconds, limit {timeLimit.TotalSeconds} seconds.";
                                 res.Issues.Add(new Issue(IssueLevel.Error, $"Time limit exceeded for {name}. {message}"));
                                 res.State = JudgeState.TimeLimitExceeded;
                                 break;

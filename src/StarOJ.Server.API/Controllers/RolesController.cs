@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using StarOJ.Core;
-using StarOJ.Core.Identity;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using StarOJ.Core.Identity;
+using StarOJ.Data.Provider;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace StarOJ.Server.API.Controllers
 {
@@ -23,9 +21,9 @@ namespace StarOJ.Server.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<RoleMetadata>>> GetAll()
         {
-            var all = await _workspace.Roles.GetAll();
+            IEnumerable<IRoleProvider> all = await _workspace.Roles.GetAll();
             List<RoleMetadata> ans = new List<RoleMetadata>();
-            foreach (var v in all)
+            foreach (IRoleProvider v in all)
             {
                 ans.Add(await v.GetMetadata());
             }
@@ -35,7 +33,7 @@ namespace StarOJ.Server.API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<RoleMetadata>> Get(string id)
         {
-            var res = await _workspace.Roles.Get(id);
+            IRoleProvider res = await _workspace.Roles.Get(id);
             if (res != null)
                 return Ok(await res.GetMetadata());
             else
@@ -45,7 +43,7 @@ namespace StarOJ.Server.API.Controllers
         [HttpGet("name/{name}")]
         public async Task<ActionResult<RoleMetadata>> GetByName(string name)
         {
-            var res = await _workspace.Roles.GetByName(name);
+            IRoleProvider res = await _workspace.Roles.GetByName(name);
             if (res != null)
                 return Ok(await res.GetMetadata());
             else
@@ -64,7 +62,7 @@ namespace StarOJ.Server.API.Controllers
         {
             try
             {
-                var res = await _workspace.Roles.Create(data);
+                IRoleProvider res = await _workspace.Roles.Create(data);
                 return Created($"users/{res.Id}", await res.GetMetadata());
             }
             catch
@@ -79,7 +77,7 @@ namespace StarOJ.Server.API.Controllers
         {
             try
             {
-                var prov = await _workspace.Roles.Get(data.Id);
+                IRoleProvider prov = await _workspace.Roles.Get(data.Id);
                 if (prov != null)
                 {
                     await prov.SetMetadata(data);

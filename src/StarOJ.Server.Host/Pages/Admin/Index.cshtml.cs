@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using StarOJ.Server.API.Clients;
-using StarOJ.Server.Host.Helpers;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using StarOJ.Core.Identity;
+using StarOJ.Server.API.Clients;
+using StarOJ.Server.Host.Helpers;
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace StarOJ.Server.Host.Pages.Admin
 {
@@ -47,8 +45,8 @@ namespace StarOJ.Server.Host.Pages.Admin
 
         public async Task<bool> CanAdmin()
         {
-            var httpclient = clientFactory.CreateClient();
-            var wclient = new WorkspaceClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            WorkspaceClient wclient = new WorkspaceClient(httpclient);
             try
             {
                 if (await wclient.GetHasInitializedAsync())
@@ -104,16 +102,16 @@ namespace StarOJ.Server.Host.Pages.Admin
                 return BadRequest();
             }
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new WorkspaceClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            WorkspaceClient client = new WorkspaceClient(httpclient);
             await client.InitializeAsync();
-            var rawUser = new UserMetadata { Email = "admin@localhost", Name = "Admin" };
+            UserMetadata rawUser = new UserMetadata { Email = "admin@localhost", Name = "Admin" };
             await _userManager.CreateAsync(rawUser, "admin");
 
             {
-                var ucli = new UsersClient(httpclient);
+                UsersClient ucli = new UsersClient(httpclient);
                 UserMetadata user = await ucli.GetByNameAsync(rawUser.NormalizedName);
-                var pcli = new ProblemsClient(httpclient);
+                ProblemsClient pcli = new ProblemsClient(httpclient);
                 await pcli.CreateAsync(Helpers.Problems.GetAPlusB(user.Id));
             }
 
@@ -131,8 +129,8 @@ namespace StarOJ.Server.Host.Pages.Admin
                 return BadRequest();
             }
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new WorkspaceClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            WorkspaceClient client = new WorkspaceClient(httpclient);
             await client.ClearAsync();
 
             await _signInManager.SignOutAsync();

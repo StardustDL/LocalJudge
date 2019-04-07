@@ -1,10 +1,7 @@
-﻿using StarOJ.Core.Helpers;
-using StarOJ.Core.Judgers;
-using System;
+﻿using StarOJ.Core.Judgers;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace StarOJ.Core
+namespace StarOJ.Data.Provider
 {
     public class WorkspaceConfig
     {

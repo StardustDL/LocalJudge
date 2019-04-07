@@ -1,19 +1,18 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Localization;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using StarOJ.Core.Helpers;
+using StarOJ.Core.Judgers;
+using StarOJ.Server.API.Clients;
+using StarOJ.Server.Host.Helpers;
+using StarOJ.Server.Host.TagHelpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using StarOJ.Server.API.Clients;
-using StarOJ.Server.Host.Helpers;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using StarOJ.Core.Judgers;
-using StarOJ.Core.Helpers;
-using Microsoft.AspNetCore.Mvc.Localization;
-using Microsoft.Extensions.Localization;
-using StarOJ.Server.Host.TagHelpers;
 
 namespace StarOJ.Server.Host.Pages.Submissions
 {
@@ -62,14 +61,14 @@ namespace StarOJ.Server.Host.Pages.Submissions
 
         public async Task OnGetAsync()
         {
-            var httpclient = clientFactory.CreateClient();
-            var client = new SubmissionsClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            SubmissionsClient client = new SubmissionsClient(httpclient);
             try
             {
-                var ms = (await client.GetAllAsync()).ToList();
+                List<Core.Submissions.SubmissionMetadata> ms = (await client.GetAllAsync()).ToList();
                 ms.Sort((x, y) => y.Time.CompareTo(x.Time));
-                var ss = new List<SubmissionModel>();
-                foreach (var v in ms)
+                List<SubmissionModel> ss = new List<SubmissionModel>();
+                foreach (Core.Submissions.SubmissionMetadata v in ms)
                 {
                     ss.Add(await SubmissionModel.GetAsync(v, httpclient));
                 }
@@ -85,8 +84,8 @@ namespace StarOJ.Server.Host.Pages.Submissions
         {
             try
             {
-                var httpclient = clientFactory.CreateClient();
-                var client = new SubmissionsClient(httpclient);
+                HttpClient httpclient = clientFactory.CreateClient();
+                SubmissionsClient client = new SubmissionsClient(httpclient);
                 ProgrammingLanguage? lang = null;
                 if (!string.IsNullOrEmpty(PostData.QueryLanguage))
                     lang = Enum.Parse<ProgrammingLanguage>(PostData.QueryLanguage);
@@ -94,9 +93,9 @@ namespace StarOJ.Server.Host.Pages.Submissions
                 if (!string.IsNullOrEmpty(PostData.QueryJudgeState))
                     state = Enum.Parse<JudgeState>(PostData.QueryJudgeState);
 
-                var ms = (await client.QueryAsync(PostData.Id, PostData.ProblemId, PostData.UserId, lang, state)).ToArray();
-                var ss = new List<SubmissionModel>();
-                foreach (var v in ms)
+                Core.Submissions.SubmissionMetadata[] ms = (await client.QueryAsync(PostData.Id, PostData.ProblemId, PostData.UserId, lang, state)).ToArray();
+                List<SubmissionModel> ss = new List<SubmissionModel>();
+                foreach (Core.Submissions.SubmissionMetadata v in ms)
                 {
                     ss.Add(await SubmissionModel.GetAsync(v, httpclient));
                 }
@@ -119,8 +118,8 @@ namespace StarOJ.Server.Host.Pages.Submissions
             {
                 return BadRequest();
             }
-            var httpclient = clientFactory.CreateClient();
-            var client = new SubmissionsClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            SubmissionsClient client = new SubmissionsClient(httpclient);
             try
             {
                 await client.DeleteAsync(PostData.Id);
@@ -142,8 +141,8 @@ namespace StarOJ.Server.Host.Pages.Submissions
             {
                 return BadRequest();
             }
-            var httpclient = clientFactory.CreateClient();
-            var client = new SubmissionsClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            SubmissionsClient client = new SubmissionsClient(httpclient);
             try
             {
                 await client.RejudgeAsync(PostData.Id);

@@ -1,15 +1,12 @@
 ﻿using Newtonsoft.Json;
-using StarOJ.Core;
 using StarOJ.Core.Identity;
 using StarOJ.Core.Judgers;
 using StarOJ.Core.Problems;
 using StarOJ.Core.Submissions;
 using StarOJ.Data.Provider.SqlServer.Models;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace StarOJ.Data.Provider.SqlServer
@@ -34,11 +31,13 @@ namespace StarOJ.Data.Provider.SqlServer
 
         public IRoleListProvider Roles { get; private set; }
 
-        public bool HasInitialized { get => _context.WorkspaceInfos.FirstOrDefault() != null; }
+        public bool HasInitialized => _context.WorkspaceInfos.FirstOrDefault() != null;
+
+        public IStatisticProvider Statistics { get; private set; }
 
         public Task<WorkspaceConfig> GetConfig()
         {
-            var config = _context.WorkspaceInfos.FirstOrDefault();
+            WorkspaceInfo config = _context.WorkspaceInfos.FirstOrDefault();
             if (config == null)
             {
                 return Task.FromResult(new WorkspaceConfig
@@ -59,8 +58,8 @@ namespace StarOJ.Data.Provider.SqlServer
             if (!Directory.Exists(SubmissionStoreRoot))
                 Directory.CreateDirectory(SubmissionStoreRoot);
 
-            var langs = new List<ProgrammingLanguage>();
-            foreach (var v in Judger.DefaultLangConfigs)
+            List<ProgrammingLanguage> langs = new List<ProgrammingLanguage>();
+            foreach (KeyValuePair<ProgrammingLanguage, JudgerLangConfig> v in Judger.DefaultLangConfigs)
                 langs.Add(v.Key);
             WorkspaceConfig config = new WorkspaceConfig
             {
@@ -85,7 +84,7 @@ namespace StarOJ.Data.Provider.SqlServer
             _context.Roles.RemoveRange(_context.Roles.ToArray());
             _context.Tests.RemoveRange(_context.Tests.ToArray());
             await _context.SaveChangesAsync();
-            foreach (var v in Directory.GetDirectories(FileStoreRoot))
+            foreach (string v in Directory.GetDirectories(FileStoreRoot))
                 Directory.Delete(v, true);
         }
 
@@ -100,6 +99,7 @@ namespace StarOJ.Data.Provider.SqlServer
             Submissions = new SubmissionListProvider(this, _context);
             Users = new UserListProvider(this, _context);
             Roles = new RoleListProvider(this, _context);
+            Statistics = new StatisticProvider(this, _context);
         }
     }
 }

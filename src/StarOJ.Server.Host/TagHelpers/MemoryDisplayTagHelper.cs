@@ -12,7 +12,7 @@ namespace StarOJ.Server.Host.TagHelpers
         {
             output.TagName = "span";
             output.TagMode = TagMode.StartTagAndEndTag;
-            if(!Value.HasValue || Value < 0)
+            if (!Value.HasValue || Value < 0)
                 output.Content.Append("N/A");
             else if (Value < MemoryValueHelper.KB)
                 output.Content.Append(string.Format("{0} B", Value));

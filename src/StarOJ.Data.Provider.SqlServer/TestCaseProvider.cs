@@ -2,7 +2,6 @@
 using StarOJ.Core.Problems;
 using StarOJ.Data.Provider.SqlServer.Models;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,22 +23,34 @@ namespace StarOJ.Data.Provider.SqlServer
             _testcase = testcase;
         }
 
-        internal string GetRoot() => Path.Join(_workspace.TestCaseStoreRoot, Id);
+        internal string GetRoot()
+        {
+            return Path.Join(_workspace.TestCaseStoreRoot, Id);
+        }
 
-        private string GetInputPath() => Path.Join(GetRoot(), PF_Input);
+        private string GetInputPath()
+        {
+            return Path.Join(GetRoot(), PF_Input);
+        }
 
-        private string GetOutputPath() => Path.Join(GetRoot(), PF_Output);
+        private string GetOutputPath()
+        {
+            return Path.Join(GetRoot(), PF_Output);
+        }
 
         public string Id => _testcase.Id.ToString();
 
-        public Task<Stream> GetInput() => Task.FromResult((Stream)File.OpenRead(GetInputPath()));
+        public Task<Stream> GetInput()
+        {
+            return Task.FromResult((Stream)File.OpenRead(GetInputPath()));
+        }
 
         public Task<DataPreview> GetInputPreview(int maxbytes)
         {
-            using (var fs = File.OpenRead(GetInputPath()))
+            using (FileStream fs = File.OpenRead(GetInputPath()))
             {
                 int len = (int)Math.Min(fs.Length, maxbytes);
-                using (var br = new BinaryReader(fs))
+                using (BinaryReader br = new BinaryReader(fs))
                     return Task.FromResult(new DataPreview
                     {
                         Content = Encoding.UTF8.GetString(br.ReadBytes(len), 0, len),
@@ -58,14 +69,17 @@ namespace StarOJ.Data.Provider.SqlServer
             });
         }
 
-        public Task<Stream> GetOutput() => Task.FromResult((Stream)File.OpenRead(GetOutputPath()));
+        public Task<Stream> GetOutput()
+        {
+            return Task.FromResult((Stream)File.OpenRead(GetOutputPath()));
+        }
 
         public Task<DataPreview> GetOutputPreview(int maxbytes)
         {
-            using (var fs = File.OpenRead(GetOutputPath()))
+            using (FileStream fs = File.OpenRead(GetOutputPath()))
             {
                 int len = (int)Math.Min(fs.Length, maxbytes);
-                using (var br = new BinaryReader(fs))
+                using (BinaryReader br = new BinaryReader(fs))
                     return Task.FromResult(new DataPreview
                     {
                         Content = Encoding.UTF8.GetString(br.ReadBytes(len), 0, len),
@@ -76,7 +90,7 @@ namespace StarOJ.Data.Provider.SqlServer
 
         public async Task SetInput(Stream value)
         {
-            using (var fs = File.Open(GetInputPath(), FileMode.Create))
+            using (FileStream fs = File.Open(GetInputPath(), FileMode.Create))
                 await value.CopyToAsync(fs);
         }
 
@@ -89,7 +103,7 @@ namespace StarOJ.Data.Provider.SqlServer
 
         public async Task SetOutput(Stream value)
         {
-            using (var fs = File.Open(GetOutputPath(), FileMode.Create))
+            using (FileStream fs = File.Open(GetOutputPath(), FileMode.Create))
                 await value.CopyToAsync(fs);
         }
     }

@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO.Pipes;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using StarOJ.Core;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using StarOJ.Core.Helpers;
 using StarOJ.Core.Judgers;
 using StarOJ.Core.Submissions;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+using StarOJ.Data.Provider;
 using StarOJ.Server.API.Models;
+using System;
+using System.Collections.Generic;
+using System.IO.Pipes;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace StarOJ.Server.API.Controllers
 {
@@ -28,10 +27,10 @@ namespace StarOJ.Server.API.Controllers
 
         void SendJudgeRequest(string id)
         {
-            using (var pipe = new NamedPipeClientStream(".", PipeStreamName, PipeDirection.Out))
+            using (NamedPipeClientStream pipe = new NamedPipeClientStream(".", PipeStreamName, PipeDirection.Out))
             {
                 pipe.Connect(10 * 1000);// Wait for 10s
-                var buffer = Encoding.UTF8.GetBytes(id);
+                byte[] buffer = Encoding.UTF8.GetBytes(id);
                 pipe.Write(buffer, 0, buffer.Length);
                 pipe.WaitForPipeDrain();
             }
@@ -47,7 +46,7 @@ namespace StarOJ.Server.API.Controllers
             if (await _workspace.Users.Has(data.UserId) == false)
                 return NotFound();
 
-            var meta = new SubmissionMetadata
+            SubmissionMetadata meta = new SubmissionMetadata
             {
                 Id = Guid.NewGuid().ToString(),
                 ProblemId = data.ProblemId,
@@ -55,13 +54,13 @@ namespace StarOJ.Server.API.Controllers
                 Language = data.Language,
                 Time = DateTimeOffset.Now,
             };
-            var sub = await _workspace.Submissions.Create(meta);
+            ISubmissionProvider sub = await _workspace.Submissions.Create(meta);
             if (sub == null) return Forbid();
             try
             {
                 if (data.CodeFile != null)
                 {
-                    using (var s = data.CodeFile.OpenReadStream())
+                    using (System.IO.Stream s = data.CodeFile.OpenReadStream())
                     {
                         meta.CodeLength = (uint)s.Length;
                         await sub.SetCode(s);
@@ -70,7 +69,7 @@ namespace StarOJ.Server.API.Controllers
                 else
                 {
                     meta.CodeLength = (uint)Encoding.UTF8.GetByteCount(data.Code);
-                    using (var ms = TextIO.ToStream(data.Code ?? ""))
+                    using (System.IO.Stream ms = TextIO.ToStream(data.Code ?? ""))
                         await sub.SetCode(ms);
                 }
                 await sub.SetMetadata(meta);
@@ -87,9 +86,9 @@ namespace StarOJ.Server.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SubmissionMetadata>>> GetAll()
         {
-            var all = await _workspace.Submissions.GetAll();
+            IEnumerable<ISubmissionProvider> all = await _workspace.Submissions.GetAll();
             List<SubmissionMetadata> ans = new List<SubmissionMetadata>();
-            foreach (var v in all)
+            foreach (ISubmissionProvider v in all)
             {
                 ans.Add(await v.GetMetadata());
             }
@@ -99,7 +98,7 @@ namespace StarOJ.Server.API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<SubmissionMetadata>> Get(string id)
         {
-            var res = await (await _workspace.Submissions.Get(id))?.GetMetadata();
+            SubmissionMetadata res = await (await _workspace.Submissions.Get(id))?.GetMetadata();
             if (res != null)
                 return Ok(res);
             else
@@ -109,9 +108,9 @@ namespace StarOJ.Server.API.Controllers
         [HttpGet("query")]
         public async Task<ActionResult<IEnumerable<SubmissionMetadata>>> Query(string id, string problemId, string userId, ProgrammingLanguage? language, JudgeState? state)
         {
-            var all = await _workspace.Submissions.Query(id, problemId, userId, language, state);
+            IEnumerable<ISubmissionProvider> all = await _workspace.Submissions.Query(id, problemId, userId, language, state);
             List<SubmissionMetadata> ans = new List<SubmissionMetadata>();
-            foreach (var v in all)
+            foreach (ISubmissionProvider v in all)
             {
                 ans.Add(await v.GetMetadata());
             }
@@ -122,7 +121,7 @@ namespace StarOJ.Server.API.Controllers
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         public async Task<ActionResult> Rejudge(string id)
         {
-            var res = await _workspace.Submissions.Get(id);
+            ISubmissionProvider res = await _workspace.Submissions.Get(id);
             if (res != null)
             {
                 await res.SetResult(null);
@@ -143,7 +142,7 @@ namespace StarOJ.Server.API.Controllers
         [HttpGet("{id}/result")]
         public async Task<ActionResult<SubmissionResult>> GetResult(string id)
         {
-            var res = await (await _workspace.Submissions.Get(id))?.GetResult();
+            SubmissionResult res = await (await _workspace.Submissions.Get(id))?.GetResult();
             if (res != null)
                 return Ok(res);
             else
@@ -154,7 +153,7 @@ namespace StarOJ.Server.API.Controllers
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         public async Task<ActionResult> SetResult(string id, [FromBody] SubmissionResult value)
         {
-            var res = await _workspace.Submissions.Get(id);
+            ISubmissionProvider res = await _workspace.Submissions.Get(id);
             if (res != null)
             {
                 await res.SetResult(value);
@@ -167,10 +166,10 @@ namespace StarOJ.Server.API.Controllers
         [HttpGet("{id}/code")]
         public async Task<ActionResult> GetCode(string id)
         {
-            var res = await _workspace.Submissions.Get(id);
+            ISubmissionProvider res = await _workspace.Submissions.Get(id);
             if (res == null) return NotFound();
-            var code = await res.GetCode();
-            var lang = (await res.GetMetadata()).Language;
+            System.IO.Stream code = await res.GetCode();
+            ProgrammingLanguage lang = (await res.GetMetadata()).Language;
             return File(code, "text/plain", $"{id}.{ProgrammingLanguageHelper.Extends[lang]}");
         }
 

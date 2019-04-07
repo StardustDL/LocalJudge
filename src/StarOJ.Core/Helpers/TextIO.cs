@@ -17,7 +17,7 @@ namespace StarOJ.Core.Helpers
 
         public static async Task<string> ToString(Stream str)
         {
-            using(var sr = new StreamReader(str))
+            using (StreamReader sr = new StreamReader(str))
             {
                 return await sr.ReadToEndAsync();
             }
@@ -25,10 +25,10 @@ namespace StarOJ.Core.Helpers
 
         public static DataPreview GetPreviewInUTF8(string path, int maxLength)
         {
-            using (var fs = File.OpenRead(path))
-            using (var br = new BinaryReader(fs))
+            using (FileStream fs = File.OpenRead(path))
+            using (BinaryReader br = new BinaryReader(fs))
             {
-                var bs = br.ReadBytes((int)Math.Min(maxLength, fs.Length));
+                byte[] bs = br.ReadBytes((int)Math.Min(maxLength, fs.Length));
                 return new DataPreview
                 {
                     Content = UTF8WithoutBOM.GetString(bs),
@@ -49,13 +49,13 @@ namespace StarOJ.Core.Helpers
 
         public static async Task<string> ReadAllInUTF8Async(string path)
         {
-            using (var sr = new StreamReader(path, UTF8WithoutBOM))
+            using (StreamReader sr = new StreamReader(path, UTF8WithoutBOM))
                 return await sr.ReadToEndAsync();
         }
 
         public static async Task WriteAllInUTF8Async(string path, string content)
         {
-            using (var sw = new StreamWriter(path, false, UTF8WithoutBOM))
+            using (StreamWriter sw = new StreamWriter(path, false, UTF8WithoutBOM))
                 await sw.WriteAsync(content);
         }
 

@@ -1,17 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
-using StarOJ.Server.API.Clients;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
-using System.Net.Http;
 using StarOJ.Core.Identity;
+using StarOJ.Server.API.Clients;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace StarOJ.Server.Host.Areas.Identity.Pages
 {
@@ -71,7 +67,7 @@ namespace StarOJ.Server.Host.Areas.Identity.Pages
             if (ModelState.IsValid)
             {
                 UserMetadata user = new UserMetadata { Name = Input.UserName, Email = Input.Email };
-                var result = await _userManager.CreateAsync(user, Input.Password);
+                IdentityResult result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
                     // _logger.LogInformation("User created a new account with password.");
@@ -88,19 +84,19 @@ namespace StarOJ.Server.Host.Areas.Identity.Pages
 
                     try
                     {
-                        var httpclient = _clientFactory.CreateClient();
-                        var client = new UsersClient(httpclient);
+                        HttpClient httpclient = _clientFactory.CreateClient();
+                        UsersClient client = new UsersClient(httpclient);
                         user = await client.GetByNameAsync(user.Name);
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         return LocalRedirect(returnUrl);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         ModelState.AddModelError(string.Empty, ex.Message);
                     }
-                    
+
                 }
-                foreach (var error in result.Errors)
+                foreach (IdentityError error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }

@@ -1,8 +1,4 @@
-﻿using StarOJ.Core;
-using StarOJ.Core.Identity;
-using System.Collections.Generic;
-
-namespace StarOJ.Data.Provider.SqlServer.Models
+﻿namespace StarOJ.Data.Provider.SqlServer.Models
 {
     public class Role
     {

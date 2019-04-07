@@ -24,7 +24,7 @@ namespace StarOJ.Server.Host.Pages
 
         public void OnGet()
         {
-            
+
         }
     }
 }

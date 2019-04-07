@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace StarOJ.Server.Host
 {
@@ -26,7 +19,7 @@ namespace StarOJ.Server.Host
 
         public static void Main(string[] args)
         {
-            var rootCommand = new RootCommand
+            RootCommand rootCommand = new RootCommand
             {
                 Description = "Server Host for StarOJ"
             };
@@ -50,9 +43,11 @@ namespace StarOJ.Server.Host
             CreateWebHostBuilder(args).Build().Run();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseUrls($"http://*:{HttpPort}", $"https://*:{HttpsPort}")
-                .UseStartup<Startup>();
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
+        {
+            return WebHost.CreateDefaultBuilder(args)
+.UseUrls($"http://*:{HttpPort}", $"https://*:{HttpsPort}")
+.UseStartup<Startup>();
+        }
     }
 }

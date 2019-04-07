@@ -14,7 +14,7 @@ namespace StarOJ.Server.Host.TagHelpers
             output.TagMode = TagMode.StartTagAndEndTag;
             if (Value.HasValue)
             {
-                var value = Value.Value;
+                TimeSpan value = Value.Value;
                 bool haspre = false;
                 if (value.Days > 0)
                 {

@@ -1,7 +1,5 @@
 ﻿using StarOJ.Core.Judgers;
 using System;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace StarOJ.Data.Provider.SqlServer.Models
 {
@@ -36,7 +34,7 @@ namespace StarOJ.Data.Provider.SqlServer.Models
         public bool HasIssue { get; set; }
 
         // Ticks
-        public long? TotalTime { get; set; }
+        public long? MaximumTime { get; set; }
 
         public long? MaximumMemory { get; set; }
 

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Localization;
-using Microsoft.AspNetCore.Razor.TagHelpers;
+﻿using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Localization;
 using System;
 
@@ -21,7 +20,7 @@ namespace StarOJ.Server.Host.TagHelpers
         {
             output.TagName = "span";
             output.TagMode = TagMode.StartTagAndEndTag;
-            var tspan = DateTimeOffset.Now - Value;
+            TimeSpan tspan = DateTimeOffset.Now - Value;
             if (tspan.TotalDays > 60)
             {
                 output.Content.Append(Value.ToString("F"));

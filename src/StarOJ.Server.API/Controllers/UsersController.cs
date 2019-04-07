@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using StarOJ.Core;
-using StarOJ.Core.Identity;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using StarOJ.Core.Identity;
+using StarOJ.Data.Provider;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace StarOJ.Server.API.Controllers
@@ -23,9 +21,9 @@ namespace StarOJ.Server.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserMetadata>>> GetAll()
         {
-            var all = await _workspace.Users.GetAll();
+            IEnumerable<IUserProvider> all = await _workspace.Users.GetAll();
             List<UserMetadata> ans = new List<UserMetadata>();
-            foreach (var v in all)
+            foreach (IUserProvider v in all)
             {
                 ans.Add(await v.GetMetadata());
             }
@@ -35,7 +33,7 @@ namespace StarOJ.Server.API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<UserMetadata>> Get(string id)
         {
-            var res = await _workspace.Users.Get(id);
+            IUserProvider res = await _workspace.Users.Get(id);
             if (res != null)
                 return Ok(await res.GetMetadata());
             else
@@ -45,7 +43,7 @@ namespace StarOJ.Server.API.Controllers
         [HttpGet("name/{name}")]
         public async Task<ActionResult<UserMetadata>> GetByName(string name)
         {
-            var res = await _workspace.Users.GetByName(name);
+            IUserProvider res = await _workspace.Users.GetByName(name);
             if (res != null)
                 return Ok(await res.GetMetadata());
             else
@@ -64,7 +62,7 @@ namespace StarOJ.Server.API.Controllers
         {
             try
             {
-                var res = await _workspace.Users.Create(data);
+                IUserProvider res = await _workspace.Users.Create(data);
                 return Created($"users/{res.Id}", await res.GetMetadata());
             }
             catch
@@ -79,7 +77,7 @@ namespace StarOJ.Server.API.Controllers
         {
             try
             {
-                var prov = await _workspace.Users.Get(data.Id);
+                IUserProvider prov = await _workspace.Users.Get(data.Id);
                 if (prov != null)
                 {
                     await prov.SetMetadata(data);

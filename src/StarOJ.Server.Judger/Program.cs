@@ -22,7 +22,7 @@ namespace StarOJ.Server.Judger
     {
         const string PipeStreamName = "StarOJ.Server.Judger";
 
-        const int C_MaxThread = 5;
+        const int C_MaxThread = 1;
 
         static string ConfigPath { get; set; }
 
@@ -34,13 +34,13 @@ namespace StarOJ.Server.Judger
 
         public static string ApiServer
         {
-            get => API.Clients.BaseClient.Url;
-            set => API.Clients.BaseClient.Url = value;
+            get => BaseClient.Url;
+            set => BaseClient.Url = value;
         }
 
         static void Main(string[] args)
         {
-            var rootCommand = new RootCommand
+            RootCommand rootCommand = new RootCommand
             {
                 Description = "Judger for StarOJ."
             };
@@ -67,7 +67,7 @@ namespace StarOJ.Server.Judger
             if (string.IsNullOrEmpty(ConfigPath))
             {
                 Configs = new Dictionary<ProgrammingLanguage, JudgerLangConfig>();
-                foreach (var v in StarOJ.Core.Judgers.Judger.DefaultLangConfigs)
+                foreach (KeyValuePair<ProgrammingLanguage, JudgerLangConfig> v in StarOJ.Core.Judgers.Judger.DefaultLangConfigs)
                 {
                     Configs.Add(v.Key, v.Value);
                 }
@@ -78,9 +78,9 @@ namespace StarOJ.Server.Judger
             }
 
             {
-                var serviceCollection = new ServiceCollection();
+                ServiceCollection serviceCollection = new ServiceCollection();
                 serviceCollection.AddHttpClient();
-                var services = serviceCollection.BuildServiceProvider();
+                ServiceProvider services = serviceCollection.BuildServiceProvider();
                 HttpClientFactory = services.GetService<IHttpClientFactory>();
             }
 
@@ -91,14 +91,14 @@ namespace StarOJ.Server.Judger
             ThreadPool.SetMaxThreads(C_MaxThread, C_MaxThread);
             Console.WriteLine($"Maximum threads: {C_MaxThread}");
 
-            var buffer = new byte[1 << 15];
+            byte[] buffer = new byte[1 << 15];
             string recieved = "";
             while (true)
             {
-                using (var pipe = new NamedPipeServerStream(PipeStreamName, PipeDirection.In))
+                using (NamedPipeServerStream pipe = new NamedPipeServerStream(PipeStreamName, PipeDirection.In))
                 {
                     pipe.WaitForConnection();
-                    var number = pipe.Read(buffer);
+                    int number = pipe.Read(buffer);
                     recieved = Encoding.UTF8.GetString(buffer, 0, number);
                 }
                 Console.WriteLine($"Recieved submission: {recieved}");
@@ -135,9 +135,9 @@ namespace StarOJ.Server.Judger
         {
             Console.WriteLine($"Judging submission: {id}");
 
-            var httpclient = HttpClientFactory.CreateClient();
-            var scli = new SubmissionsClient(httpclient);
-            var pcli = new ProblemsClient(httpclient);
+            HttpClient httpclient = HttpClientFactory.CreateClient();
+            SubmissionsClient scli = new SubmissionsClient(httpclient);
+            ProblemsClient pcli = new ProblemsClient(httpclient);
 
             SubmissionResult result = new SubmissionResult
             {
@@ -146,12 +146,12 @@ namespace StarOJ.Server.Judger
                 Samples = new List<JudgeResult>(),
                 Tests = new List<JudgeResult>(),
             };
-            var submission = await scli.GetAsync(id);
+            SubmissionMetadata submission = await scli.GetAsync(id);
 
             try
             {
 
-                var problem = await pcli.GetAsync(submission.ProblemId);
+                Core.Problems.ProblemMetadata problem = await pcli.GetAsync(submission.ProblemId);
                 string rootDir = Path.Join(TempDirectory, submission.Id);
                 if (!Directory.Exists(rootDir)) Directory.CreateDirectory(rootDir);
                 string codePath = Path.Join(rootDir, GetCodePath(submission.Language));
@@ -160,11 +160,11 @@ namespace StarOJ.Server.Judger
                 {
                     if (Configs.ContainsKey(submission.Language))
                     {
-                        var lang = Configs[submission.Language];
+                        JudgerLangConfig lang = Configs[submission.Language];
 
-                        var code = await scli.GetCodeAsync(submission.Id);
+                        FileResponse code = await scli.GetCodeAsync(submission.Id);
 
-                        using (var fs = File.Open(codePath, FileMode.Create))
+                        using (FileStream fs = File.Open(codePath, FileMode.Create))
                             await code.Stream.CopyToAsync(fs);
 
                         CompileResult compileResult = null;
@@ -202,30 +202,30 @@ namespace StarOJ.Server.Judger
                             if (compileResult != null)
                                 vars.Add(Core.Judgers.Judger.V_CompileOutput, compileResult.OutputPath);
 
-                            var comparer = new Core.Judgers.Comparers.LineByLine();
+                            Core.Judgers.Comparers.LineByLine comparer = new Core.Judgers.Comparers.LineByLine();
 
-                            var samples = await pcli.GetSamplesAsync(problem.Id);
-                            foreach (var item in samples)
+                            IList<Core.Problems.TestCaseMetadata> samples = await pcli.GetSamplesAsync(problem.Id);
+                            foreach (Core.Problems.TestCaseMetadata item in samples)
                             {
-                                var casemdata = await pcli.GetSampleAsync(problem.Id, item.Id);
+                                Core.Problems.TestCaseMetadata casemdata = await pcli.GetSampleAsync(problem.Id, item.Id);
                                 JudgeResult res = null;
-                                using (var fin = await pcli.GetSampleInputAsync(problem.Id, item.Id))
-                                using (var fout = await pcli.GetSampleOutputAsync(problem.Id, item.Id))
-                                using (var input = new StreamReader(fin.Stream))
-                                using (var output = new StreamReader(fout.Stream))
+                                using (FileResponse fin = await pcli.GetSampleInputAsync(problem.Id, item.Id))
+                                using (FileResponse fout = await pcli.GetSampleOutputAsync(problem.Id, item.Id))
+                                using (StreamReader input = new StreamReader(fin.Stream))
+                                using (StreamReader output = new StreamReader(fout.Stream))
                                     res = await Core.Judgers.Judger.Judge(casemdata.Id, lang.RunCommand.Resolve(vars), rootDir, casemdata.TimeLimit, casemdata.MemoryLimit, input, output, comparer);
                                 result.Samples.Add(res);
                             }
 
-                            var tests = await pcli.GetTestsAsync(problem.Id);
-                            foreach (var item in tests)
+                            IList<Core.Problems.TestCaseMetadata> tests = await pcli.GetTestsAsync(problem.Id);
+                            foreach (Core.Problems.TestCaseMetadata item in tests)
                             {
-                                var casemdata = await pcli.GetTestAsync(problem.Id, item.Id);
+                                Core.Problems.TestCaseMetadata casemdata = await pcli.GetTestAsync(problem.Id, item.Id);
                                 JudgeResult res = null;
-                                using (var fin = await pcli.GetTestInputAsync(problem.Id, item.Id))
-                                using (var fout = await pcli.GetTestOutputAsync(problem.Id, item.Id))
-                                using (var input = new StreamReader(fin.Stream))
-                                using (var output = new StreamReader(fout.Stream))
+                                using (FileResponse fin = await pcli.GetTestInputAsync(problem.Id, item.Id))
+                                using (FileResponse fout = await pcli.GetTestOutputAsync(problem.Id, item.Id))
+                                using (StreamReader input = new StreamReader(fin.Stream))
+                                using (StreamReader output = new StreamReader(fout.Stream))
                                     res = await Core.Judgers.Judger.Judge(casemdata.Id, lang.RunCommand.Resolve(vars), rootDir, casemdata.TimeLimit, casemdata.MemoryLimit, input, output, comparer);
                                 result.Tests.Add(res);
                             }
@@ -255,8 +255,8 @@ namespace StarOJ.Server.Judger
                         [JudgeState.WrongAnswer] = 0,
                         [JudgeState.RuntimeError] = 0,
                     };
-                    foreach (var v in result.Samples) if (cnt.ContainsKey(v.State)) cnt[v.State]++;
-                    foreach (var v in result.Tests) if (cnt.ContainsKey(v.State)) cnt[v.State]++;
+                    foreach (JudgeResult v in result.Samples) if (cnt.ContainsKey(v.State)) cnt[v.State]++;
+                    foreach (JudgeResult v in result.Tests) if (cnt.ContainsKey(v.State)) cnt[v.State]++;
                     if (cnt[JudgeState.SystemError] > 0) result.State = JudgeState.SystemError;
                     else if (cnt[JudgeState.RuntimeError] > 0) result.State = JudgeState.RuntimeError;
                     else if (cnt[JudgeState.MemoryLimitExceeded] > 0) result.State = JudgeState.MemoryLimitExceeded;
@@ -264,28 +264,28 @@ namespace StarOJ.Server.Judger
                     else if (cnt[JudgeState.WrongAnswer] > 0) result.State = JudgeState.WrongAnswer;
                     else result.State = JudgeState.Accepted;
 
-                    TimeSpan totalTime = TimeSpan.FromTicks(0);
+                    long maxTimeTicks = 0;
                     long maxMemory = 0;
                     int totalCase = 0;
                     int acceptCase = 0;
                     if (result.Samples != null)
-                        foreach (var v in result.Samples)
+                        foreach (JudgeResult v in result.Samples)
                         {
-                            totalTime += v.Time;
+                            maxTimeTicks = Math.Max(maxTimeTicks, v.Time.Ticks);
                             maxMemory = Math.Max(maxMemory, v.Memory);
                             totalCase++;
                             if (v.State == JudgeState.Accepted) acceptCase++;
                         }
                     if (result.Tests != null)
-                        foreach (var v in result.Tests)
+                        foreach (JudgeResult v in result.Tests)
                         {
-                            totalTime += v.Time;
+                            maxTimeTicks = Math.Max(maxTimeTicks, v.Time.Ticks);
                             maxMemory = Math.Max(maxMemory, v.Memory);
                             totalCase++;
                             if (v.State == JudgeState.Accepted) acceptCase++;
                         }
 
-                    result.TotalTime = totalTime;
+                    result.MaximumTime = TimeSpan.FromTicks(maxTimeTicks);
                     result.MaximumMemory = maxMemory;
                     result.TotalCase = totalCase;
                     result.AcceptedCase = acceptCase;

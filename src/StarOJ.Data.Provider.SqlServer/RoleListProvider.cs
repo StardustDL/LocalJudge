@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using StarOJ.Core.Identity;
+﻿using StarOJ.Core.Identity;
 using StarOJ.Data.Provider.SqlServer.Models;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace StarOJ.Data.Provider.SqlServer
 {
@@ -29,7 +29,7 @@ namespace StarOJ.Data.Provider.SqlServer
             Role empty = new Role();
             _context.Roles.Add(empty);
             await _context.SaveChangesAsync();
-            var res = new RoleProvider(_workspace, _context, empty);
+            RoleProvider res = new RoleProvider(_workspace, _context, empty);
             await res.SetMetadata(metadata);
             return res;
         }
@@ -43,7 +43,7 @@ namespace StarOJ.Data.Provider.SqlServer
         public async Task Delete(string id)
         {
             int _id = int.Parse(id);
-            var item = await _context.Roles.FindAsync(_id);
+            Role item = await _context.Roles.FindAsync(_id);
             if (item != null)
             {
                 _context.Roles.Remove(item);
@@ -54,7 +54,7 @@ namespace StarOJ.Data.Provider.SqlServer
         public async Task<IRoleProvider> Get(string id)
         {
             int _id = int.Parse(id);
-            var item = await _context.Roles.FindAsync(_id);
+            Role item = await _context.Roles.FindAsync(_id);
             if (item == null)
             {
                 return null;
@@ -68,7 +68,7 @@ namespace StarOJ.Data.Provider.SqlServer
         public Task<IEnumerable<IRoleProvider>> GetAll()
         {
             List<IRoleProvider> res = new List<IRoleProvider>();
-            foreach (var v in _context.Roles)
+            foreach (Role v in _context.Roles)
             {
                 res.Add(new RoleProvider(_workspace, _context, v));
             }
@@ -77,7 +77,7 @@ namespace StarOJ.Data.Provider.SqlServer
 
         public Task<IRoleProvider> GetByName(string name)
         {
-            var item = (from x in _context.Roles where x.NormalizedName == name select x).FirstOrDefault();
+            Role item = (from x in _context.Roles where x.NormalizedName == name select x).FirstOrDefault();
             if (item == null)
                 return Task.FromResult<IRoleProvider>(null);
             else

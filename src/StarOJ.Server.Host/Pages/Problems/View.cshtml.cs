@@ -1,20 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using StarOJ.Server.API.Clients;
-using StarOJ.Server.Host.Helpers;
-using Markdig;
+﻿using Markdig;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using StarOJ.Core.Identity;
-using StarOJ.Core.Problems;
-using StarOJ.Server.API.Models;
 using StarOJ.Core.Judgers;
+using StarOJ.Core.Problems;
+using StarOJ.Server.API.Clients;
+using StarOJ.Server.API.Models;
+using StarOJ.Server.Host.Helpers;
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace StarOJ.Server.Host.Pages.Problems
 {
@@ -57,11 +56,11 @@ namespace StarOJ.Server.Host.Pages.Problems
             if (string.IsNullOrEmpty(id))
                 return NotFound();
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new ProblemsClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            ProblemsClient client = new ProblemsClient(httpclient);
             try
             {
-                var metadata = await client.GetAsync(id);
+                ProblemMetadata metadata = await client.GetAsync(id);
                 Problem = await ProblemModel.GetAsync(metadata, httpclient, true, true);
             }
             catch
@@ -70,10 +69,10 @@ namespace StarOJ.Server.Host.Pages.Problems
             }
 
             List<TestCaseData> samples = new List<TestCaseData>();
-            foreach (var s in Problem.Samples)
+            foreach (TestCaseMetadata s in Problem.Samples)
             {
-                var input = await client.GetSampleInputPreviewAsync(id, s.Id, int.MaxValue);
-                var output = await client.GetSampleOutputPreviewAsync(id, s.Id, int.MaxValue);
+                Core.DataPreview input = await client.GetSampleInputPreviewAsync(id, s.Id, int.MaxValue);
+                Core.DataPreview output = await client.GetSampleOutputPreviewAsync(id, s.Id, int.MaxValue);
                 TestCaseData td = new TestCaseData
                 {
                     Metadata = s,
@@ -90,7 +89,7 @@ namespace StarOJ.Server.Host.Pages.Problems
             if (EnableCode)
             {
                 StringBuilder res = new StringBuilder();
-                var wclient = new WorkspaceClient(httpclient);
+                WorkspaceClient wclient = new WorkspaceClient(httpclient);
                 IList<ProgrammingLanguage> langs;
                 try
                 {
@@ -107,9 +106,9 @@ namespace StarOJ.Server.Host.Pages.Problems
                 else
                 {
                     EnableCode = true;
-                    foreach (var item in langs)
+                    foreach (ProgrammingLanguage item in langs)
                     {
-                        var editorId = Helper.GetEditorLanguage(item);
+                        string editorId = Helper.GetEditorLanguage(item);
                         if (editorId == "plaintext") continue;
 
                         res.Append("{editorId: \"" + editorId + "\", ");
@@ -177,8 +176,8 @@ namespace StarOJ.Server.Host.Pages.Problems
             {
                 return BadRequest();
             }
-            var httpclient = clientFactory.CreateClient();
-            var client = new ProblemsClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            ProblemsClient client = new ProblemsClient(httpclient);
             try
             {
                 await client.DeleteAsync(PostData.Metadata.Id);
@@ -196,11 +195,11 @@ namespace StarOJ.Server.Host.Pages.Problems
             {
                 return BadRequest();
             }
-            var httpclient = clientFactory.CreateClient();
-            var client = new SubmissionsClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            SubmissionsClient client = new SubmissionsClient(httpclient);
             try
             {
-                var meta = await client.SubmitAsync(PostData.SubmitData);
+                Core.Submissions.SubmissionMetadata meta = await client.SubmitAsync(PostData.SubmitData);
                 return RedirectToPage("/Submissions/View", new { id = meta.Id });
             }
             catch

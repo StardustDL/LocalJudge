@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace StarOJ.Core.Problems
+﻿namespace StarOJ.Core.Problems
 {
     public class ProblemMetadata
     {

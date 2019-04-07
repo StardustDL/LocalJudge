@@ -75,7 +75,7 @@
                     {
                         <li>
                             <span class="badge badge-@Helper.GetIssueClass(item.Level)">@item.Level</span>
-                            @SharedLocalizer["Sample"] @i @item.Content
+                            @SharedLocalizer["Sample"] #@ci.Id @item.Content
                         </li>
                     }
                 }
@@ -86,7 +86,7 @@
                     {
                         <li>
                             <span class="badge badge-@Helper.GetIssueClass(item.Level)">@item.Level</span>
-                            @SharedLocalizer["Test"] @i @item.Content
+                            @SharedLocalizer["Test"] #@ci.Id @item.Content
                         </li>
                     }
                 }
@@ -114,7 +114,7 @@
             </dd>
 
             <dt style="float:left; min-width:30px"><i class="fa fa-clock"></i></dt>
-            <dd><timespan-display value="@Model.Submission.Result.TotalTime"></timespan-display></dd>
+            <dd><timespan-display value="@Model.Submission.Result.MaximumTime"></timespan-display></dd>
 
             <dt style="float:left; min-width:30px"><i class="fa fa-microchip"></i></dt>
             <dd><memory-display value="@Model.Submission.Result.MaximumMemory"></memory-display></dd>

@@ -1,22 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
-using StarOJ.Server.API.Clients;
-using StarOJ.Server.Host.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Identity;
 using StarOJ.Core.Identity;
+using StarOJ.Server.Host.Helpers;
+using System;
+using System.Globalization;
 
 namespace StarOJ.Server.Host
 {
@@ -86,7 +79,7 @@ namespace StarOJ.Server.Host
 
             services.Configure<RequestLocalizationOptions>(options =>
             {
-                var supportedCultures = new[]
+                CultureInfo[] supportedCultures = new[]
                 {
                     new CultureInfo("en-US"),
                     new CultureInfo("zh-CN"),

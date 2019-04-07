@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using StarOJ.Core.Problems;
 using StarOJ.Data.Provider.SqlServer.Models;
-using System.Linq;
-using StarOJ.Core.Problems;
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace StarOJ.Data.Provider.SqlServer
 {
@@ -25,11 +25,11 @@ namespace StarOJ.Data.Provider.SqlServer
 
         public async Task Clear()
         {
-            var tests = (from x in _context.Tests where x.ProblemId == _problemId && x.IsSample == _isSample select x).ToArray();
+            TestCase[] tests = (from x in _context.Tests where x.ProblemId == _problemId && x.IsSample == _isSample select x).ToArray();
 
-            foreach(var v in tests)
+            foreach (TestCase v in tests)
             {
-                var item = new TestCaseProvider(_workspace, _context, v);
+                TestCaseProvider item = new TestCaseProvider(_workspace, _context, v);
                 Directory.Delete(item.GetRoot(), true);
             }
 
@@ -42,7 +42,7 @@ namespace StarOJ.Data.Provider.SqlServer
             TestCase empty = new TestCase { ProblemId = _problemId, IsSample = _isSample };
             _context.Tests.Add(empty);
             await _context.SaveChangesAsync();
-            var res = new TestCaseProvider(_workspace, _context, empty);
+            TestCaseProvider res = new TestCaseProvider(_workspace, _context, empty);
             Directory.CreateDirectory(res.GetRoot());
             await res.SetMetadata(metadata);
             return res;
@@ -56,10 +56,10 @@ namespace StarOJ.Data.Provider.SqlServer
         public async Task Delete(string id)
         {
             int _id = int.Parse(id);
-            var item = await _context.Tests.FindAsync(_id);
+            TestCase item = await _context.Tests.FindAsync(_id);
             if (item != null && item.ProblemId == _problemId && item.IsSample == _isSample)
             {
-                var prov = new TestCaseProvider(_workspace, _context, item);
+                TestCaseProvider prov = new TestCaseProvider(_workspace, _context, item);
                 Directory.Delete(prov.GetRoot(), true);
                 _context.Tests.Remove(item);
                 await _context.SaveChangesAsync();
@@ -69,10 +69,10 @@ namespace StarOJ.Data.Provider.SqlServer
         public async Task<ITestCaseProvider> Get(string id)
         {
             int _id = int.Parse(id);
-            var item = await _context.Tests.FindAsync(_id);
+            TestCase item = await _context.Tests.FindAsync(_id);
             if (item != null && item.ProblemId == _problemId && item.IsSample == _isSample)
             {
-                return new TestCaseProvider(_workspace, _context, item); 
+                return new TestCaseProvider(_workspace, _context, item);
             }
             else
             {
@@ -82,9 +82,9 @@ namespace StarOJ.Data.Provider.SqlServer
 
         public Task<IEnumerable<ITestCaseProvider>> GetAll()
         {
-            var test = (from x in _context.Tests where x.ProblemId == _problemId && x.IsSample == _isSample select x).ToList();
+            List<TestCase> test = (from x in _context.Tests where x.ProblemId == _problemId && x.IsSample == _isSample select x).ToList();
             List<ITestCaseProvider> res = new List<ITestCaseProvider>();
-            foreach (var v in test)
+            foreach (TestCase v in test)
                 res.Add(new TestCaseProvider(_workspace, _context, v));
             return Task.FromResult((IEnumerable<ITestCaseProvider>)res);
         }
@@ -92,7 +92,7 @@ namespace StarOJ.Data.Provider.SqlServer
         public async Task<bool> Has(string id)
         {
             int _id = int.Parse(id);
-            var item = await _context.Tests.FindAsync(_id);
+            TestCase item = await _context.Tests.FindAsync(_id);
             if (item != null && item.ProblemId == _problemId && item.IsSample == _isSample)
             {
                 return true;

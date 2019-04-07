@@ -1,7 +1,4 @@
-﻿using StarOJ.Core.Helpers;
-using System.IO;
-
-namespace StarOJ.Core.Problems
+﻿namespace StarOJ.Core.Problems
 {
     public class ProblemDescription
     {

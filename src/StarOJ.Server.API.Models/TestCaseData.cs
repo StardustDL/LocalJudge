@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using StarOJ.Core.Problems;
-using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace StarOJ.Server.API.Models

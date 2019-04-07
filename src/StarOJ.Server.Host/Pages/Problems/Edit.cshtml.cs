@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using StarOJ.Core.Identity;
 using StarOJ.Core.Problems;
 using StarOJ.Server.API.Clients;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace StarOJ.Server.Host.Pages.Problems
 {
@@ -38,11 +35,11 @@ namespace StarOJ.Server.Host.Pages.Problems
 
         async Task<bool> GetData(string id)
         {
-            var httpclient = clientFactory.CreateClient();
-            var client = new ProblemsClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            ProblemsClient client = new ProblemsClient(httpclient);
             try
             {
-                var metadata = await client.GetAsync(id);
+                ProblemMetadata metadata = await client.GetAsync(id);
                 Problem = await ProblemModel.GetAsync(metadata, httpclient, true, false);
             }
             catch
@@ -95,7 +92,7 @@ namespace StarOJ.Server.Host.Pages.Problems
             {
                 try
                 {
-                    var user = await _userManager.GetUserAsync(User);
+                    UserMetadata user = await _userManager.GetUserAsync(User);
                     if (await _userManager.GetUserIdAsync(user) != PostData.Metadata.UserId)
                     {
                         return false;
@@ -124,8 +121,8 @@ namespace StarOJ.Server.Host.Pages.Problems
                     return NotFound();
             }
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new ProblemsClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            ProblemsClient client = new ProblemsClient(httpclient);
             try
             {
                 await client.UpdateMetadataAsync(PostData.Metadata.Id, PostData.Metadata);
@@ -148,11 +145,11 @@ namespace StarOJ.Server.Host.Pages.Problems
                     return NotFound();
             }
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new ProblemsClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            ProblemsClient client = new ProblemsClient(httpclient);
             try
             {
-                var pro = await client.CreateAsync(new API.Models.ProblemData
+                ProblemMetadata pro = await client.CreateAsync(new API.Models.ProblemData
                 {
                     Description = PostData.Description,
                     Metadata = PostData.Metadata,
@@ -171,8 +168,8 @@ namespace StarOJ.Server.Host.Pages.Problems
             {
                 return BadRequest();
             }
-            var httpclient = clientFactory.CreateClient();
-            var client = new ProblemsClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            ProblemsClient client = new ProblemsClient(httpclient);
             try
             {
                 await client.DeleteAsync(PostData.Metadata.Id);
@@ -191,17 +188,17 @@ namespace StarOJ.Server.Host.Pages.Problems
                 return BadRequest();
             }
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new ProblemsClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            ProblemsClient client = new ProblemsClient(httpclient);
             try
             {
                 string sp = "";
-                using (var st = PostData.ImportFile.OpenReadStream())
-                using (var sr = new StreamReader(st))
+                using (Stream st = PostData.ImportFile.OpenReadStream())
+                using (StreamReader sr = new StreamReader(st))
                     sp = await sr.ReadToEndAsync();
-                var package = Newtonsoft.Json.JsonConvert.DeserializeObject<ProblemPackage>(sp);
+                ProblemPackage package = Newtonsoft.Json.JsonConvert.DeserializeObject<ProblemPackage>(sp);
                 package.Metadata.UserId = PostData.Metadata.UserId;
-                var pro = await client.ImportAsync(package);
+                ProblemMetadata pro = await client.ImportAsync(package);
                 return RedirectToPage(new { id = pro.Id });
             }
             catch

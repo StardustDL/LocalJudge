@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace StarOJ.Data.Provider.SqlServer.Models
+﻿namespace StarOJ.Data.Provider.SqlServer.Models
 {
     public class User
     {

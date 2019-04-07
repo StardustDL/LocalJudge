@@ -1,8 +1,7 @@
-﻿using StarOJ.Server.API.Clients;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using StarOJ.Core.Judgers;
 using StarOJ.Core.Helpers;
+using StarOJ.Core.Judgers;
 
 namespace StarOJ.Server.Host.TagHelpers
 {
@@ -52,11 +51,11 @@ namespace StarOJ.Server.Host.TagHelpers
             output.TagName = "span";
             output.TagMode = TagMode.StartTagAndEndTag;
 
-            var color = new TagBuilder("span");
+            TagBuilder color = new TagBuilder("span");
             color.Attributes["style"] = $"display:inline-block; border-radius:50%; height:12px; width:12px; position:relative; background-color:{GetLanguageColor(Value)}";
             output.Content.AppendHtml(color);
 
-            var name = new TagBuilder("span");
+            TagBuilder name = new TagBuilder("span");
             name.Attributes["style"] = "margin-left: 5px";
             name.InnerHtml.Append(ProgrammingLanguageHelper.DisplayNames[Value]);
             output.Content.AppendHtml(name);

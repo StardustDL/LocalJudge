@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
 using StarOJ.Core.Problems;
 using StarOJ.Data.Provider.SqlServer.Models;
+using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace StarOJ.Data.Provider.SqlServer
 {
@@ -20,8 +20,8 @@ namespace StarOJ.Data.Provider.SqlServer
 
         public async Task Clear()
         {
-            var ls = _context.Problems.ToArray();
-            foreach (var v in ls)
+            Problem[] ls = _context.Problems.ToArray();
+            foreach (Problem v in ls)
                 await Delete(v.Id.ToString());
         }
 
@@ -30,7 +30,7 @@ namespace StarOJ.Data.Provider.SqlServer
             Problem empty = new Problem();
             _context.Add(empty);
             await _context.SaveChangesAsync();
-            var res = new ProblemProvider(_workspace, _context, empty);
+            ProblemProvider res = new ProblemProvider(_workspace, _context, empty);
             await res.SetMetadata(metadata);
             return res;
         }
@@ -46,18 +46,18 @@ namespace StarOJ.Data.Provider.SqlServer
         public async Task Delete(string id)
         {
             int _id = int.Parse(id);
-            var item = await _context.Problems.FindAsync(_id);
+            Problem item = await _context.Problems.FindAsync(_id);
             if (item != null)
             {
-                var prov = new ProblemProvider(_workspace, _context, item);
+                ProblemProvider prov = new ProblemProvider(_workspace, _context, item);
 
                 await prov.Samples.Clear();
                 await prov.Tests.Clear();
 
                 {
-                    var submis = (from x in _context.Submissions where x.ProblemId == item.Id select x.Id).ToArray();
+                    int[] submis = (from x in _context.Submissions where x.ProblemId == item.Id select x.Id).ToArray();
 
-                    foreach (var s in submis)
+                    foreach (int s in submis)
                         await _workspace.Submissions.Delete(s.ToString());
                 }
 
@@ -70,7 +70,7 @@ namespace StarOJ.Data.Provider.SqlServer
         public async Task<IProblemProvider> Get(string id)
         {
             int _id = int.Parse(id);
-            var item = await _context.Problems.FindAsync(_id);
+            Problem item = await _context.Problems.FindAsync(_id);
             if (item == null)
             {
                 return null;
@@ -84,7 +84,7 @@ namespace StarOJ.Data.Provider.SqlServer
         public Task<IEnumerable<IProblemProvider>> GetAll()
         {
             List<IProblemProvider> res = new List<IProblemProvider>();
-            foreach (var v in _context.Problems)
+            foreach (Problem v in _context.Problems)
             {
                 res.Add(new ProblemProvider(_workspace, _context, v));
             }
@@ -99,12 +99,12 @@ namespace StarOJ.Data.Provider.SqlServer
 
         public async Task<IEnumerable<IProblemProvider>> Query(string id, string userId, string name, string source)
         {
-            var query = from item in _context.Problems select item;
-            if (!string.IsNullOrEmpty(id) && int.TryParse(id, out var _id))
+            IQueryable<Problem> query = from item in _context.Problems select item;
+            if (!string.IsNullOrEmpty(id) && int.TryParse(id, out int _id))
             {
                 query = query.Where(item => item.Id == _id);
             }
-            if (!string.IsNullOrEmpty(userId) && int.TryParse(userId, out var _userId))
+            if (!string.IsNullOrEmpty(userId) && int.TryParse(userId, out int _userId))
             {
                 query = query.Where(item => item.UserId == _userId);
             }

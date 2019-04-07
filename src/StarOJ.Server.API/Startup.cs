@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace StarOJ.Server.API
 {
@@ -36,7 +28,7 @@ namespace StarOJ.Server.API
             services.AddDbContext<Data.Provider.SqlServer.Models.OJContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            var appconfig = Configuration.GetSection("AppConfig").Get<AppConfig>();
+            AppConfig appconfig = Configuration.GetSection("AppConfig").Get<AppConfig>();
 
             services.AddScoped((provider) =>
             {
@@ -45,7 +37,7 @@ namespace StarOJ.Server.API
                     FileStoreRoot = appconfig.FileStoreRoot
                 };
             });
-            services.AddScoped<StarOJ.Core.IWorkspace, StarOJ.Data.Provider.SqlServer.Workspace>();
+            services.AddScoped<Data.Provider.IWorkspace, StarOJ.Data.Provider.SqlServer.Workspace>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddSwaggerDocument();

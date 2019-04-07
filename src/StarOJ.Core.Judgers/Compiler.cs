@@ -25,11 +25,11 @@ namespace StarOJ.Core.Judgers
                 };
                 executor = executor.Resolve(vars);
 
-                var startInfo = new System.Diagnostics.ProcessStartInfo(executor.Name, string.Join(" ", executor.Arguments))
+                System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo(executor.Name, string.Join(" ", executor.Arguments))
                 {
                     WorkingDirectory = workingDirectory
                 };
-                using (var runner = new Runner(startInfo)
+                using (Runner runner = new Runner(startInfo)
                 {
                     TimeLimit = timeLimit,
                     MemoryLimit = memoryLimit,
@@ -60,13 +60,13 @@ namespace StarOJ.Core.Judgers
                             }
                         case RunnerState.OutOfMemory:
                             {
-                                var message = $"Used {runner.MaximumMemory} bytes, limit {memoryLimit} bytes.";
+                                string message = $"Used {runner.MaximumMemory} bytes, limit {memoryLimit} bytes.";
                                 res.State = CompileState.MemoryLimitExceeded;
                                 break;
                             }
                         case RunnerState.OutOfTime:
                             {
-                                var message = $"Used {runner.RunningTime.TotalSeconds} seconds, limit {timeLimit.TotalSeconds} seconds.";
+                                string message = $"Used {runner.RunningTime.TotalSeconds} seconds, limit {timeLimit.TotalSeconds} seconds.";
                                 res.State = CompileState.TimeLimitExceeded;
                                 break;
                             }

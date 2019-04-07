@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using StarOJ.Server.API.Clients;
-using StarOJ.Server.Host.Helpers;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using StarOJ.Core.Helpers;
+using StarOJ.Server.API.Clients;
+using StarOJ.Server.Host.Helpers;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace StarOJ.Server.Host.Pages.Submissions
 {
@@ -39,11 +35,11 @@ namespace StarOJ.Server.Host.Pages.Submissions
             if (string.IsNullOrEmpty(id))
                 return NotFound();
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new SubmissionsClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            SubmissionsClient client = new SubmissionsClient(httpclient);
             try
             {
-                var metadata = await client.GetAsync(id);
+                Core.Submissions.SubmissionMetadata metadata = await client.GetAsync(id);
                 Submission = await SubmissionModel.GetAsync(metadata, httpclient);
             }
             catch
@@ -60,11 +56,11 @@ namespace StarOJ.Server.Host.Pages.Submissions
             {
                 return BadRequest();
             }
-            var httpclient = clientFactory.CreateClient();
-            var client = new SubmissionsClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            SubmissionsClient client = new SubmissionsClient(httpclient);
             try
             {
-                var file = await client.GetCodeAsync(PostData.Id);
+                FileResponse file = await client.GetCodeAsync(PostData.Id);
                 return File(file.Stream, "text/plain", $"{PostData.Id}.{ProgrammingLanguageHelper.Extends[PostData.Language]}");
             }
             catch
@@ -83,8 +79,8 @@ namespace StarOJ.Server.Host.Pages.Submissions
             {
                 return BadRequest();
             }
-            var httpclient = clientFactory.CreateClient();
-            var client = new SubmissionsClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            SubmissionsClient client = new SubmissionsClient(httpclient);
             try
             {
                 await client.DeleteAsync(PostData.Id);
@@ -106,8 +102,8 @@ namespace StarOJ.Server.Host.Pages.Submissions
             {
                 return BadRequest();
             }
-            var httpclient = clientFactory.CreateClient();
-            var client = new SubmissionsClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            SubmissionsClient client = new SubmissionsClient(httpclient);
             try
             {
                 await client.RejudgeAsync(PostData.Id);

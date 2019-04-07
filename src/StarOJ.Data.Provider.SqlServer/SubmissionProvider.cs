@@ -6,7 +6,6 @@ using StarOJ.Data.Provider.SqlServer.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace StarOJ.Data.Provider.SqlServer
@@ -19,9 +18,15 @@ namespace StarOJ.Data.Provider.SqlServer
         private readonly OJContext _context;
         private readonly Submission _submission;
 
-        internal string GetRoot() => Path.Join(_workspace.SubmissionStoreRoot, Id);
+        internal string GetRoot()
+        {
+            return Path.Join(_workspace.SubmissionStoreRoot, Id);
+        }
 
-        private string GetCodePath() => Path.Join(GetRoot(), PF_Code);
+        private string GetCodePath()
+        {
+            return Path.Join(GetRoot(), PF_Code);
+        }
 
         public SubmissionProvider(Workspace workspace, OJContext context, Submission submission)
         {
@@ -32,7 +37,10 @@ namespace StarOJ.Data.Provider.SqlServer
 
         public string Id => _submission.Id.ToString();
 
-        public Task<Stream> GetCode() => Task.FromResult((Stream)File.OpenRead(GetCodePath()));
+        public Task<Stream> GetCode()
+        {
+            return Task.FromResult((Stream)File.OpenRead(GetCodePath()));
+        }
 
         public Task<SubmissionMetadata> GetMetadata()
         {
@@ -49,16 +57,16 @@ namespace StarOJ.Data.Provider.SqlServer
 
         public Task<SubmissionResult> GetResult()
         {
-            TimeSpan? totalTime = null;
-            if (_submission.TotalTime.HasValue)
-                totalTime = TimeSpan.FromTicks(_submission.TotalTime.Value);
+            TimeSpan? maxTime = null;
+            if (_submission.MaximumTime.HasValue)
+                maxTime = TimeSpan.FromTicks(_submission.MaximumTime.Value);
             return Task.FromResult(new SubmissionResult
             {
                 AcceptedCase = _submission.AcceptedCase,
                 HasIssue = _submission.HasIssue,
                 Issues = JsonConvert.DeserializeObject<List<Issue>>(_submission.Issues),
                 MaximumMemory = _submission.MaximumMemory,
-                TotalTime = totalTime,
+                MaximumTime = maxTime,
                 TotalCase = _submission.TotalCase,
                 Samples = JsonConvert.DeserializeObject<List<JudgeResult>>(_submission.SampleResults),
                 Tests = JsonConvert.DeserializeObject<List<JudgeResult>>(_submission.TestResults),
@@ -68,7 +76,7 @@ namespace StarOJ.Data.Provider.SqlServer
 
         public async Task SetCode(Stream value)
         {
-            using (var fs = File.Open(GetCodePath(), FileMode.Create))
+            using (FileStream fs = File.Open(GetCodePath(), FileMode.Create))
                 await value.CopyToAsync(fs);
         }
 
@@ -90,7 +98,7 @@ namespace StarOJ.Data.Provider.SqlServer
                 _submission.HasIssue = false;
                 _submission.Issues = "";
                 _submission.TotalCase = null;
-                _submission.TotalTime = null;
+                _submission.MaximumTime = null;
                 _submission.SampleResults = "";
                 _submission.TestResults = "";
                 _submission.State = JudgeState.Pending;
@@ -102,7 +110,7 @@ namespace StarOJ.Data.Provider.SqlServer
                 _submission.HasIssue = value.HasIssue;
                 _submission.Issues = JsonConvert.SerializeObject(value.Issues);
                 _submission.TotalCase = value.TotalCase;
-                _submission.TotalTime = value.TotalTime?.Ticks;
+                _submission.MaximumTime = value.MaximumTime?.Ticks;
                 _submission.SampleResults = JsonConvert.SerializeObject(value.Samples);
                 _submission.TestResults = JsonConvert.SerializeObject(value.Tests);
                 _submission.State = value.State;

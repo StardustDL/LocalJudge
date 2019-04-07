@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using StarOJ.Server.API.Clients;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Authorization;
-using StarOJ.Server.Host.Helpers;
-using System.ComponentModel.DataAnnotations;
 using StarOJ.Core;
-using StarOJ.Core.Problems;
-using StarOJ.Server.API.Models;
 using StarOJ.Core.Helpers;
+using StarOJ.Core.Problems;
+using StarOJ.Server.API.Clients;
+using StarOJ.Server.API.Models;
+using StarOJ.Server.Host.Helpers;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace StarOJ.Server.Host.Pages.Problems
 {
@@ -65,11 +63,11 @@ namespace StarOJ.Server.Host.Pages.Problems
 
         async Task<bool> GetData(string id)
         {
-            var httpclient = clientFactory.CreateClient();
-            var client = new ProblemsClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            ProblemsClient client = new ProblemsClient(httpclient);
             try
             {
-                var metadata = await client.GetAsync(id);
+                ProblemMetadata metadata = await client.GetAsync(id);
                 Problem = await ProblemModel.GetAsync(metadata, httpclient, false, true);
             }
             catch
@@ -77,7 +75,7 @@ namespace StarOJ.Server.Host.Pages.Problems
                 return false;
             }
 
-            var emptyTestCase = new TestCasePreviewModel
+            TestCasePreviewModel emptyTestCase = new TestCasePreviewModel
             {
                 Metadata = new TestCaseMetadata
                 {
@@ -89,8 +87,8 @@ namespace StarOJ.Server.Host.Pages.Problems
             };
 
             {
-                var ls = new List<TestCasePreviewModel>();
-                foreach (var item in Problem.Samples)
+                List<TestCasePreviewModel> ls = new List<TestCasePreviewModel>();
+                foreach (TestCaseMetadata item in Problem.Samples)
                 {
                     ls.Add(new TestCasePreviewModel
                     {
@@ -105,8 +103,8 @@ namespace StarOJ.Server.Host.Pages.Problems
             }
 
             {
-                var ls = new List<TestCasePreviewModel>();
-                foreach (var item in Problem.Tests)
+                List<TestCasePreviewModel> ls = new List<TestCasePreviewModel>();
+                foreach (TestCaseMetadata item in Problem.Tests)
                 {
                     ls.Add(new TestCasePreviewModel
                     {
@@ -142,11 +140,11 @@ namespace StarOJ.Server.Host.Pages.Problems
                 return BadRequest();
             }
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new ProblemsClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            ProblemsClient client = new ProblemsClient(httpclient);
             try
             {
-                var file = await client.GetSampleInputAsync(PostData.ProblemId, PostData.TestCaseId);
+                FileResponse file = await client.GetSampleInputAsync(PostData.ProblemId, PostData.TestCaseId);
                 return File(file.Stream, "text/plain", $"{PostData.TestCaseId}.in");
             }
             catch
@@ -162,11 +160,11 @@ namespace StarOJ.Server.Host.Pages.Problems
                 return BadRequest();
             }
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new ProblemsClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            ProblemsClient client = new ProblemsClient(httpclient);
             try
             {
-                var file = await client.GetSampleOutputAsync(PostData.ProblemId, PostData.TestCaseId);
+                FileResponse file = await client.GetSampleOutputAsync(PostData.ProblemId, PostData.TestCaseId);
                 return File(file.Stream, "text/plain", $"{PostData.TestCaseId}.out");
             }
             catch
@@ -182,11 +180,11 @@ namespace StarOJ.Server.Host.Pages.Problems
                 return BadRequest();
             }
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new ProblemsClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            ProblemsClient client = new ProblemsClient(httpclient);
             try
             {
-                var file = await client.GetTestInputAsync(PostData.ProblemId, PostData.TestCaseId);
+                FileResponse file = await client.GetTestInputAsync(PostData.ProblemId, PostData.TestCaseId);
                 return File(file.Stream, "text/plain", $"{PostData.TestCaseId}.in");
             }
             catch
@@ -202,11 +200,11 @@ namespace StarOJ.Server.Host.Pages.Problems
                 return BadRequest();
             }
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new ProblemsClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            ProblemsClient client = new ProblemsClient(httpclient);
             try
             {
-                var file = await client.GetTestOutputAsync(PostData.ProblemId, PostData.TestCaseId);
+                FileResponse file = await client.GetTestOutputAsync(PostData.ProblemId, PostData.TestCaseId);
                 return File(file.Stream, "text/plain", $"test{PostData.TestCaseId}.out");
             }
             catch
@@ -231,8 +229,8 @@ namespace StarOJ.Server.Host.Pages.Problems
                 return BadRequest();
             }
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new ProblemsClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            ProblemsClient client = new ProblemsClient(httpclient);
             try
             {
                 await client.DeleteSampleAsync(PostData.ProblemId, PostData.TestCaseId);
@@ -255,8 +253,8 @@ namespace StarOJ.Server.Host.Pages.Problems
                 return BadRequest();
             }
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new ProblemsClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            ProblemsClient client = new ProblemsClient(httpclient);
             try
             {
                 await client.DeleteTestAsync(PostData.ProblemId, PostData.TestCaseId);
@@ -283,8 +281,8 @@ namespace StarOJ.Server.Host.Pages.Problems
                     return NotFound();
             }
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new ProblemsClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            ProblemsClient client = new ProblemsClient(httpclient);
             try
             {
                 await client.UpdateTestAsync(PostData.ProblemId, PostData.TestCaseId, PostData.TestCase);
@@ -311,8 +309,8 @@ namespace StarOJ.Server.Host.Pages.Problems
                     return NotFound();
             }
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new ProblemsClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            ProblemsClient client = new ProblemsClient(httpclient);
             try
             {
                 await client.UpdateSampleAsync(PostData.ProblemId, PostData.TestCaseId, PostData.TestCase);
@@ -339,11 +337,11 @@ namespace StarOJ.Server.Host.Pages.Problems
                     return NotFound();
             }
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new ProblemsClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            ProblemsClient client = new ProblemsClient(httpclient);
             try
             {
-                var tmeta = await client.CreateTestAsync(PostData.ProblemId, PostData.TestCase);
+                TestCaseMetadata tmeta = await client.CreateTestAsync(PostData.ProblemId, PostData.TestCase);
                 return RedirectToPage(new { id = PostData.ProblemId, showId = tmeta.Id });
             }
             catch
@@ -367,11 +365,11 @@ namespace StarOJ.Server.Host.Pages.Problems
                     return NotFound();
             }
 
-            var httpclient = clientFactory.CreateClient();
-            var client = new ProblemsClient(httpclient);
+            HttpClient httpclient = clientFactory.CreateClient();
+            ProblemsClient client = new ProblemsClient(httpclient);
             try
             {
-                var tmeta = await client.CreateSampleAsync(PostData.ProblemId, PostData.TestCase);
+                TestCaseMetadata tmeta = await client.CreateSampleAsync(PostData.ProblemId, PostData.TestCase);
                 return RedirectToPage(new { id = PostData.ProblemId, showId = tmeta.Id });
             }
             catch

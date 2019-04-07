@@ -1,6 +1,4 @@
-﻿using StarOJ.Core.Helpers;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -126,7 +124,7 @@ namespace StarOJ.Core.Judgers
             {
                 if (InputAll)
                 {
-                    var input = await Input.ReadToEndAsync();
+                    string input = await Input.ReadToEndAsync();
                     await Process.StandardInput.WriteAsync(input);
                     StartTime = DateTimeOffset.Now;
                 }
@@ -139,7 +137,7 @@ namespace StarOJ.Core.Judgers
                     StartTime = DateTimeOffset.Now;
                 }
             }
-            Process.StandardInput.Close();            
+            Process.StandardInput.Close();
 
             if (Process.WaitForExit((int)Math.Ceiling(TimeLimit.TotalMilliseconds)))
             {

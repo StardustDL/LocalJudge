@@ -18,7 +18,7 @@ namespace StarOJ.Core.Submissions
 
         public bool HasIssue { get; set; }
 
-        public TimeSpan? TotalTime { get; set; }
+        public TimeSpan? MaximumTime { get; set; }
 
         public long? MaximumMemory { get; set; }
 

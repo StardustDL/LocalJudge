@@ -1,11 +1,5 @@
-﻿using JetBrains.Annotations;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using StarOJ.Core.Identity;
-using StarOJ.Core.Problems;
-using System;
-using System.Text;
 
 namespace StarOJ.Data.Provider.SqlServer.Models
 {
@@ -14,7 +8,7 @@ namespace StarOJ.Data.Provider.SqlServer.Models
         public OJContext(DbContextOptions options) : base(options)
         {
         }
-        
+
         public DbSet<User> Users { get; set; }
 
         public DbSet<Role> Roles { get; set; }
@@ -32,7 +26,7 @@ namespace StarOJ.Data.Provider.SqlServer.Models
     {
         public OJContext CreateDbContext(string[] args)
         {
-            var optionsBuilder = new DbContextOptionsBuilder<OJContext>();
+            DbContextOptionsBuilder<OJContext> optionsBuilder = new DbContextOptionsBuilder<OJContext>();
             optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=StarOJ-db;Trusted_Connection=True;MultipleActiveResultSets=true");
 
             return new OJContext(optionsBuilder.Options);

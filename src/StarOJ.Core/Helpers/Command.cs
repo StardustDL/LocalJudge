@@ -14,7 +14,7 @@ namespace StarOJ.Core.Helpers
         {
             string resolve(string raw, Dictionary<string, string> vars)
             {
-                if (variables != null && variables.TryGetValue(raw, out var value) == true)
+                if (variables != null && variables.TryGetValue(raw, out string value) == true)
                 {
                     return value;
                 }

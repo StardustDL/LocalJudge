@@ -15,15 +15,6 @@
     <li class="breadcrumb-item active">@ViewData["Title"]</li>
 </ul>
 
-@if (canModify)
-{
-    <div class="btn-group-toggle" style="text-align:right; margin-bottom:10px">
-        <a asp-page="./Edit" class="btn btn-outline-success">
-            <i class="fa fa-plus"></i>
-        </a>
-    </div>
-}
-
 <div class="text-center" style="width:100%">
     <form method="post" class="form-inline" style="display:inline-flex">
         <label class="control-label">@SharedLocalizer["Id"]</label>
@@ -34,7 +25,15 @@
         <input class="form-control" asp-for="PostData.QueryName" style="margin-left:10px; width:150px" />
         <label class="control-label" style="margin-left:10px">@SharedLocalizer["Source"]</label>
         <input class="form-control" asp-for="PostData.QuerySource" style="margin-left:10px; width:150px" />
-        <button type="submit" asp-page-handler="Query" class="btn btn-outline-dark" style="margin-left:10px">@SharedLocalizer["Query"]</button>
+        <button type="submit" asp-page-handler="Query" class="btn btn-outline-dark" style="margin-left:10px">
+            <i class="fa fa-search"></i>
+        </button>
+        @if (canModify)
+        {
+            <a asp-page="./Edit" class="btn btn-outline-success" style="margin-left:10px">
+                <i class="fa fa-plus"></i>
+            </a>
+        }
     </form>
 </div>
 
@@ -46,6 +45,9 @@
             </th>
             <th>
                 @SharedLocalizer[Html.DisplayNameFor(model => model.Problems[0].Metadata.Name)]
+            </th>
+            <th style="width:10%">
+                @SharedLocalizer[Html.DisplayNameFor(model => model.Problems[0].AcceptedRate)]
             </th>
             <th style="width:10%">
                 @SharedLocalizer["Author"]
@@ -65,6 +67,9 @@
                 </td>
                 <td>
                     <a asp-page="./View" asp-route-id="@item.Metadata.Id">@Html.DisplayFor(modelItem => item.Metadata.Name)</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AcceptedRate)
                 </td>
                 <td>
                     @if (item.User == null)
@@ -90,7 +95,7 @@
                                 @if (canModify)
                                 {
                                     <button type="submit" asp-page-handler="Export" class="btn btn-outline-info">
-                                        <i class="fa fa-file-export"></i>
+                                        <i class="fa fa-file-import"></i>
                                     </button>
                                     <a asp-page="./Edit" asp-route-id="@item.Metadata.Id" class="btn btn-outline-primary">
                                         <i class="fa fa-edit"></i>

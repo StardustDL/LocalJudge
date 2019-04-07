@@ -1,10 +1,10 @@
-﻿using System;
+﻿using StarOJ.Core.Identity;
+using StarOJ.Core.Problems;
+using StarOJ.Server.API.Clients;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using StarOJ.Core.Identity;
-using StarOJ.Core.Problems;
-using StarOJ.Server.API.Clients;
 
 namespace StarOJ.Server.Host.Pages.Problems
 {
@@ -20,14 +20,38 @@ namespace StarOJ.Server.Host.Pages.Problems
 
         public UserMetadata User { get; set; }
 
+        public ProblemStatistics Statistics { get; set; }
+
+        public string AcceptedRate
+        {
+            get
+            {
+                if (Statistics == null || Statistics.SubmissionCount == 0) return "N/A";
+                double res = (double)Statistics.SubmissionAcceptedCount / Statistics.SubmissionCount;
+                return string.Format("{0:f1}%", res * 100);
+            }
+        }
+
         public static async Task<ProblemModel> GetAsync(ProblemMetadata metadata, HttpClient client, bool loadDescription, bool loadData)
         {
-            var res = new ProblemModel
+            ProblemModel res = new ProblemModel
             {
                 Metadata = metadata,
             };
 
-            var pcli = new ProblemsClient(client);
+            ProblemsClient pcli = new ProblemsClient(client);
+
+            {
+                try
+                {
+                    StatisticsClient stcli = new StatisticsClient(client);
+                    res.Statistics = await stcli.GetProblemAsync(metadata.Id);
+                }
+                catch
+                {
+                    res.Statistics = null;
+                }
+            }
 
             if (loadDescription)
             {
@@ -60,7 +84,7 @@ namespace StarOJ.Server.Host.Pages.Problems
             }
 
             {
-                var ucli = new UsersClient(client);
+                UsersClient ucli = new UsersClient(client);
                 try
                 {
                     res.User = await ucli.GetAsync(metadata.UserId);

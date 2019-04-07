@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using StarOJ.Core.Identity;
+﻿using StarOJ.Core.Identity;
 using StarOJ.Data.Provider.SqlServer.Models;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace StarOJ.Data.Provider.SqlServer
 {
@@ -23,7 +23,7 @@ namespace StarOJ.Data.Provider.SqlServer
             User empty = new User();
             _context.Users.Add(empty);
             await _context.SaveChangesAsync();
-            var res = new UserProvider(_workspace, _context, empty);
+            UserProvider res = new UserProvider(_workspace, _context, empty);
             await res.SetMetadata(metadata);
             return res;
         }
@@ -37,15 +37,15 @@ namespace StarOJ.Data.Provider.SqlServer
         public async Task Delete(string id)
         {
             int _id = int.Parse(id);
-            var item = await _context.Users.FindAsync(_id);
+            User item = await _context.Users.FindAsync(_id);
             if (item != null)
             {
                 _context.Users.Remove(item);
                 {
-                    var submis = (from x in _context.Submissions where x.UserId == item.Id select x).ToArray();
+                    Submission[] submis = (from x in _context.Submissions where x.UserId == item.Id select x).ToArray();
                     _context.Submissions.RemoveRange(submis);
                 }
-                foreach (var p in (from x in _context.Problems where x.UserId == item.Id select x))
+                foreach (Problem p in (from x in _context.Problems where x.UserId == item.Id select x))
                 {
                     await _workspace.Problems.Delete(p.Id.ToString());
                 }
@@ -56,7 +56,7 @@ namespace StarOJ.Data.Provider.SqlServer
         public async Task<IUserProvider> Get(string id)
         {
             int _id = int.Parse(id);
-            var item = await _context.Users.FindAsync(_id);
+            User item = await _context.Users.FindAsync(_id);
             if (item == null)
             {
                 return null;
@@ -70,7 +70,7 @@ namespace StarOJ.Data.Provider.SqlServer
         public Task<IEnumerable<IUserProvider>> GetAll()
         {
             List<IUserProvider> res = new List<IUserProvider>();
-            foreach (var v in _context.Users)
+            foreach (User v in _context.Users)
             {
                 res.Add(new UserProvider(_workspace, _context, v));
             }
@@ -79,7 +79,7 @@ namespace StarOJ.Data.Provider.SqlServer
 
         public Task<IUserProvider> GetByName(string name)
         {
-            var item = (from x in _context.Users where x.NormalizedName == name select x).FirstOrDefault();
+            User item = (from x in _context.Users where x.NormalizedName == name select x).FirstOrDefault();
             if (item == null)
                 return Task.FromResult<IUserProvider>(null);
             else
